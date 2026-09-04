@@ -6,6 +6,7 @@ import type {
 } from "./types";
 import { extraProducts } from "./extra-products";
 import { lifeProducts } from "./life-products";
+import { brideProducts, commercialBundles } from "./bride-guide";
 import { expandNetworkListings } from "./expand-listings";
 import { stores } from "./network";
 
@@ -41,6 +42,12 @@ export const categories: Category[] = [
   { id: "jewelry", name: "إكسسوار", description: "طقم زركون وحلق وسلاسل", room: "general", vertical: "jewelry" },
   { id: "beauty", name: "عطور وتجميل", description: "عطر، مكياج، عناية", room: "general", vertical: "beauty" },
   { id: "accessories", name: "رفايع البيت", description: "فوط مطبخ، مريلة، حاجات صغيرة", room: "kitchen", vertical: "accessories" },
+  { id: "cleaning", name: "تنظيف", description: "مقشات، ممسحات، منظفات، فوط", room: "general", vertical: "cleaning" },
+  { id: "bathroom", name: "الحمام", description: "ستائر، دواسات، إكسسوار حمام", room: "general", vertical: "bathroom" },
+  { id: "storage", name: "تخزين وتنظيم", description: "منظمات أدراج ودولاب وصناديق", room: "general", vertical: "storage" },
+  { id: "travel", name: "سفر وشهر العسل", description: "شنط، منظمات سفر، باسبور هولدر", room: "general", vertical: "travel" },
+  { id: "emergency", name: "طوارئ وإسعاف", description: "بوكس إسعافات وعدة صغيرة", room: "general", vertical: "emergency" },
+  { id: "baby", name: "مستقبل الأطفال", description: "ملايات وفوط ومنظمات ممكن تتجاب بدري", room: "general", vertical: "baby" },
 ];
 
 export const brands: Brand[] = [
@@ -66,6 +73,10 @@ export const brands: Brand[] = [
   { id: "defacto", name: "ديفاكتو", origin: "تركيا" },
   { id: "cottonil", name: "كوتونيل", origin: "مصر" },
   { id: "lattafa", name: "لطافة", origin: "الإمارات" },
+  { id: "luminarc", name: "لومينارك", origin: "فرنسا" },
+  { id: "nivea", name: "نيفيا", origin: "ألمانيا" },
+  { id: "loreal", name: "لوريال", origin: "فرنسا" },
+  { id: "anker", name: "أنكر", origin: "الصين" },
 ];
 
 function listing(
@@ -635,15 +646,15 @@ const seedProducts: Product[] = [
   },
 ];
 
-export const products = expandNetworkListings([
-  ...seedProducts,
-  ...extraProducts,
-  ...lifeProducts,
-]);
+export const products = [
+  ...expandNetworkListings([...seedProducts, ...extraProducts, ...lifeProducts]),
+  ...brideProducts,
+];
 
 export const templates: ChecklistTemplate[] = [
   {
     id: "kitchen-core",
+    kind: "room",
     name: "جهاز مطبخ أساسي",
     description: "غسالة، ثلاجة، بوتاجاز، سخان، خلاط، حلل",
     suggestedBudget: 65000,
@@ -658,6 +669,7 @@ export const templates: ChecklistTemplate[] = [
   },
   {
     id: "kitchen-plus",
+    kind: "room",
     name: "مطبخ كامل مع أطباق",
     description: "الأساسي + غسالة أطباق وميكروويف",
     suggestedBudget: 95000,
@@ -674,6 +686,7 @@ export const templates: ChecklistTemplate[] = [
   },
   {
     id: "bedroom-set",
+    kind: "room",
     name: "غرفة نوم العروسين",
     description: "غرفة 5 قطع + لحاف + مناشف",
     suggestedBudget: 48000,
@@ -681,6 +694,7 @@ export const templates: ChecklistTemplate[] = [
   },
   {
     id: "living-set",
+    kind: "room",
     name: "صالون واستقبال",
     description: "ركنة، سفرة، شاشة، نجفة",
     suggestedBudget: 62000,
@@ -688,6 +702,7 @@ export const templates: ChecklistTemplate[] = [
   },
   {
     id: "cooling",
+    kind: "room",
     name: "تبريد الشقة",
     description: "مكيف أوضة + مكيف صالة",
     suggestedBudget: 45000,
@@ -695,6 +710,7 @@ export const templates: ChecklistTemplate[] = [
   },
   {
     id: "daily-life",
+    kind: "room",
     name: "أجهزة البيت اليومية",
     description: "قلاية، كتل، مروحة، مبرد مياه، سشوار، روبوت",
     suggestedBudget: 28000,
@@ -709,6 +725,7 @@ export const templates: ChecklistTemplate[] = [
   },
   {
     id: "bride-wardrobe",
+    kind: "room",
     name: "لبس العروسة والبيجامات",
     description: "فستان/عباية، بيجامة، شباشب، كلتش، فوط، عطر",
     suggestedBudget: 15000,
@@ -722,6 +739,7 @@ export const templates: ChecklistTemplate[] = [
       "lattafa-perfume",
     ],
   },
+  ...commercialBundles.map((b) => ({ ...b, kind: "bundle" as const })),
 ];
 
 export function getProduct(id: string) {

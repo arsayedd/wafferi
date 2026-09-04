@@ -10,13 +10,13 @@ import { useLive } from "@/hooks/use-live";
 import { SearchBar } from "@/components/search-bar";
 
 const links = [
-  { href: "/live", label: "لحظي" },
+  { href: "/guide", label: "دليل العروسة" },
   { href: "/search", label: "السوق" },
-  { href: "/categories", label: "الفئات" },
+  { href: "/list", label: "القايمة" },
   { href: "/deals", label: "أوفر سعر" },
-  { href: "/list", label: "قايمة الجهاز" },
+  { href: "/live", label: "لحظي" },
+  { href: "/categories", label: "الفئات" },
   { href: "/stores", label: "الشبكة" },
-  { href: "/ingest", label: "فيد" },
   { href: "/how-it-works", label: "إزاي بنشتغل" },
 ];
 
@@ -168,6 +168,9 @@ export function SiteFooter() {
         <div>
           <p className="mb-2 text-sm font-medium">اكتشفي</p>
           <ul className="space-y-1 text-sm text-muted-foreground">
+            <li>
+              <Link href="/guide">دليل العروسة</Link>
+            </li>
             <li>
               <Link href="/search">السوق</Link>
             </li>

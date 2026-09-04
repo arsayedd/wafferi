@@ -64,7 +64,8 @@ export function liveCheapest(product: Product, at = Date.now()) {
 
 export function recentMoves(at = Date.now(), limit = 24): PriceMove[] {
   const moves: PriceMove[] = [];
-  for (const p of products) {
+  const watch = products.filter((p) => !p.id.startsWith("br-"));
+  for (const p of watch) {
     const live = withLivePrices(p, at);
     for (const l of live.listings) {
       if (l.price === l.previousPrice) continue;

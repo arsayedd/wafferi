@@ -63,8 +63,10 @@ export default function ListClient() {
         </Button>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-3">
-        {templates.map((t) => (
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {templates
+          .filter((t) => t.kind !== "bundle")
+          .map((t) => (
           <button
             key={t.id}
             type="button"
@@ -78,6 +80,27 @@ export default function ListClient() {
             <p className="text-xs text-muted-foreground">{t.description}</p>
           </button>
         ))}
+      </div>
+      <div>
+        <p className="mb-3 text-sm font-medium">بوكسات تجارية — بتستبدل القايمة</p>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {templates
+            .filter((t) => t.kind === "bundle")
+            .map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => {
+                  applyTemplate(t.id);
+                  toast.success(`اتطبقت قايمة ${t.name}`);
+                }}
+                className="rounded-xl bg-card p-4 text-start ring-1 ring-foreground/10 hover:bg-secondary"
+              >
+                <p className="font-medium">{t.name}</p>
+                <p className="text-xs text-muted-foreground">{t.description}</p>
+              </button>
+            ))}
+        </div>
       </div>
 
       <div className="grid gap-4 rounded-xl bg-card p-4 ring-1 ring-foreground/10 md:grid-cols-3">
@@ -114,7 +137,11 @@ export default function ListClient() {
         <div className="rounded-xl border border-dashed p-12 text-center">
           <p className="font-medium">القايمة فاضية</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            اختاري قالب من فوق، أو أضيفي منتجات من السوق.
+            اختاري قالب من فوق، أو افتحي{" "}
+            <Link href="/guide" className="text-primary underline">
+              دليل العروسة
+            </Link>
+            .
           </p>
           <Button className="mt-4" nativeButton={false} render={<Link href="/search" />}>
             فتح السوق

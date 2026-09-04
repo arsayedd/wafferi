@@ -31,6 +31,12 @@ export const categoryVertical: Record<CategoryId, VerticalId> = {
   jewelry: "jewelry",
   beauty: "beauty",
   accessories: "accessories",
+  cleaning: "cleaning",
+  bathroom: "bathroom",
+  storage: "storage",
+  travel: "travel",
+  emergency: "emergency",
+  baby: "baby",
 };
 
 function jitter(seed: string, base: number) {

@@ -27,6 +27,11 @@ import {
   ShoppingBag,
   Gem,
   Sparkle,
+  SprayCan,
+  Bath,
+  Archive,
+  Plane,
+  HeartPulse,
   type LucideIcon,
 } from "lucide-react";
 import type { CategoryId } from "@/lib/types";
@@ -61,6 +66,12 @@ const icons: Record<CategoryId, LucideIcon> = {
   jewelry: Gem,
   beauty: Sparkles,
   accessories: Utensils,
+  cleaning: SprayCan,
+  bathroom: Bath,
+  storage: Archive,
+  travel: Plane,
+  emergency: HeartPulse,
+  baby: Baby,
 };
 
 const tints: Record<CategoryId, string> = {
@@ -93,6 +104,12 @@ const tints: Record<CategoryId, string> = {
   jewelry: "from-amber-100 to-white text-amber-900",
   beauty: "from-fuchsia-50 to-white text-fuchsia-800",
   accessories: "from-lime-50 to-white text-lime-800",
+  cleaning: "from-teal-50 to-white text-teal-800",
+  bathroom: "from-sky-50 to-cyan-100 text-sky-900",
+  storage: "from-amber-50 to-white text-amber-900",
+  travel: "from-indigo-50 to-white text-indigo-800",
+  emergency: "from-red-50 to-white text-red-800",
+  baby: "from-orange-50 to-white text-orange-800",
 };
 
 export function ProductArt({

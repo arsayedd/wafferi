@@ -34,6 +34,11 @@ const LIFE: VerticalId[] = [
   "jewelry",
   "beauty",
   "accessories",
+  "bathroom",
+  "storage",
+  "travel",
+  "emergency",
+  "baby",
 ];
 
 const FASHION: VerticalId[] = [
@@ -484,6 +489,11 @@ export const verticalLabels: Record<VerticalId, string> = {
   jewelry: "إكسسوار وذهب موضة",
   beauty: "عطور وتجميل",
   accessories: "رفايع",
+  bathroom: "حمام",
+  storage: "تخزين وتنظيم",
+  travel: "سفر",
+  emergency: "طوارئ",
+  baby: "أطفال مستقبلًا",
 };
 
 export function networkStats() {

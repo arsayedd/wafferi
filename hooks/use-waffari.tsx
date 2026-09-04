@@ -23,6 +23,7 @@ type ListState = {
   alerts: PriceAlert[];
   compare: string[];
   addItem: (productId: string) => void;
+  addMany: (productIds: string[]) => void;
   removeItem: (productId: string) => void;
   togglePurchased: (productId: string) => void;
   setNote: (productId: string, note: string) => void;
@@ -95,6 +96,25 @@ export function WaffariProvider({ children }: { children: React.ReactNode }) {
     setItems((prev) => {
       if (prev.some((i) => i.productId === productId)) return prev;
       const next = [...prev, { productId, qty: 1, purchased: false, note: "" }];
+      persist(LIST_KEY, next);
+      return next;
+    });
+  }, []);
+
+  const addMany = useCallback((productIds: string[]) => {
+    dirty.current = true;
+    setItems((prev) => {
+      const have = new Set(prev.map((i) => i.productId));
+      const extra = productIds
+        .filter((id) => !have.has(id))
+        .map((productId) => ({
+          productId,
+          qty: 1,
+          purchased: false,
+          note: "",
+        }));
+      if (!extra.length) return prev;
+      const next = [...prev, ...extra];
       persist(LIST_KEY, next);
       return next;
     });
@@ -177,6 +197,7 @@ export function WaffariProvider({ children }: { children: React.ReactNode }) {
       alerts,
       compare,
       addItem,
+      addMany,
       removeItem,
       togglePurchased,
       setNote,
@@ -195,6 +216,7 @@ export function WaffariProvider({ children }: { children: React.ReactNode }) {
       alerts,
       compare,
       addItem,
+      addMany,
       removeItem,
       togglePurchased,
       setNote,

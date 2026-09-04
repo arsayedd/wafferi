@@ -12,11 +12,29 @@ import { SearchBar } from "@/components/search-bar";
 import { ProductCard } from "@/components/product-card";
 import { categories, products, stores, templates } from "@/lib/catalog";
 import { productStats } from "@/lib/stats";
+import { brideItemCount, brideSections } from "@/lib/bride-guide";
+
+const homeCats = [
+  "kitchen-tools",
+  "cleaning",
+  "bathroom",
+  "textiles",
+  "beauty",
+  "bridal-wear",
+  "storage",
+  "travel",
+  "emergency",
+  "small-appliances",
+  "washers",
+  "fridges",
+] as const;
 
 export default function HomePage() {
   const deals = [...products]
     .sort((a, b) => productStats(b).save - productStats(a).save)
     .slice(0, 6);
+  const roomTemplates = templates.filter((t) => t.kind !== "bundle");
+  const bundleTemplates = templates.filter((t) => t.kind === "bundle");
 
   return (
     <div>
@@ -25,19 +43,26 @@ export default function HomePage() {
           <div className="space-y-6">
             <p className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">
               <Sparkles className="size-4" />
-              مقارنة أسعار لكل حاجة بتتباع في مصر: جهاز، لبس، فوط، بيجامات، عرايس
+              دليل عروسة من المطبخ لبوكس الطوارئ — مع مقارنة سعر على متاجر مصر
             </p>
             <h1 className="font-heading text-4xl leading-tight font-semibold md:text-5xl">
-              من الغسالة لفستان الفرح… الأرخص من كل المتاجر المتصلة.
+              قايمة الجهاز كاملة: {brideItemCount} بند، والأرخص ظاهر.
             </h1>
             <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
-              وفّري طبقة مقارنة فوق ماركتبليس الأزياء والأجهزة والهايبر: لبس العرايس،
-              بيجامات، فوط، رفايع، وأجهزة البيت. السحب الحي بيتم بفيد وأفلييت رسمي،
-              مش سكرابينج عشوائي لكل الإنترنت.
+              من أطقم الحلل ورفايع الدرج لفوط الحمام واللانجري وشهر العسل. وفّري مش
+              بتبيع المنتج — بتجمع العروض من المتاجر المتصلة في كارت واحد.
             </p>
             <SearchBar />
+            <div className="flex flex-wrap gap-2">
+              <Button nativeButton={false} render={<Link href="/guide" />}>
+                افتحي دليل العروسة
+              </Button>
+              <Button variant="outline" nativeButton={false} render={<Link href="/list" />}>
+                قايمة الجهاز
+              </Button>
+            </div>
             <div className="flex flex-wrap gap-2 text-sm">
-              {["فستان فرح", "بيجاما قطن", "فوط حمام", "غسالة 8 كيلو"].map((s) => (
+              {["طقم حلل", "ستارة حمام", "بوكس الطوارئ", "شنطة سفر"].map((s) => (
                 <Link
                   key={s}
                   href={`/search?q=${encodeURIComponent(s)}`}
@@ -50,13 +75,13 @@ export default function HomePage() {
           </div>
           <Card className="bg-background/80 py-5 shadow-lg backdrop-blur">
             <CardContent className="space-y-4">
-              <p className="text-sm font-medium">تغطية الـ MVP</p>
+              <p className="text-sm font-medium">تغطية الدليل</p>
               <ul className="grid grid-cols-2 gap-3 text-sm">
                 <li>
                   <strong className="block text-2xl text-primary">
-                    {stores.length}
+                    {brideSections.length}
                   </strong>
-                  متجر في الشبكة
+                  باب في دليل العروسة
                 </li>
                 <li>
                   <strong className="block text-2xl text-primary">
@@ -89,24 +114,30 @@ export default function HomePage() {
       <section className="mx-auto max-w-6xl px-4 py-12">
         <div className="mb-6 flex items-end justify-between">
           <div>
-            <h2 className="font-heading text-2xl font-semibold">تسوقِي حسب الغرفة</h2>
-            <p className="text-sm text-muted-foreground">من المطبخ لغرفة النوم والصالون</p>
+            <h2 className="font-heading text-2xl font-semibold">تسوقِي حسب الباب</h2>
+            <p className="text-sm text-muted-foreground">
+              عيّنة من الفئات. الدليل الكامل فيه {brideItemCount} بند.
+            </p>
           </div>
-          <Button variant="ghost" nativeButton={false} render={<Link href="/categories" />}>
-            كل الفئات
+          <Button variant="ghost" nativeButton={false} render={<Link href="/guide" />}>
+            دليل العروسة
             <ArrowLeft />
           </Button>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-          {categories.map((c) => (
-            <Link
-              key={c.id}
-              href={`/categories/${c.id}`}
-              className="rounded-xl bg-card p-3 text-center text-sm ring-1 ring-foreground/10 hover:bg-secondary"
-            >
-              <span className="font-medium">{c.name}</span>
-            </Link>
-          ))}
+          {homeCats.map((id) => {
+            const c = categories.find((x) => x.id === id);
+            if (!c) return null;
+            return (
+              <Link
+                key={c.id}
+                href={`/categories/${c.id}`}
+                className="rounded-xl bg-card p-3 text-center text-sm ring-1 ring-foreground/10 hover:bg-secondary"
+              >
+                <span className="font-medium">{c.name}</span>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
@@ -125,9 +156,31 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-12">
-        <h2 className="mb-6 font-heading text-2xl font-semibold">قايمات جهاز جاهزة</h2>
+        <h2 className="mb-2 font-heading text-2xl font-semibold">قايمات غرف</h2>
+        <p className="mb-6 text-sm text-muted-foreground">بتفتح القايمة وتستبدل المحتويات بالقالب.</p>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {templates.map((t) => (
+          {roomTemplates.map((t) => (
+            <Card key={t.id}>
+              <CardContent className="space-y-3">
+                <ListChecks className="text-primary" />
+                <h3 className="font-medium">{t.name}</h3>
+                <p className="text-sm text-muted-foreground">{t.description}</p>
+                <p className="text-sm">
+                  ميزانية مقترحة: {t.suggestedBudget.toLocaleString("ar-EG")} ج
+                </p>
+                <Button nativeButton={false} render={<Link href={`/list?template=${t.id}`} />}>
+                  افتحي القايمة
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <h2 className="mt-12 mb-2 font-heading text-2xl font-semibold">بوكسات العروسة</h2>
+        <p className="mb-6 text-sm text-muted-foreground">
+          باقات تجارية جاهزة: مطبخ، تنظيم، حمام، عناية، شهر العسل، أول بيت.
+        </p>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {bundleTemplates.map((t) => (
             <Card key={t.id}>
               <CardContent className="space-y-3">
                 <ListChecks className="text-primary" />

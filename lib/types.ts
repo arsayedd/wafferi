@@ -27,7 +27,13 @@ export type CategoryId =
   | "bags"
   | "jewelry"
   | "beauty"
-  | "accessories";
+  | "accessories"
+  | "cleaning"
+  | "bathroom"
+  | "storage"
+  | "travel"
+  | "emergency"
+  | "baby";
 
 export type VerticalId =
   | "laundry"
@@ -51,7 +57,12 @@ export type VerticalId =
   | "bags"
   | "jewelry"
   | "beauty"
-  | "accessories";
+  | "accessories"
+  | "bathroom"
+  | "storage"
+  | "travel"
+  | "emergency"
+  | "baby";
 
 export type StoreKind =
   | "marketplace"
@@ -150,6 +161,7 @@ export type ChecklistTemplate = {
   description: string;
   suggestedBudget: number;
   productIds: string[];
+  kind?: "room" | "bundle";
 };
 
 export type ListItem = {
