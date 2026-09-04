@@ -35,7 +35,7 @@ function merge(saved: PartnerRule[]): PartnerRule[] {
   return [...map.values()];
 }
 
-export function PartnersProvider({ children }: { children: React.ReactNode }) {
+function PartnersProvider({ children }: { children: React.ReactNode }) {
   const [rules, setRules] = useState<PartnerRule[]>(defaults);
   const [ready, setReady] = useState(false);
 
@@ -88,3 +88,6 @@ export function usePartners() {
   if (!v) throw new Error("usePartners must be inside PartnersProvider");
   return v;
 }
+
+export { PartnersProvider };
+export default PartnersProvider;
