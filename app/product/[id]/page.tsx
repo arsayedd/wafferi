@@ -24,7 +24,8 @@ import { ShopLink } from "@/components/shop-link";
 import { SpecSheet } from "@/components/spec-sheet";
 import { SpecCompare } from "@/components/spec-compare";
 import { ProductCard } from "@/components/product-card";
-import { similarVirtual, youtubeReviewUrl, gsmarenaSearchUrl, mobizilSearchUrl } from "@/lib/product-research";
+import { ProductToc, ProductVideos, VersusStrip } from "@/components/product-hub";
+import { similarVirtual } from "@/lib/product-research";
 
 export default function ProductPage({
   params,
@@ -62,6 +63,7 @@ export default function ProductPage({
 
   return (
     <div className="mx-auto max-w-6xl space-y-10 px-4 py-8">
+      <ProductToc />
       <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr]">
         <ProductPhoto
           id={product.id}
@@ -192,18 +194,26 @@ export default function ProductPage({
         </div>
       </div>
 
-      <section className="space-y-3">
+      <section id="secPrices" className="scroll-mt-28 space-y-3">
         <h2 className="font-heading text-xl font-semibold">
           العروض مربوطة بمصادرها ({product.listings.length} عرض)
         </h2>
         <PriceTable listings={product.listings} productName={product.name} />
       </section>
 
-      <SpecSheet product={product} />
+      <div id="secSpecs" className="scroll-mt-28">
+        <SpecSheet product={product} />
+      </div>
 
-      <SpecCompare products={[product, ...related.slice(0, 2)]} />
+      <ProductVideos product={product} />
 
-      <section>
+      <section id="secCompare" className="scroll-mt-28 space-y-4">
+        <h2 className="font-heading text-xl font-semibold">مقارنات جاهزة</h2>
+        <VersusStrip product={product} />
+        <SpecCompare products={[product, ...related.slice(0, 2)]} />
+      </section>
+
+      <section id="secReviews" className="scroll-mt-28">
         <h2 className="mb-3 font-heading text-xl font-semibold">آراء من المتاجر</h2>
         <div className="space-y-3">
           {product.reviewHighlights.map((r) => (
@@ -216,28 +226,6 @@ export default function ProductPage({
           ))}
           {product.reviewHighlights.length === 0 && (
             <p className="text-sm text-muted-foreground">لسه مفيش مقتطفات تقييم للمنتج ده.</p>
-          )}
-        </div>
-      </section>
-
-      <section className="rounded-2xl bg-card p-5 ring-1 ring-foreground/10">
-        <h2 className="font-heading text-xl font-semibold">مراجعات ومقارنة من برّه</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          مش بنسحب يوتيوب ولا موبيزيل. دي روابط بحث جاهزة على الاسم — زي ما بتعملي على مواقع الموبايلات.
-        </p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Button nativeButton={false} render={<a href={youtubeReviewUrl(product)} target="_blank" rel="noreferrer" />}>
-            فيديوهات مراجعة على يوتيوب
-          </Button>
-          {(product.category === "phones" || product.category === "tablets") && (
-            <>
-              <Button variant="secondary" nativeButton={false} render={<a href={gsmarenaSearchUrl(product)} target="_blank" rel="noreferrer" />}>
-                مواصفات GSMArena
-              </Button>
-              <Button variant="outline" nativeButton={false} render={<a href={mobizilSearchUrl(product)} target="_blank" rel="noreferrer" />}>
-                بحث موبيزيل
-              </Button>
-            </>
           )}
         </div>
       </section>

@@ -6,6 +6,7 @@ import type {
 } from "./types";
 import { hydrateVirtual } from "./virtual-catalog";
 import { extraProducts } from "./extra-products";
+import { flagshipTech } from "./flagship-tech";
 import { lifeProducts } from "./life-products";
 import { marketCatalog } from "./market-catalog";
 import { brideProducts, commercialBundles } from "./bride-guide";
@@ -662,7 +663,7 @@ const seedProducts: Product[] = [
 ];
 
 export const products = [
-  ...expandNetworkListings([...seedProducts, ...extraProducts, ...lifeProducts, ...marketCatalog, ...brideProducts]),
+  ...expandNetworkListings([...seedProducts, ...extraProducts, ...lifeProducts, ...marketCatalog, ...brideProducts, ...flagshipTech]),
 ].map((p) => {
   const seen = new Set<string>();
   const listings = p.listings
