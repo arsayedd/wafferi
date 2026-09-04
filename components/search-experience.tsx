@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { SearchBar } from "@/components/search-bar";
 import { ProductCard } from "@/components/product-card";
@@ -110,6 +111,14 @@ export function SearchExperience({
           الويب (جوجل لو المفتاح متفعل) بنفس كروت وفّري.
         </p>
         <SearchBar defaultValue={q} category={category || undefined} />
+        {q ? (
+          <Link
+            href={`/places?q=${encodeURIComponent(q)}`}
+            className="block rounded-xl bg-secondary/80 px-4 py-3 text-sm ring-1 ring-foreground/10 hover:bg-secondary"
+          >
+            أماكن على الخريطة لـ «{q}» — أحياء غالبًا أرخص + خرائط جوجل
+          </Link>
+        ) : null}
         {q ? (
           <div className="flex flex-wrap gap-1.5">
             {(

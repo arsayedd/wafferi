@@ -12,11 +12,10 @@ import { SearchBar } from "@/components/search-bar";
 const links = [
   { href: "/guide", label: "الدليل" },
   { href: "/map", label: "الخريطة" },
+  { href: "/places", label: "أماكن" },
   { href: "/search", label: "السوق" },
   { href: "/list", label: "القايمة" },
-  { href: "/deals", label: "أوفر سعر" },
   { href: "/stores", label: "الشبكة" },
-  { href: "/how-it-works", label: "إزاي بنشتغل" },
 ];
 
 export function Logo({ className = "" }: { className?: string }) {
@@ -175,7 +174,10 @@ export function SiteFooter() {
           <p className="mb-2 text-sm font-medium">اكتشفي</p>
           <ul className="space-y-1 text-sm text-muted-foreground">
             <li>
-              <Link href="/map">خريطة الشراء</Link>
+              <Link href="/places">أماكن وخرائط</Link>
+            </li>
+            <li>
+              <Link href="/map">خريطة الرحلة</Link>
             </li>
             <li>
               <Link href="/guide">دليل العروسة</Link>
