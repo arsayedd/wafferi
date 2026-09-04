@@ -64,8 +64,8 @@ export default function HomePage() {
               <Button variant="outline" nativeButton={false} render={<Link href="/places" />}>
                 لو هتنزلي
               </Button>
-              <Button variant="outline" nativeButton={false} render={<Link href="/sourcing" />}>
-                مصادر
+              <Button variant="outline" nativeButton={false} render={<Link href="/plan" />}>
+                خطتي
               </Button>
             </div>
             <div className="flex flex-wrap gap-2 text-sm">
