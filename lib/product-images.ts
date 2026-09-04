@@ -1,42 +1,5 @@
 import type { CategoryId } from "./types";
-
-const CATEGORY_EN: Record<CategoryId, string> = {
-  washers: "front load washing machine appliance",
-  fridges: "french door refrigerator appliance",
-  freezers: "chest freezer appliance",
-  acs: "split air conditioner indoor unit",
-  fans: "standing pedestal fan",
-  stoves: "gas stove oven range",
-  dishwashers: "built-in dishwasher",
-  vacuums: "cylinder vacuum cleaner",
-  heaters: "electric water heater tank",
-  water: "water dispenser cooler",
-  tvs: "flat screen television",
-  audio: "soundbar speaker",
-  "small-appliances": "kitchen countertop appliance",
-  "personal-care": "hair dryer beauty device",
-  bedroom: "wooden bedroom furniture set",
-  living: "living room sofa",
-  "kitchen-tools": "cookware pot set",
-  textiles: "folded towels bedding",
-  decor: "home chandelier lighting",
-  "women-wear": "women dress on hanger",
-  "men-wear": "men galabiya garment",
-  "kids-wear": "kids pajamas folded",
-  "bridal-wear": "white wedding dress",
-  pajamas: "cotton pajamas folded",
-  shoes: "bridal slippers shoes",
-  bags: "evening clutch bag",
-  jewelry: "zircon jewelry set",
-  beauty: "perfume bottle",
-  accessories: "kitchen linens",
-  cleaning: "cleaning mop bucket",
-  bathroom: "bathroom accessories set",
-  storage: "storage organizer boxes",
-  travel: "travel suitcase",
-  emergency: "first aid kit box",
-  baby: "baby bedding",
-};
+import { foldArabic } from "./ar-fold";
 
 function seed(id: string) {
   let h = 2166136261;
@@ -44,30 +7,59 @@ function seed(id: string) {
   return (h >>> 0) % 1_000_000;
 }
 
-/** Unique studio-style photo per product name — not one generic category stock image. */
+/** Local Wikimedia Commons photos (real appliances/furniture, not AI stock). */
+const BY_ID: Record<string, string> = {
+  "lg-washer-8": "/catalog-photos/washers2.jpg",
+  "lg-tv-55": "/catalog-photos/tvs2.jpg",
+  "toshiba-fridge-16": "/catalog-photos/fridges2.jpg",
+  "bosch-dishwasher": "/catalog-photos/dishwashers.jpg",
+  "unionaire-stove": "/catalog-photos/stoves.jpg",
+  "fresh-heater": "/catalog-photos/heaters.jpg",
+  "kenwood-mixer": "/catalog-photos/small-appliances.jpg",
+  "tefal-pots": "/catalog-photos/kitchen-tools.jpg",
+  "tefal-iron": "/catalog-photos/iron.jpg",
+};
+
+const BY_CATEGORY: Partial<Record<CategoryId, string[]>> = {
+  washers: ["/catalog-photos/washers.jpg", "/catalog-photos/washers2.jpg", "/catalog-photos/washers3.jpg"],
+  fridges: ["/catalog-photos/fridges.jpg", "/catalog-photos/fridges2.jpg"],
+  freezers: ["/catalog-photos/freezers.jpg", "/catalog-photos/fridges2.jpg"],
+  acs: ["/catalog-photos/acs.jpg"],
+  fans: ["/catalog-photos/fans.jpg"],
+  stoves: ["/catalog-photos/stoves.jpg"],
+  dishwashers: ["/catalog-photos/dishwashers.jpg"],
+  vacuums: ["/catalog-photos/vacuums.jpg"],
+  heaters: ["/catalog-photos/heaters.jpg"],
+  water: ["/catalog-photos/water.jpg"],
+  tvs: ["/catalog-photos/tvs.jpg", "/catalog-photos/tvs2.jpg"],
+  audio: ["/catalog-photos/audio.jpg"],
+  "small-appliances": ["/catalog-photos/small-appliances.jpg", "/catalog-photos/microwave.jpg"],
+  "personal-care": ["/catalog-photos/personal-care.jpg"],
+  bedroom: ["/catalog-photos/bedroom.jpg"],
+  living: ["/catalog-photos/living.jpg"],
+  "kitchen-tools": ["/catalog-photos/kitchen-tools.jpg"],
+  textiles: ["/catalog-photos/textiles.jpg"],
+  bathroom: ["/catalog-photos/textiles.jpg"],
+};
+
 export function productImage(id: string, category: CategoryId, name = "") {
-  const kind = CATEGORY_EN[category] ?? "home product";
-  const prompt = [
-    "photorealistic catalog product photo",
-    name || id.replace(/-/g, " "),
-    kind,
-    "studio lighting",
-    "clean white background",
-    "single product only",
-    "no people",
-    "no watermark",
-    "e-commerce listing",
-  ].join(", ");
-  const params = new URLSearchParams({
-    width: "900",
-    height: "675",
-    nologo: "true",
-    seed: String(seed(id)),
-  });
-  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?${params.toString()}`;
+  if (BY_ID[id]) return BY_ID[id];
+  const blob = foldArabic(`${id} ${name}`);
+  if (category === "washers" && blob.includes("lg")) return "/catalog-photos/washers2.jpg";
+  if (category === "washers" && blob.includes("samsung")) return "/catalog-photos/washers3.jpg";
+  if (category === "tvs" && (blob.includes("lg") || blob.includes("samsung"))) return "/catalog-photos/tvs2.jpg";
+  if (blob.includes("ميكرو") || blob.includes("microwave")) return "/catalog-photos/microwave.jpg";
+  if (blob.includes("مكواة") || blob.includes("iron")) return "/catalog-photos/iron.jpg";
+  const pool = BY_CATEGORY[category];
+  if (pool?.length) return pool[seed(id) % pool.length];
+  return "/catalog-photos/small-appliances.jpg";
 }
 
-export function productImageFallback(id: string, category: CategoryId) {
-  const kind = encodeURIComponent(CATEGORY_EN[category] ?? "product");
-  return `https://loremflickr.com/900/675/${kind}/all?lock=${seed(id)}`;
+export function productImageFallback(id: string, category: CategoryId, name = "") {
+  const pool = BY_CATEGORY[category];
+  if (pool && pool.length > 1) return pool[(seed(id) + 1) % pool.length];
+  if (pool?.[0] && pool[0] !== productImage(id, category, name)) return pool[0];
+  return "/catalog-photos/living.jpg";
 }
+
+export const PHOTO_CREDIT = "صور الأجهزة من ويكيميديا كومنز — مش صور صفحة المتجر.";

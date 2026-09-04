@@ -21,8 +21,11 @@ import {
   type WatchTier,
   watchDue,
 } from "@/lib/intel/types";
+import { catalogReferenceWatches } from "@/lib/intel/catalog-seed";
+import { snapshotsFromCatalogProduct } from "@/lib/intel/from-product";
+import { getProduct } from "@/lib/catalog";
 
-const KEY = "waffari-intel-v1";
+const KEY = "waffari-intel-v2";
 
 type File = {
   watches: WatchItem[];
@@ -92,10 +95,14 @@ export function IntelProvider({ children }: { children: React.ReactNode }) {
         setRules(file.rules ?? []);
         setPlan(file.plan ?? "starter");
         setMyPrice(file.myPrice ?? 0);
+        if (!(file.watches ?? []).length) {
+          setWatches(catalogReferenceWatches());
+        }
       }
     } catch {
       /* ignore */
     }
+    setWatches((prev) => (prev.length ? prev : catalogReferenceWatches()));
     setReady(true);
   }, []);
 
@@ -129,6 +136,29 @@ export function IntelProvider({ children }: { children: React.ReactNode }) {
     async (id: string) => {
       const current = watches.find((w) => w.id === id);
       if (!current) return;
+      if (current.platform === "catalog-reference" || current.id.startsWith("catalog-")) {
+        const pid = current.id.replace(/^catalog-/, "");
+        const p = getProduct(pid);
+        if (!p) return;
+        const snaps = snapshotsFromCatalogProduct(p);
+        const prevSnaps = current.lastSnapshots ?? [];
+        const delta = diffRuns(prevSnaps, snaps);
+        setEvents((ev) => [...delta, ...ev].slice(0, 200));
+        setWatches((all) =>
+          all.map((w) =>
+            w.id === id
+              ? {
+                  ...w,
+                  lastCheck: Date.now(),
+                  lastSnapshots: snaps,
+                  snapshot: snaps[0],
+                  history: snaps[0] ? [...w.history, snaps[0]].slice(-40) : w.history,
+                }
+              : w,
+          ),
+        );
+        return;
+      }
       setPolling(true);
       try {
         const res = await fetch("/api/intel-check", {

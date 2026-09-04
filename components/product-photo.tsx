@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { productImage, productImageFallback } from "@/lib/product-images";
+import { productImage, productImageFallback, PHOTO_CREDIT } from "@/lib/product-images";
 import { ProductArt } from "@/components/product-art";
 import type { CategoryId } from "@/lib/types";
 
@@ -37,6 +37,9 @@ export function ProductPhoto({
         referrerPolicy="no-referrer"
         onError={() => setStep((s) => s + 1)}
       />
+      <span className="pointer-events-none absolute bottom-1 start-1 rounded bg-background/80 px-1.5 py-0.5 text-[10px] text-muted-foreground">
+        {PHOTO_CREDIT}
+      </span>
     </div>
   );
 }

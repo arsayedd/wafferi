@@ -8,7 +8,7 @@ export type PartnerRule = {
 };
 
 const DEAD_SHOP =
-  /carrefouregypt|edgesuite\.net|edgekey\.net|mafretailprod|mafegy/i;
+  /carrefouregypt|tradeline\.com\.eg|edgesuite\.net|edgekey\.net|mafretailprod|mafegy/i;
 
 function isJumiaHost(hostname: string) {
   return hostname.includes("jumia.");
@@ -25,7 +25,7 @@ export function forceShopOut(url: string, storeId?: string, productName?: string
   try {
     const u = new URL(url);
     if (!id && (DEAD_SHOP.test(u.hostname) || u.hostname.includes("carrefour"))) {
-      id = "carrefour";
+      id = u.hostname.includes("tradeline") ? "tradeline" : "carrefour";
     }
     const fallback = listingHref(id || "jumia", name);
     if (DEAD_SHOP.test(u.hostname) || DEAD_SHOP.test(u.pathname)) return fallback;

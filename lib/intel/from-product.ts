@@ -38,6 +38,38 @@ export function snapshotFromProduct(
   };
 }
 
+export function snapshotsFromCatalogProduct(p: Product, checkedAt = Date.now()): CompetitiveSnapshot[] {
+  return [...p.listings]
+    .sort((a, b) => a.price - b.price)
+    .map((listing) => {
+      const seller = getStore(listing.storeId)?.name ?? listing.storeId;
+      const compareAt = listing.oldPrice && listing.oldPrice > listing.price ? listing.oldPrice : undefined;
+      const availRaw = listing.inStock === false ? "out_of_stock" : "in_stock";
+      const stock = parseStock(availRaw);
+      return {
+        url: listingHref(listing.storeId, p.name),
+        seller,
+        adapter: "unknown" as AdapterKind,
+        name: p.name,
+        brand: p.brand !== "غير محدد" ? p.brand : undefined,
+        sku: listing.sku,
+        gtin: p.barcode,
+        variant: p.capacity || undefined,
+        price: listing.price,
+        previousPrice: listing.oldPrice,
+        compareAt,
+        currency: "EGP" as const,
+        availability: listing.inStock === false ? ("out_of_stock" as const) : ("in_stock" as const),
+        stock: stock.status,
+        quantity: stock.quantity,
+        rating: listing.rating,
+        reviewCount: listing.reviews,
+        category: p.category,
+        checkedAt,
+      };
+    });
+}
+
 export function adapterFromConnector(connector: string): AdapterKind {
   if (connector.includes("magento")) return "magento";
   if (connector.includes("shopify")) return "shopify";

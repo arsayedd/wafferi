@@ -69,9 +69,8 @@ export function IntelClient() {
       <div className="space-y-2">
         <h1 className="font-heading text-3xl font-semibold">مراقبة أسعار المنافسين</h1>
         <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
-          نفس مسار Apify: سحب صفحة/فيد → مطابقة المنتج → مقارنة مع آخر قراءة → تنبيه. أفكار
-          ChangeDetection.io للجدولة والتغيير، وواجهة المتتبع (جدول/كروت + تصدير). المحرك عندنا
-          HTTP منظم — مش Crawlee/Playwright، ومش تجاوز حماية الموقع.
+          نفس مسار Apify: سحب صفحة/فيد → مطابقة المنتج → مقارنة مع آخر قراءة → تنبيه.
+          الأرقام اللي تحت من كتالوج وفّري المرجعي لحد ما تضيف فيد مصرّح. مش زحف متاجر مصر.
         </p>
         <p className="font-mono text-xs text-muted-foreground">
           Scrape → Match → Compare → Alert
@@ -344,7 +343,9 @@ export function IntelClient() {
       <section className="space-y-2">
         <h2 className="font-heading text-xl font-semibold">التنبيهات (تغيير عن آخر قراءة)</h2>
         {events.length === 0 ? (
-          <p className="text-sm text-muted-foreground">لسه مفيش دلتا. حدّثي رابط مرتين عشان يظهر التغيير.</p>
+          <p className="text-sm text-muted-foreground">
+            لسه مفيش دلتا. العروض الحالية مرجعية من الكتالوج. حدّثي فيد مصدر مرتين عشان يظهر التغيير.
+          </p>
         ) : (
           <ul className="space-y-2 text-sm">
             {events.slice(0, 20).map((e) => (

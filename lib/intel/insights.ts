@@ -19,6 +19,14 @@ export function marketInsights(events: ChangeEvent[], snaps: CompetitiveSnapshot
   if (stats.avgDiscount >= 10) {
     lines.push(`متوسط الخصم الظاهر على العروض ${stats.avgDiscount}٪.`);
   }
-  if (!lines.length) lines.push("لسه مفيش إشارة سوق من المراقبة. زوّدي مصادر واتنين قراءات.");
+  if (!lines.length) {
+    if (snaps.length) {
+      lines.push(
+        `${snaps.length} عرض مرجعي من كتالوج وفّري. الأرقام دي للمقارنة جوّه التطبيق — مش بورصة لحظية من المتاجر.`,
+      );
+    } else {
+      lines.push("لسه مفيش إشارة سوق من المراقبة. زوّدي مصدر فيد مصرّح وامسحيه مرتين.");
+    }
+  }
   return lines;
 }

@@ -8,6 +8,8 @@ const extra: Record<string, string> = {
   "btech.com": "btech",
   "2b.com.eg": "twob",
   "carrefouregypt.com": "carrefour",
+  "tradeline.com.eg": "tradeline",
+  "tradelinestores.com": "tradeline",
   "ikea.com": "ikea",
   "homzmart.com": "homzmart",
   "namshi.com": "namshi",

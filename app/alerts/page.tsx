@@ -36,7 +36,11 @@ export default function AlertsPage() {
         </div>
         {inbox.length === 0 ? (
           <p className="rounded-xl border border-dashed p-6 text-sm text-muted-foreground">
-            لسه مفيش رسائل. حطّي هدف سعر على منتج؛ مفيش تيكر حي من المتاجر.
+            لسه مفيش رسائل من فيد الأسعار. أضيفي هدف سعر من صفحة المنتج. مراقبة المنافسين المرجعية على{" "}
+            <Link href="/intel" className="text-primary underline">
+              صفحة المراقبة
+            </Link>
+            .
           </p>
         ) : (
           <ul className="space-y-2">
