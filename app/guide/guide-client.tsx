@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { cheapestListing, getProduct } from "@/lib/catalog";
 import { arabicIncludes } from "@/lib/ar-fold";
 import { brideItemCount, brideSections, commercialBundles } from "@/lib/bride-guide";
@@ -75,13 +74,16 @@ export default function GuideClient() {
             السوق
           </Link>
         </div>
-        <Input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="دورِي جوّه الدليل: كنكة، فوط، ترمومتر…"
-          className="max-w-md"
-          aria-label="بحث داخل الدليل"
-        />
+        <label className="block max-w-xl space-y-2">
+          <span className="text-sm font-medium">بحث جوّه الدليل</span>
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="دورِي جوّه الدليل: كنكة، فوط، ترمومتر…"
+            aria-label="بحث داخل الدليل"
+            className="h-12 w-full rounded-lg border border-input bg-background px-3 text-base shadow-sm outline-none ring-1 ring-foreground/10 focus-visible:ring-3"
+          />
+        </label>
         {searching ? (
           <p className="text-sm text-muted-foreground">
             {hitCount ? `${hitCount} بند مطابق لكلمة «${query}»` : "مفيش نتائج بالكلمة دي"}
@@ -112,7 +114,12 @@ export default function GuideClient() {
                   {b.productIds.length} منتجات · ميزانية مقترحة{" "}
                   {b.suggestedBudget.toLocaleString("ar-EG")} ج
                 </p>
-                <Button size="sm" onClick={() => addSection(b.productIds, b.name)}>
+                <Button
+                  type="button"
+                  size="sm"
+                  nativeButton
+                  onClick={() => addSection(b.productIds, b.name)}
+                >
                   أضيفي البوكس
                 </Button>
               </div>
@@ -212,9 +219,11 @@ export default function GuideClient() {
                             </Link>
                           ) : null}
                           <Button
+                            type="button"
                             size="sm"
+                            nativeButton
                             variant={added ? "secondary" : "default"}
-                            disabled={added || !p}
+                            disabled={added}
                             onClick={() => {
                               addItem(it.productId);
                               toast.success(`اتضاف ${it.name}`);

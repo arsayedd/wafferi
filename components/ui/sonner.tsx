@@ -14,6 +14,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
     <Sonner
       theme="light"
       position="top-center"
+      offset={72}
       className="toaster group z-[300]"
       dir="rtl"
       icons={{

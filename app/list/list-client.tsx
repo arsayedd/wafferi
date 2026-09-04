@@ -34,17 +34,21 @@ export default function ListClient() {
     if (templateId) applyTemplate(templateId);
   }, [templateId, applyTemplate]);
 
-  const rows = items
-    .map((i) => {
-      const p = getProduct(i.productId);
-      if (!p) return null;
-      const live = liveProduct(p);
-      const cheap = cheapestListing(live);
-      return { item: i, product: live, cheap };
-    })
-    .filter((x) => x !== null);
+  const rows = items.map((i) => {
+    const p = getProduct(i.productId);
+    if (!p) {
+      return {
+        item: i,
+        product: { id: i.productId, name: i.productId, category: "accessories" as const },
+        cheap: { price: 0 },
+        missing: true as const,
+      };
+    }
+    const live = liveProduct(p);
+    return { item: i, product: live, cheap: cheapestListing(live), missing: false as const };
+  });
 
-  const total = rows.reduce((s, r) => s + r.cheap.price * r.item.qty, 0);
+  const total = rows.reduce((s, r) => s + (r.cheap?.price ?? 0) * r.item.qty, 0);
   const remaining = budget - total;
   const bought = rows.filter((r) => r.item.purchased).length;
   const pct = rows.length ? Math.round((bought / rows.length) * 100) : 0;
@@ -174,7 +178,7 @@ export default function ListClient() {
                       {product.name}
                     </Link>
                     <p className="text-sm text-muted-foreground">
-                      أوفر سعر {formatPrice(cheap.price)} × {item.qty}
+                      أوفر سعر {formatPrice(cheap?.price ?? 0)} × {item.qty}
                     </p>
                   </div>
                 </div>

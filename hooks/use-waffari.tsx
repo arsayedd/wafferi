@@ -64,20 +64,16 @@ export function WaffariProvider({ children }: { children: React.ReactNode }) {
   const dirty = useRef(false);
 
   useEffect(() => {
-    if (dirty.current) {
-      setReady(true);
-      return;
-    }
-    setItems(readJson<ListItem[]>(LIST_KEY, []));
-    setBudgetState(readJson<number>(BUDGET_KEY, 80000));
-    setAlerts(readJson<PriceAlert[]>(ALERT_KEY, []));
-    setCompare(readJson<string[]>(COMPARE_KEY, []));
+    setItems((prev) => (dirty.current ? prev : readJson<ListItem[]>(LIST_KEY, [])));
+    setBudgetState((prev) => (dirty.current ? prev : readJson<number>(BUDGET_KEY, 80000)));
+    setAlerts((prev) => (dirty.current ? prev : readJson<PriceAlert[]>(ALERT_KEY, [])));
+    setCompare((prev) => (dirty.current ? prev : readJson<string[]>(COMPARE_KEY, [])));
     setReady(true);
   }, []);
 
   useEffect(() => {
     if (!ready) return;
-    localStorage.setItem(LIST_KEY, JSON.stringify(items));
+    persist(LIST_KEY, items);
   }, [items, ready]);
   useEffect(() => {
     if (!ready) return;
