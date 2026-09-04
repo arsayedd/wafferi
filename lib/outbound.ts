@@ -16,20 +16,6 @@ function isGoogleHost(hostname: string) {
   return hostname.includes("google.");
 }
 
-function isKeptShopHost(hostname: string) {
-  const h = hostname.replace(/^www\./, "");
-  return (
-    h.includes("jumia.") ||
-    h.includes("amazon.") ||
-    h.includes("noon.") ||
-    h === "tradelinestores.com" ||
-    h.includes("rayashop.") ||
-    h.includes("ikea.") ||
-    h.includes("dream2000.") ||
-    h.includes("google.")
-  );
-}
-
 /** Never send shoppers to invented /p/{sku} pages or DNS-dead merchant hosts. */
 export function forceShopOut(url: string, storeId?: string, productName?: string) {
   const name = productName?.trim() || "منتج جهاز";
@@ -78,26 +64,24 @@ export function buildOutboundUrl(
     return listingHref(rule?.storeId ?? "jumia", productName || "منتج جهاز");
   }
   if (isGoogleHost(u.hostname)) return u.toString();
-  if (!isKeptShopHost(u.hostname)) {
-    return listingHref(rule?.storeId ?? "jumia", productName || "منتج جهاز");
-  }
-  if (!isJumiaHost(u.hostname)) return u.toString();
-  u.searchParams.set("utm_source", "waffari");
-  u.searchParams.set("utm_medium", "affiliate");
-  if (rule?.affiliateId.trim()) {
-    u.searchParams.set("aff_id", rule.affiliateId.trim());
-    u.searchParams.set("sid", rule.affiliateId.trim());
-  }
-  const coupon = (listingCoupon || rule?.coupon || "").trim();
-  if (coupon) {
-    u.searchParams.set("coupon", coupon);
-    u.searchParams.set("voucher", coupon);
-  }
-  if (rule?.extraQuery.trim()) {
-    const extra = new URLSearchParams(rule.extraQuery.replace(/^\?/, ""));
-    extra.forEach((v, k) => {
-      if (k) u.searchParams.set(k, v);
-    });
+  if (isJumiaHost(u.hostname)) {
+    u.searchParams.set("utm_source", "waffari");
+    u.searchParams.set("utm_medium", "affiliate");
+    if (rule?.affiliateId.trim()) {
+      u.searchParams.set("aff_id", rule.affiliateId.trim());
+      u.searchParams.set("sid", rule.affiliateId.trim());
+    }
+    const coupon = (listingCoupon || rule?.coupon || "").trim();
+    if (coupon) {
+      u.searchParams.set("coupon", coupon);
+      u.searchParams.set("voucher", coupon);
+    }
+    if (rule?.extraQuery.trim()) {
+      const extra = new URLSearchParams(rule.extraQuery.replace(/^\?/, ""));
+      extra.forEach((v, k) => {
+        if (k) u.searchParams.set(k, v);
+      });
+    }
   }
   return u.toString();
 }

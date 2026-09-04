@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { StoreLogo } from "@/components/store-logo";
 import { products } from "@/lib/catalog";
 import { kindLabels, stores } from "@/lib/network";
+import { foldArabic } from "@/lib/ar-fold";
 import type { StoreKind } from "@/lib/types";
 
 const kinds = Object.keys(kindLabels) as StoreKind[];
@@ -17,7 +18,7 @@ export function NetworkBoard() {
     return stores.filter((s) => {
       if (s.id === "cartlow" || s.shipsEgypt === false) return false;
       if (!q) return true;
-      return `${s.name} ${s.specialty} ${s.city} ${s.website}`.includes(q);
+      return foldArabic(`${s.name} ${s.specialty} ${s.city} ${s.website}`).includes(foldArabic(q));
     });
   }, [q]);
 

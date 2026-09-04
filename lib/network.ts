@@ -7,6 +7,7 @@ import type {
   VerticalId,
 } from "./types";
 import { mapStores } from "./map-stores";
+import { egyptChains } from "./egypt-chains";
 
 const ALL_APPLIANCES: VerticalId[] = [
   "laundry",
@@ -133,12 +134,12 @@ export const stores: Store[] = [
     commissionNote: "عبر الشبكات",
     skuEstimate: 7000,
   }),
-  s("raneen", "رنين", "electronics", "partnership", "connected", "direct", ALL_APPLIANCES, {
+  s("raneen", "رنين", "electronics", "partnership", "connected", "direct", [...ALL_APPLIANCES, "textiles", "furniture", "accessories", "bathroom"], {
     city: "فروع متعددة",
-    website: "https://raneen.com",
-    specialty: "أجهزة وأدوات منزل بأسعار تنافسية",
-    commissionNote: "شراكة مباشرة / عمولة لياد",
-    skuEstimate: 6000,
+    website: "https://www.raneen.com",
+    specialty: "أجهزة وأدوات منزل بأسعار تنافسية — فروع + موقع",
+    commissionNote: "توجيه لبحث raneen.com",
+    skuEstimate: 60000,
   }),
   s("tradeline", "تريدلاين", "electronics", "affiliate_network", "affiliate_ready", "arabclicks", [...ALL_APPLIANCES, "av"], {
     city: "القاهرة",
@@ -504,6 +505,7 @@ export const stores: Store[] = [
     commissionNote: "توجيه",
     skuEstimate: 0,
   }),
+  ...egyptChains,
   ...mapStores,
 ];
 

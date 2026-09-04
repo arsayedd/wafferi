@@ -10,13 +10,15 @@ function hash(s: string) {
 const NET: Record<string, AffiliateNetwork> = {
   jumia: "jumia",
   noon: "noon",
-  carrefour: "arabclicks",
   amazon: "direct",
   ikea: "direct",
   namshi: "arabclicks",
   goldenscent: "arabclicks",
   seif: "direct",
   homzmart: "arabclicks",
+  raneen: "direct",
+  "tawhid-nour": "direct",
+  alreyada: "direct",
 };
 
 function storesFor(cat: CategoryId): [string, string, string] {
@@ -29,12 +31,13 @@ function storesFor(cat: CategoryId): [string, string, string] {
     cat === "bags" ||
     cat === "jewelry"
   )
-    return ["jumia", "noon", "namshi"];
+    return ["jumia", "noon", "tawhid-nour"];
   if (cat === "textiles" || cat === "bathroom" || cat === "decor" || cat === "storage")
-    return ["jumia", "noon", "ikea"];
-  if (cat === "emergency") return ["jumia", "amazon", "carrefour"];
+    return ["jumia", "tawhid-nour", "ikea"];
+  if (cat === "emergency") return ["jumia", "amazon", "raneen"];
   if (cat === "travel") return ["jumia", "noon", "amazon"];
-  return ["jumia", "noon", "carrefour"];
+  if (cat === "stoves" || cat === "dishwashers") return ["jumia", "alreyada", "raneen"];
+  return ["jumia", "noon", "raneen"];
 }
 
 export function makeSku(
@@ -72,7 +75,10 @@ export function makeSku(
       reviews: 18 + ((n + row.extra * 17) % 420),
       inStock: (n + row.extra) % 19 !== 0,
       shipping:
-        row.storeId === "carrefour" || row.storeId === "ikea"
+        row.storeId === "raneen" ||
+        row.storeId === "tawhid-nour" ||
+        row.storeId === "ikea" ||
+        row.storeId === "alreyada"
           ? "استلام فرع أو توصيل"
           : "توصيل خلال 2–5 أيام",
       url: listingHref(row.storeId, name),

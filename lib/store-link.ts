@@ -30,17 +30,38 @@ const TRUSTED_SEARCH: Record<string, (q: string) => string> = {
   raya: (q) => `https://www.rayashop.com/ar/search?q=${q}`,
   ikea: (q) => `https://www.ikea.com/eg/ar/search/products/?q=${q}`,
   dream2000: (q) => `https://dream2000.com/search?q=${q}`,
+  raneen: (q) => `https://www.raneen.com/catalogsearch/result/?q=${q}`,
+  "tawhid-nour": (q) => `https://tawheedwnour.com/search?q=${q}`,
+  alreyada: (q) => `https://alreyadastore.com/search?q=${q}`,
+  btech: (q) => `https://btech.com/catalogsearch/result/?q=${q}`,
+  twob: (q) => `https://2b.com.eg/catalogsearch/result/?q=${q}`,
+  extra: (q) => `https://www.extra.com/ar-eg/search?q=${q}`,
+  homzmart: (q) => `https://homzmart.com/en/search?q=${q}`,
+  defacto: (q) => `https://www.defacto.com.eg/search?q=${q}`,
+  max: (q) => `https://www.maxfashion.com/eg/ar/search?q=${q}`,
+  namshi: (q) => `https://www.namshi.com/uae-en/search/?q=${q}`,
+  radioshack: (q) => `https://radioshack.com.eg/catalogsearch/result/?q=${q}`,
+  hyperone: (q) => `https://hyperone.com.eg/search?q=${q}`,
 };
 
 export function canShopOut(storeId: string) {
-  return storeId in TRUSTED_SEARCH;
+  const store = getNetworkStore(storeId);
+  if (!store || store.shipsEgypt === false) return false;
+  if (store.kind === "district" || store.kind === "factory") return false;
+  if (store.skuEstimate === 0) return false;
+  if (isDeadShopUrl(store.website)) return false;
+  return true;
 }
 
 export function storeSearchUrl(store: Store, productName: string) {
   const q = encodeURIComponent(productName);
   const trusted = TRUSTED_SEARCH[store.id];
   if (trusted) return trusted(q);
-  return `https://www.google.com.eg/search?q=${encodeURIComponent(`${productName} ${store.name} للبيع`)}`;
+  const host = storeHostname(store.website);
+  if (host && !host.includes("google.") && !isDeadShopUrl(store.website)) {
+    return `https://www.google.com.eg/search?q=${encodeURIComponent(`site:${host} ${productName}`)}`;
+  }
+  return `https://www.google.com.eg/search?q=${encodeURIComponent(`${productName} ${store.name} مصر للبيع`)}`;
 }
 
 const BRAND_SHOPS: Record<string, string[]> = {

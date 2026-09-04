@@ -648,8 +648,7 @@ const seedProducts: Product[] = [
 ];
 
 export const products = [
-  ...expandNetworkListings([...seedProducts, ...extraProducts, ...lifeProducts]),
-  ...brideProducts,
+  ...expandNetworkListings([...seedProducts, ...extraProducts, ...lifeProducts, ...brideProducts]),
 ].map((p) => {
   const seen = new Set<string>();
   const listings = p.listings

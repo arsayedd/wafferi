@@ -1,6 +1,7 @@
 import type { CategoryId, Product, Store, VerticalId } from "./types";
 import { stores } from "./network";
 import { brandShopFits, storeSearchUrl } from "./store-link";
+import { isDeadShopUrl } from "./dead-hosts";
 
 export const categoryVertical: Record<CategoryId, VerticalId> = {
   washers: "laundry",
@@ -40,16 +41,16 @@ export const categoryVertical: Record<CategoryId, VerticalId> = {
   baby: "baby",
 };
 
-/** Retailers we actually send shoppers to — not every brand portal on every SKU. */
-const EXPAND_IDS = new Set([
-  "jumia",
-  "noon",
-  "amazon",
-  "tradeline",
-  "raya",
-  "ikea",
-  "dream2000",
-]);
+function allowedOnProduct(st: Store, p: Product) {
+  if (st.shipsEgypt === false) return false;
+  if (st.kind === "district" || st.kind === "factory") return false;
+  if (st.skuEstimate === 0) return false;
+  if (isDeadShopUrl(st.website)) return false;
+  if (st.kind === "brand" || st.connector === "brand_portal") {
+    return brandShopFits(st, p);
+  }
+  return true;
+}
 
 function jitter(seed: string, base: number) {
   let h = 0;
@@ -58,14 +59,7 @@ function jitter(seed: string, base: number) {
   return Math.max(50, Math.round((base * (1 + pct)) / 10) * 10);
 }
 
-function allowedOnProduct(st: Store, p: Product) {
-  if (st.shipsEgypt === false) return false;
-  if (!EXPAND_IDS.has(st.id)) return false;
-  if (st.kind === "brand" || st.connector === "brand_portal") {
-    return brandShopFits(st, p);
-  }
-  return true;
-}
+const PIN = ["jumia", "noon", "raneen", "tawhid-nour", "alreyada", "amazon", "btech", "twob", "extra"];
 
 export function expandNetworkListings(products: Product[]): Product[] {
   return products.map((p) => {
@@ -82,8 +76,16 @@ export function expandNetworkListings(products: Product[]): Product[] {
           !existing.has(st.id) &&
           allowedOnProduct(st, p),
       )
-      .sort((a, b) => Number(b.status === "connected") - Number(a.status === "connected"))
-      .slice(0, 12)
+      .filter((st, i, arr) => arr.findIndex((x) => x.id === st.id) === i)
+      .sort((a, b) => {
+        const pa = PIN.indexOf(a.id);
+        const pb = PIN.indexOf(b.id);
+        const ra = pa === -1 ? 80 : pa;
+        const rb = pb === -1 ? 80 : pb;
+        if (ra !== rb) return ra - rb;
+        return Number(b.status === "connected") - Number(a.status === "connected");
+      })
+      .slice(0, 20)
       .map((s) => {
         const price = jitter(`${s.id}:${p.id}`, base);
         return {
@@ -92,7 +94,7 @@ export function expandNetworkListings(products: Product[]): Product[] {
           rating: Number((3.9 + (price % 7) / 10).toFixed(1)),
           reviews: 12 + (price % 200),
           inStock: price % 17 !== 0,
-          shipping: s.kind === "hypermarket" ? "استلام فرع أو توصيل" : "توصيل خلال 2–5 أيام",
+          shipping: s.kind === "hypermarket" || s.kind === "department" ? "استلام فرع أو توصيل" : "توصيل خلال 2–5 أيام",
           url: storeSearchUrl(s, p.name),
           sku: `${p.id}-${s.id}`.toUpperCase(),
           affiliateNetwork: s.network,

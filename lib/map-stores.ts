@@ -103,9 +103,9 @@ export const mapStores: Store[] = [
     "التوحيد والنور",
     "department",
     "فروع مصر",
-    "https://www.al-tawhid.com",
-    "منزل ولبس وأدوات بأسعار شعبية",
-    [...HOME_BITS, ...FASHION, "furniture"],
+    "https://tawheedwnour.com",
+    "منزل ولبس وأجهزة وأثاث — سلسلة شعبية في كل المحافظات",
+    [...HOME_BITS, ...FASHION, "furniture", ...APPLIANCES],
     30000,
   ),
   add(
