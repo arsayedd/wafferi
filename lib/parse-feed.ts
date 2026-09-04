@@ -73,12 +73,14 @@ function fromRow(row: Record<string, unknown>, i: number): Product {
   const brand = String(row.brand ?? row["الماركة"] ?? "غير محدد");
   const storeId = String(row.store ?? row.storeid ?? row["المتجر"] ?? "direct-feed");
   const price = Number(row.price ?? row["السعر"] ?? 0) || 0;
+  const barcode = String(row.barcode ?? row.ean ?? row.gtin ?? "") || undefined;
   const id = String(row.id ?? `feed-${slug(name)}-${i}`);
   return {
     id,
     name,
     brand,
     category: categoryOf(String(row.category ?? row["الفئة"] ?? "")),
+    barcode,
     model: String(row.model ?? row.sku ?? id),
     capacity: String(row.capacity ?? ""),
     highlights: [String(row.highlight ?? "وارد من فيد تاجر مصرّح")],

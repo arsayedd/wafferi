@@ -9,7 +9,12 @@ import { getStore } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { hostnameOf } from "@/lib/outbound";
 import type { Listing } from "@/lib/types";
+import type { LiveListing } from "@/lib/live-quotes";
 import { usePartners } from "@/hooks/use-partners";
+
+function updatedAtOf(l: Listing) {
+  return "updatedAt" in l ? (l as LiveListing).updatedAt : undefined;
+}
 
 export function PriceTable({ listings }: { listings: Listing[] }) {
   const { outbound, ruleFor } = usePartners();
@@ -22,7 +27,7 @@ export function PriceTable({ listings }: { listings: Listing[] }) {
         <thead className="bg-muted/60 text-muted-foreground">
           <tr>
             <th className="px-3 py-2 text-start font-medium">المصدر</th>
-            <th className="px-3 py-2 text-start font-medium">سعر مرجعي</th>
+            <th className="px-3 py-2 text-start font-medium">سعر حي</th>
             <th className="px-3 py-2 text-start font-medium">كوبون</th>
             <th className="px-3 py-2 text-start font-medium">التوصيل</th>
             <th className="px-3 py-2" />
@@ -50,6 +55,11 @@ export function PriceTable({ listings }: { listings: Listing[] }) {
                     {cheapest && (
                       <Badge className="bg-emerald-700 text-white">الأرخص في العينة</Badge>
                     )}
+                    {updatedAtOf(l) ? (
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(updatedAtOf(l)!).toLocaleTimeString("ar-EG")}
+                      </span>
+                    ) : null}
                   </div>
                 </td>
                 <td className="px-3 py-3">
@@ -97,7 +107,7 @@ export function PriceTable({ listings }: { listings: Listing[] }) {
       </table>
       <p className="flex items-center gap-1 px-3 py-2 text-xs text-muted-foreground">
         <BadgeCheck className="size-3.5" />
-        وفّري مش البائع. السعر مرجعي مش لايف. الاسم والحقوق للمصدر. الزر بيفتح موقعهم.
+        وفّري مش البائع. السعر يتحدّث من فيد المصدر. الاسم والحقوق ليهم. الزر بيفتح موقعهم.
       </p>
       <div className="px-3 pb-3">
         <SourceCopyright

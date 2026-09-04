@@ -8,12 +8,14 @@ import { Input } from "@/components/ui/input";
 import { parseProductFeed, sampleFeedCsv } from "@/lib/parse-feed";
 import { stores } from "@/lib/catalog";
 import { useCatalog } from "@/hooks/use-catalog";
+import { useLive } from "@/hooks/use-live";
 import { usePartners } from "@/hooks/use-partners";
 import type { PartnerRule } from "@/lib/outbound";
 import type { Product } from "@/lib/types";
 
 export default function IngestPage() {
-  const { ingested, replaceFeed, clearFeed } = useCatalog();
+  const { ingested, applyFeed, clearFeed } = useCatalog();
+  const { addFeedUrl } = useLive();
   const { rules, upsert, outbound } = usePartners();
   const [raw, setRaw] = useState(sampleFeedCsv);
   const [feedUrl, setFeedUrl] = useState("");
@@ -22,9 +24,9 @@ export default function IngestPage() {
   const [addId, setAddId] = useState("btech");
 
   function applyProducts(products: Product[], msg: string) {
-    replaceFeed(products);
+    applyFeed(products);
     setNote(msg);
-    toast.success("الكتالوج اتحدّث من المصدر");
+    toast.success("الأسعار اتحدّثت من المصدر");
   }
 
   function runPaste() {
@@ -54,6 +56,7 @@ export default function IngestPage() {
         return;
       }
       applyProducts(data.products, `اتسحب ${data.count} صنف من رابط الفيد.`);
+      addFeedUrl(feedUrl.trim());
     } catch {
       toast.error("السحب فشل");
     } finally {
@@ -66,9 +69,9 @@ export default function IngestPage() {
       <div>
         <h1 className="font-heading text-3xl font-semibold">السحب، المصدر، والأفلييت</h1>
         <p className="mt-2 text-muted-foreground">
-          بنسحب كتالوج من فيد التاجر أو لوحة الأفلييت (CSV/JSON)، وبنكتب المصدر على كل
-          منتج، والتحويل يروح لصفحتهم بلينك فيه أفلييت وكوبون وفّري. مش بنزحف على HTML
-          جوميا ونون — ده فيد مصرّح، والعميلة بتشوف مين البائع.
+          بنسحب فيد التاجر أو لوحة الأفلييت (CSV/JSON) ونحدّث السعر لحظي زي منصات
+          المقارنة: نفس المنتج يتوحّد (باركود/موديل)، والتيك يترصد. مش بنزحف على HTML
+          جوميا ونون.
         </p>
       </div>
 
@@ -106,6 +109,9 @@ export default function IngestPage() {
           </Button>
           <Button variant="secondary" nativeButton={false} render={<Link href="/search" />}>
             السوق
+          </Button>
+          <Button variant="secondary" nativeButton={false} render={<Link href="/live" />}>
+            أسعار حية
           </Button>
         </div>
         {note ? <p className="text-sm text-emerald-800">{note}</p> : null}

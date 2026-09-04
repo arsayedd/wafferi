@@ -6,6 +6,7 @@ import { Bell, Star } from "lucide-react";
 import { toast } from "sonner";
 import { PriceTable } from "@/components/price-table";
 import { ProductPhoto } from "@/components/product-photo";
+import { Sparkline } from "@/components/sparkline";
 import { SourceCopyright } from "@/components/source-copyright";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,7 +28,7 @@ export default function ProductPage({
   const { allProducts } = useCatalog();
   const catalog = getProduct(id) ?? allProducts.find((p) => p.id === id);
   const { addItem, items, addAlert, alerts, toggleCompare, compare } = useWaffari();
-  const { liveProduct } = useLive();
+  const { liveProduct, quoteHistory } = useLive();
   const [target, setTarget] = useState("");
 
   if (!catalog) {
@@ -44,6 +45,7 @@ export default function ProductPage({
 
   const product = liveProduct(catalog);
   const { cheap, save, rating, stores } = productStats(product);
+  const history = quoteHistory(product.id, cheap.storeId);
   const cat = getCategory(product.category);
   const inList = items.some((i) => i.productId === product.id);
   const related = products
@@ -81,12 +83,13 @@ export default function ProductPage({
           </div>
           <p className="text-3xl font-semibold text-primary">{formatPrice(cheap.price)}</p>
           <p className="text-sm text-muted-foreground">
-            أوفر سعر مرجعي من{" "}
+            أوفر سعر حي من{" "}
             <Link href={`/stores/${cheap.storeId}`} className="text-primary hover:underline">
               {getStore(cheap.storeId)?.name ?? cheap.storeId}
             </Link>
-            — المنتج عندهم، مش عندنا. الفرق عن أغلى عرض في العينة {formatPrice(save)}.
+            — المنتج عندهم، مش عندنا. الفرق عن أغلى عرض {formatPrice(save)}.
           </p>
+          {history.length > 1 ? <Sparkline values={history} className="h-11 w-40" /> : null}
           <SourceCopyright
             compact
             names={[

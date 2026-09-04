@@ -1,16 +1,12 @@
-import { recentMoves, tickBucket } from "@/lib/live-quotes";
 import { networkStats } from "@/lib/network";
-import { products } from "@/lib/catalog";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const now = Date.now();
   return Response.json({
-    at: now,
-    bucket: tickBucket(now),
+    at: Date.now(),
+    mode: "partner-feeds",
+    note: "الأسعار الحية على العميل من فيد CSV/JSON. مفيش سحب HTML للمتاجر.",
     network: networkStats(),
-    watchedProducts: products.length,
-    moves: recentMoves(now, 30),
   });
 }

@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { products as seed } from "@/lib/catalog";
+import { mergeFeedIntoCatalog } from "@/lib/merge-feed";
 import type { Product } from "@/lib/types";
 
 const KEY = "waffari-ingested-feed-v1";
@@ -16,6 +17,7 @@ const KEY = "waffari-ingested-feed-v1";
 type CatalogState = {
   ingested: Product[];
   allProducts: Product[];
+  applyFeed: (items: Product[]) => void;
   replaceFeed: (items: Product[]) => void;
   clearFeed: () => void;
 };
@@ -41,17 +43,17 @@ export function CatalogOverlayProvider({ children }: { children: React.ReactNode
     localStorage.setItem(KEY, JSON.stringify(ingested));
   }, [ingested, ready]);
 
-  const replaceFeed = useCallback((items: Product[]) => setIngested(items), []);
+  const applyFeed = useCallback((items: Product[]) => {
+    setIngested((prev) => mergeFeedIntoCatalog(items, prev));
+  }, []);
+  const replaceFeed = applyFeed;
   const clearFeed = useCallback(() => setIngested([]), []);
 
-  const allProducts = useMemo(() => {
-    const ids = new Set(ingested.map((p) => p.id));
-    return [...ingested, ...seed.filter((p) => !ids.has(p.id))];
-  }, [ingested]);
+  const allProducts = useMemo(() => mergeFeedIntoCatalog(ingested, seed), [ingested]);
 
   const value = useMemo(
-    () => ({ ingested, allProducts, replaceFeed, clearFeed }),
-    [ingested, allProducts, replaceFeed, clearFeed],
+    () => ({ ingested, allProducts, applyFeed, replaceFeed, clearFeed }),
+    [ingested, allProducts, applyFeed, replaceFeed, clearFeed],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

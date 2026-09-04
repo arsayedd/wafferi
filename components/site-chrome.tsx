@@ -20,6 +20,7 @@ const links = [
   { href: "/map", label: "الخريطة" },
   { href: "/places", label: "أماكن" },
   { href: "/search", label: "السوق" },
+  { href: "/live", label: "أسعار حية" },
   { href: "/list", label: "القايمة" },
 ];
 
