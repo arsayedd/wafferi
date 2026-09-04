@@ -1,5 +1,5 @@
 import { arabicIncludes, foldArabic } from "./ar-fold";
-import { avgRating, cheapestListing, products } from "./catalog";
+import { avgRating, cheapestListing, getStore, products } from "./catalog";
 import { bestChoiceScore, offerDiscountPct, totalReviews } from "./best-choice";
 import type { Product } from "./types";
 
@@ -28,7 +28,7 @@ function haystack(p: Product) {
     p.model,
     p.capacity,
     p.barcode,
-    ...p.highlights,
+    ...p.listings.map((l) => getStore(l.storeId)?.name ?? l.storeId),
     ...p.specs.map((s) => `${s.label} ${s.value}`),
   ]
     .join(" ")

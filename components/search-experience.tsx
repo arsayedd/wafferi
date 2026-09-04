@@ -9,7 +9,8 @@ import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { brands, categories, cheapestListing, getStore, stores } from "@/lib/catalog";
+import { brands, categories, cheapestListing, getStore } from "@/lib/catalog";
+import { catalogStores, networkStats } from "@/lib/network";
 import { searchProducts, type SortKey } from "@/lib/search";
 import { parseShopperQuery } from "@/lib/query-parse";
 import { pickBestChoice, priceIntel, whyBest } from "@/lib/best-choice";
@@ -97,6 +98,14 @@ export function SearchExperience({
 
   const best = useMemo(() => pickBestChoice(results.slice(0, 24)), [results]);
   const areas = useMemo(() => (q.trim() ? matchAreas(q) : []), [q]);
+  const net = networkStats();
+  const storeOptions = useMemo(
+    () =>
+      [...catalogStores()].sort(
+        (a, b) => Number(b.status === "connected") - Number(a.status === "connected"),
+      ),
+    [],
+  );
   const uniqueBrands = [...new Set(brands.map((b) => b.name))];
   const showWaffari = tab !== "go";
   const showGo = tab !== "waffari" && Boolean(q.trim());
@@ -106,10 +115,16 @@ export function SearchExperience({
     <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8">
       <div className="space-y-3">
         <h1 className="font-heading text-3xl font-semibold">
-          {q ? `نتائج «${q}»` : "ابحثي في سوق الجهاز"}
+          {q ? `نتائج «${q}»` : "ابحثي في سوق مصر"}
         </h1>
         <p className="text-muted-foreground">
-          منتج واحد، وكل بائعيه. اكتبي جملة زي «غسالة ١٠ كيلو أقل من ٣٠ ألف وتقييمها فوق ٤.٥».
+          أي منتج أو فئة: أسعار، تقييمات، خصم، توفر، توصيل. النتيجة منتج واحد وكل بائعيه — جوميا ونون
+          وأمازون وبي تك وكارفور والسلاسل الجاهزة للربط. مش زحف لحظي لكل دومين مصري؛ الأسعار المرجعية
+          تتحدث من فيد مصرّح أو مراقبة مرخّصة.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          شبكة الكتالوج: {net.catalog} متجر إيكومرس + أحياء على الخريطة · {net.ready} جاهز للعروض
+          الموسَّعة · ابحثي زي «غسالة ١٠ كيلو أقل من ٣٠ ألف وتقييمها فوق ٤.٥»
         </p>
         <SearchBar defaultValue={q} category={category || undefined} />
         {parsed.intent.length ? (
@@ -191,7 +206,7 @@ export function SearchExperience({
               onChange={(e) => setParam("store", e.target.value)}
             >
               <option value="">كل المتاجر</option>
-              {stores.map((s) => (
+              {storeOptions.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
                 </option>

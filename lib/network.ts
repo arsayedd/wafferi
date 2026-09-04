@@ -440,6 +440,76 @@ export const stores: Store[] = [
     commissionNote: "لياد صيدليات",
     skuEstimate: 6000,
   }),
+  s("extra", "إكسترا مصر", "electronics", "affiliate_network", "affiliate_ready", "arabclicks", ALL_APPLIANCES, {
+    city: "فروع",
+    website: "https://www.extra.com/ar-eg",
+    specialty: "إلكترونيات وأجهزة منزلية",
+    commissionNote: "شبكات إقليمية",
+    skuEstimate: 8000,
+  }),
+  s("dream2000", "دريم 2000", "electronics", "affiliate_network", "connected", "arabclicks", ALL_APPLIANCES, {
+    city: "القاهرة",
+    website: "https://dream2000.com",
+    specialty: "موبايلات وأجهزة",
+    commissionNote: "أفلييت / شبكات",
+    skuEstimate: 5000,
+  }),
+  s("radioshack", "راديو شاك مصر", "electronics", "partnership", "affiliate_ready", "direct", [...ALL_APPLIANCES, "av"], {
+    city: "فروع",
+    website: "https://radioshack.com.eg",
+    specialty: "إلكترونيات واكسسوار",
+    commissionNote: "شراكة سلسلة",
+    skuEstimate: 4500,
+  }),
+  s("virgin", "فيرجن ميجاستور", "electronics", "partnership", "affiliate_ready", "direct", AV, {
+    city: "مولات",
+    website: "https://www.virginmegastore.eg",
+    specialty: "صوتيات وشاشات",
+    commissionNote: "شراكة مولات",
+    skuEstimate: 2000,
+  }),
+  s("gourmet", "جورميه", "hypermarket", "partnership", "affiliate_ready", "direct", ["small_kitchen", "personal_care"], {
+    city: "القاهرة",
+    website: "https://gourmetegypt.com",
+    specialty: "بقالة فاخرة وأجهزة صغيرة",
+    commissionNote: "فيد عروض",
+    skuEstimate: 800,
+  }),
+  s("talabatmart", "طلبات مارت", "local", "affiliate_network", "affiliate_ready", "direct", ["small_kitchen", "cleaning"], {
+    city: "توصيل سريع",
+    website: "https://www.talabat.com/egypt",
+    specialty: "مارت سريع للأجهزة الصغيرة",
+    commissionNote: "شراكة تطبيق",
+    skuEstimate: 600,
+  }),
+  s("rabbit", "رابت", "local", "partnership", "affiliate_ready", "direct", ["small_kitchen"], {
+    city: "القاهرة",
+    website: "https://rabbitmart.com",
+    specialty: "توصيل دقائق",
+    commissionNote: "شراكة تطبيق",
+    skuEstimate: 300,
+  }),
+  s("instashop", "إنستاشوب", "local", "affiliate_network", "affiliate_ready", "direct", ["small_kitchen", "cleaning"], {
+    city: "أونلاين",
+    website: "https://instashop.com",
+    specialty: "توصيل سوبرماركت",
+    commissionNote: "شراكة تطبيق",
+    skuEstimate: 400,
+  }),
+  s("olx", "أوليكس مصر", "marketplace", "partnership", "outreach", "direct", BIG_HOME, {
+    city: "إعلانات مبوبة",
+    website: "https://www.olx.com.eg",
+    specialty: "مستعمل وجديد من أفراد — مش فيد أسعار حي",
+    commissionNote: "توجيه فقط، من غير زحف الإعلانات",
+    skuEstimate: 0,
+  }),
+  s("hatla2ee", "هتلاقيه", "marketplace", "partnership", "outreach", "direct", ALL_APPLIANCES, {
+    city: "إعلانات سيارات وأجهزة",
+    website: "https://eg.hatla2ee.com",
+    specialty: "إعلانات — مش كتالوج جهاز حي",
+    commissionNote: "توجيه",
+    skuEstimate: 0,
+  }),
   ...mapStores,
 ];
 
@@ -504,10 +574,22 @@ export const verticalLabels: Record<VerticalId, string> = {
   baby: "أطفال مستقبلًا",
 };
 
+export function catalogStores() {
+  return stores.filter((s) => s.kind !== "district" && s.kind !== "factory");
+}
+
 export function networkStats() {
+  const catalog = catalogStores();
   return {
     total: stores.length,
-    connected: stores.filter((x) => x.status === "connected").length,
+    catalog: catalog.length,
+    connected: catalog.filter((x) => x.status === "connected").length,
+    ready: catalog.filter(
+      (x) =>
+        x.status === "connected" ||
+        x.status === "affiliate_ready" ||
+        x.status === "feed_pending",
+    ).length,
     affiliate: stores.filter((x) => x.affiliate).length,
     skuCoverage: stores.reduce((n, x) => n + x.skuEstimate, 0),
   };

@@ -45,8 +45,24 @@ export function ProductCard({ product: raw }: { product: Product }) {
           <p className="text-lg font-semibold text-primary">{formatPrice(cheap.price)}</p>
           <p className="flex items-center gap-1 text-xs text-muted-foreground">
             <Store className="size-3" />
-            المصدر الأرخص: {store?.name} · {stores} عروض
+            الأرخص: {store?.name}
           </p>
+          <ul className="mt-2 flex flex-wrap gap-1">
+            {[...product.listings]
+              .sort((a, b) => a.price - b.price)
+              .slice(0, 8)
+              .map((l) => (
+                <li key={l.sku}>
+                  <span className="inline-block rounded-full bg-muted px-2 py-0.5 text-[11px]">
+                    {getStore(l.storeId)?.name ?? l.storeId} {formatPrice(l.price)}
+                    {!l.inStock ? " ✕" : ""}
+                  </span>
+                </li>
+              ))}
+            {product.listings.length > 8 ? (
+              <li className="text-[11px] text-muted-foreground">+{product.listings.length - 8} بائع</li>
+            ) : null}
+          </ul>
         </div>
         {save > 0 && (
           <Badge variant="secondary" className="w-fit gap-1">

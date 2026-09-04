@@ -59,6 +59,54 @@ export function setupToCsv(
   return `\uFEFF${lines.join("\n")}`;
 }
 
+export function setupSellersCsv(
+  items: ListItem[],
+  resolve: (id: string) => Product | undefined,
+) {
+  const header = [
+    "Product",
+    "Brand",
+    "Category",
+    "Store",
+    "Price",
+    "OldPrice",
+    "Rating",
+    "Reviews",
+    "Stock",
+    "Shipping",
+    "URL",
+    "Chosen",
+  ];
+  const lines = [header.join(",")];
+  for (const item of items) {
+    const p = resolve(item.productId);
+    if (!p) continue;
+    const chosen =
+      (item.storeId ? p.listings.find((l) => l.storeId === item.storeId)?.storeId : undefined) ??
+      cheapestListing(p).storeId;
+    for (const offer of [...p.listings].sort((a, b) => a.price - b.price)) {
+      const store = getStore(offer.storeId)?.name ?? offer.storeId;
+      lines.push(
+        [
+          csvCell(p.name),
+          csvCell(p.brand),
+          p.category,
+          csvCell(store),
+          offer.price,
+          offer.oldPrice ?? "",
+          offer.rating,
+          offer.reviews,
+          offer.inStock ? "in_stock" : "out_of_stock",
+          csvCell(offer.shipping),
+          csvCell(offer.url),
+          offer.storeId === chosen ? "yes" : "no",
+        ].join(","),
+      );
+    }
+  }
+  return `\uFEFF${lines.join("\n")}`;
+}
+
 export function downloadCsv(filename: string, csv: string) {
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
   const href = URL.createObjectURL(blob);

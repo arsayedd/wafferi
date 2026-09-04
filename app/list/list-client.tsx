@@ -12,7 +12,7 @@ import { cheapestListing, getProduct, getStore, templates } from "@/lib/catalog"
 import { formatPrice } from "@/lib/format";
 import { budgetSwitches, collectionTotals } from "@/lib/budget-optimizer";
 import { roomBlueprints } from "@/lib/setup-rooms";
-import { downloadCsv, setupToCsv } from "@/lib/export-setup";
+import { downloadCsv, setupSellersCsv, setupToCsv } from "@/lib/export-setup";
 import { pickBestChoice } from "@/lib/best-choice";
 import { useWaffari } from "@/hooks/use-waffari";
 import { useLive } from "@/hooks/use-live";
@@ -92,18 +92,33 @@ export default function ListClient() {
     toast.success("اتحمّل ملف CSV يفتح في Excel");
   }
 
+  function exportSellers() {
+    if (!items.length) {
+      toast.error("القايمة فاضية");
+      return;
+    }
+    downloadCsv(
+      `${active?.name ?? "setup"}-sellers.csv`,
+      setupSellersCsv(items, resolve),
+    );
+    toast.success("اتحمّل ملف كل البائعين: المنتج عند مين ومين");
+  }
+
   return (
     <div className="mx-auto max-w-5xl space-y-8 px-4 py-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-heading text-3xl font-semibold">جهاز العروسة</h1>
           <p className="text-muted-foreground">
-            قوائم متعددة، ميزانية، وتجميع أوفر الأسعار من البائعين.
+            سيّفي البنود، اختاري البائع لكل قطعة، صدّري القايمة أو ملف كل البائعين (مين بيبيع إيه وبكام).
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="secondary" onClick={exportExcel} disabled={!items.length}>
-            تصدير Excel
+            تصدير الجهاز
+          </Button>
+          <Button variant="outline" onClick={exportSellers} disabled={!items.length}>
+            تصدير كل البائعين
           </Button>
           <Button variant="outline" onClick={clearList} disabled={!items.length}>
             تفريغ القايمة الحالية
@@ -326,6 +341,9 @@ export default function ListClient() {
                     </Link>
                     <p className="text-sm text-muted-foreground">
                       {formatPrice(cheap?.price ?? 0)} × {item.qty}
+                      {"listings" in product && product.listings?.length
+                        ? ` · عند ${product.listings.length} بائع`
+                        : ""}
                     </p>
                   </div>
                 </div>

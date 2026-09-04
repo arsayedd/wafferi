@@ -56,13 +56,15 @@ export function expandNetworkListings(products: Product[]): Product[] {
     const existing = new Set(p.listings.map((l) => l.storeId));
     const extras = stores
       .filter(
-        (s) =>
-          s.verticals.includes(vertical) &&
-          !existing.has(s.id) &&
-          (s.status === "connected" ||
-            s.status === "affiliate_ready" ||
-            s.status === "feed_pending"),
+        (st) =>
+          st.verticals.includes(vertical) &&
+          !existing.has(st.id) &&
+          (st.status === "connected" ||
+            st.status === "affiliate_ready" ||
+            st.status === "feed_pending"),
       )
+      .sort((a, b) => Number(b.status === "connected") - Number(a.status === "connected"))
+      .slice(0, 22)
       .map((s) => {
         const price = jitter(`${s.id}:${p.id}`, base);
         return {
