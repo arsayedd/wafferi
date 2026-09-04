@@ -1,3 +1,4 @@
+import { arabicIncludes } from "./ar-fold";
 import { avgRating, cheapestListing, products } from "./catalog";
 import type { Product } from "./types";
 
@@ -34,9 +35,14 @@ export function searchProducts(
 ): Product[] {
   const q = (filters.q ?? "").trim().toLowerCase();
   let list = pool.filter((p) => {
-    if (q && !haystack(p).includes(q) && !p.name.includes(filters.q ?? "")) {
-      const words = q.split(/\s+/);
-      if (!words.every((w) => haystack(p).includes(w))) return false;
+    if (q) {
+      const raw = filters.q ?? "";
+      const blob = haystack(p);
+      const hit =
+        arabicIncludes(blob, raw) ||
+        arabicIncludes(p.name, raw) ||
+        raw.split(/\s+/).every((w) => w && (arabicIncludes(blob, w) || blob.includes(w)));
+      if (!hit) return false;
     }
     if (filters.category && p.category !== filters.category) return false;
     if (filters.brand && p.brand !== filters.brand) return false;

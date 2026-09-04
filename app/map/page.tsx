@@ -32,7 +32,7 @@ export default function MapPage() {
         </p>
         <div className="flex flex-wrap gap-2">
           <Button nativeButton={false} render={<Link href="/places" />}>
-            أماكن على جوجل ماب
+            أماكن الأحياء
           </Button>
           <Button nativeButton={false} render={<Link href="/guide" />}>
             دليل المنتجات

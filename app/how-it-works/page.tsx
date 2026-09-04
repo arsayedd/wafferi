@@ -25,6 +25,14 @@ export default function HowPage() {
         </p>
       </section>
       <section className="space-y-2">
+        <h2 className="text-xl font-medium">لو هتنزلي</h2>
+        <p className="text-sm">
+          الأحياء متجمّعة عندنا: حمام التلات للحلل، عبدالعزيز للأجهزة، الصاغة للذهب،
+          دمياط للأثاث. البحث بيرميكِ على الحي المناسب من الداتا دي، من غير Google
+          Search ولا Places API.
+        </p>
+      </section>
+      <section className="space-y-2">
         <h2 className="text-xl font-medium">الفلوس</h2>
         <p className="text-sm">
           السعر للي بتشتري زي ما هو عند المصدر. لو العملية تمت من لينك فيه أفلييتكم،

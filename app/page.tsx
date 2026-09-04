@@ -58,8 +58,11 @@ export default function HomePage() {
               <Button nativeButton={false} render={<Link href="/map" />}>
                 خريطة الشراء
               </Button>
-              <Button variant="outline" nativeButton={false} render={<Link href="/guide" />}>
+              <Button nativeButton={false} render={<Link href="/guide" />}>
                 دليل العروسة
+              </Button>
+              <Button variant="outline" nativeButton={false} render={<Link href="/places" />}>
+                لو هتنزلي
               </Button>
             </div>
             <div className="flex flex-wrap gap-2 text-sm">

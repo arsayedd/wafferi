@@ -175,7 +175,7 @@ export function SiteFooter() {
           <p className="mb-2 text-sm font-medium">اكتشفي</p>
           <ul className="space-y-1 text-sm text-muted-foreground">
             <li>
-              <Link href="/places">أماكن وخرائط</Link>
+              <Link href="/places">أماكن الأحياء</Link>
             </li>
             <li>
               <Link href="/map">خريطة الرحلة</Link>

@@ -35,7 +35,7 @@ export function SearchBar({
         placeholder={
           compact
             ? "أي حاجة في الحياة…"
-            : "دورِي على أي حاجة: غسالة، فستان، وصفة، تذكرة، عيادة…"
+            : "دورِي: غسالة، حلل، ذهب… أونلاين أو نودّيكي للحي"
         }
         className={compact ? "h-9 bg-muted/50" : "h-12 bg-background text-base"}
         name="q"
