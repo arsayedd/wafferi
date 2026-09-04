@@ -112,14 +112,6 @@ export const stores: Store[] = [
     commissionNote: "Amazon Associates مصر عند التفعيل",
     skuEstimate: 90000,
   }),
-  s("cartlow", "كارتلو", "marketplace", "affiliate_network", "outreach", "arabclicks", ALL_APPLIANCES, {
-    city: "مش سوق مصر",
-    website: "https://cartlow.com",
-    specialty: "مجدّد إقليمي — مش كتالوج جهاز مصري",
-    commissionNote: "مش معروض كبائع مصر",
-    skuEstimate: 0,
-    shipsEgypt: false,
-  }),
   s("btech", "بي تك", "electronics", "affiliate_network", "connected", "arabclicks", ALL_APPLIANCES, {
     city: "القاهرة والجيزة والإسكندرية",
     website: "https://btech.com",

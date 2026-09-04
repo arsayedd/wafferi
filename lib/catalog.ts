@@ -8,7 +8,7 @@ import { extraProducts } from "./extra-products";
 import { lifeProducts } from "./life-products";
 import { brideProducts, commercialBundles } from "./bride-guide";
 import { expandNetworkListings } from "./expand-listings";
-import { listingHref } from "./store-link";
+import { listingHref, isEgyptSeller, getNetworkStore } from "./store-link";
 import { stores } from "./network";
 
 export { stores } from "./network";
@@ -652,10 +652,12 @@ export const products = [
   ...brideProducts,
 ].map((p) => ({
   ...p,
-  listings: p.listings.map((l) => ({
-    ...l,
-    url: listingHref(l.storeId, p.name),
-  })),
+  listings: p.listings
+    .filter((l) => l.storeId !== "cartlow" && isEgyptSeller(getNetworkStore(l.storeId)))
+    .map((l) => ({
+      ...l,
+      url: listingHref(l.storeId, p.name),
+    })),
 }));
 
 const productById = new Map(products.map((p) => [p.id, p]));

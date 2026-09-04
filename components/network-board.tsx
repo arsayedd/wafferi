@@ -15,6 +15,7 @@ export function NetworkBoard() {
 
   const list = useMemo(() => {
     return stores.filter((s) => {
+      if (s.id === "cartlow" || s.shipsEgypt === false) return false;
       if (!q) return true;
       return `${s.name} ${s.specialty} ${s.city} ${s.website}`.includes(q);
     });

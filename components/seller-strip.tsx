@@ -12,7 +12,9 @@ export function SellerStrip({
   product: Product;
   limit?: number;
 }) {
-  const rows = [...product.listings].sort((a, b) => a.price - b.price);
+  const rows = [...product.listings]
+    .filter((l) => l.storeId !== "cartlow" && getStore(l.storeId)?.shipsEgypt !== false)
+    .sort((a, b) => a.price - b.price);
   const shown = rows.slice(0, limit);
   const extra = rows.length - shown.length;
 

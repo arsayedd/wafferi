@@ -27,7 +27,11 @@ export function PriceTable({
 }) {
   const { outbound, ruleFor } = usePartners();
   const [sort, setSort] = useState<"price" | "rating" | "reviews" | "discount">("price");
-  const sorted = [...listings].sort((a, b) => {
+  const egypt = [...listings].filter((l) => {
+    const st = getStore(l.storeId);
+    return l.storeId !== "cartlow" && st?.shipsEgypt !== false;
+  });
+  const sorted = [...egypt].sort((a, b) => {
     if (sort === "rating") return b.rating - a.rating;
     if (sort === "reviews") return b.reviews - a.reviews;
     if (sort === "discount") {
@@ -37,7 +41,7 @@ export function PriceTable({
     }
     return a.price - b.price;
   });
-  const min = Math.min(...listings.map((l) => l.price));
+  const min = egypt.length ? Math.min(...egypt.map((l) => l.price)) : 0;
 
   return (
     <div className="overflow-x-auto rounded-xl ring-1 ring-foreground/10">
@@ -72,7 +76,6 @@ export function PriceTable({
             const rule = ruleFor(l.storeId);
             const coupon = l.coupon || rule?.coupon || "";
             const href = listingHref(l.storeId, productName, l.url);
-            const egypt = store?.shipsEgypt !== false;
             return (
               <tr key={`${l.storeId}-${l.sku}-${i}`} className={cheapest ? "bg-emerald-50/80" : "border-t"}>
                 <td className="px-3 py-3">
@@ -81,9 +84,7 @@ export function PriceTable({
                     <div>
                       <div className="font-medium">{store?.name ?? l.storeId}</div>
                       <div className="text-xs text-muted-foreground">
-                        {egypt
-                          ? `${store?.city ?? "مصر"} · تحويل لبحث المنتج عندهم`
-                          : "مش بائع سوق مصر"}
+                        {store?.city ?? "مصر"} · متجر في مصر
                       </div>
                     </div>
                   </div>
