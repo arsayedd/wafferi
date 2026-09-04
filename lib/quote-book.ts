@@ -1,6 +1,7 @@
 import { getStore } from "./catalog";
 import { findCatalogMatch } from "./merge-feed";
 import type { LiveListing, LiveProduct, PriceMove } from "./live-quotes";
+import { listingHref } from "./store-link";
 import type { Product } from "./types";
 
 export type QuoteChannel = "seed" | "feed";
@@ -34,7 +35,7 @@ export function ticksFromIncomingFeed(
         storeId: l.storeId,
         sku: l.sku,
         price: l.price,
-        url: l.url,
+        url: listingHref(l.storeId, hit?.product.name ?? item.name),
         at,
         channel: "feed",
       });
@@ -56,7 +57,7 @@ export function ticksFromProducts(
         storeId: l.storeId,
         sku: l.sku,
         price: l.price,
-        url: l.url,
+        url: listingHref(l.storeId, p.name),
         at,
         channel,
       });
@@ -97,7 +98,7 @@ export function overlayProduct(product: Product, ticks: QuoteTick[]): LiveProduc
       const live: LiveListing = {
         ...l,
         price: last?.price ?? l.price,
-        url: last?.url || l.url,
+        url: listingHref(l.storeId, product.name),
         catalogPrice: l.price,
         previousPrice: prev?.price ?? last?.price ?? l.price,
         updatedAt: last?.at,

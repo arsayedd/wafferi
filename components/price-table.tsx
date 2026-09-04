@@ -136,12 +136,16 @@ export function PriceTable({
                     variant={cheapest ? "default" : "outline"}
                     disabled={!l.inStock}
                     onClick={() => {
+                      const dest = outbound(href, l.storeId, l.coupon, productName);
                       toast.message(`هتحوّلي على ${store?.name ?? "المصدر"}`, {
-                        description: coupon
-                          ? `الكوبون ${coupon} هيتركب على الرابط. بنفتح بحث المنتج عندهم مش صفحة وهمية.`
-                          : "بنفتح بحث الاسم على موقعهم عشان مفيش صفحة منتج ملفّقة.",
+                        description:
+                          l.storeId === "carrefour"
+                            ? "موقع كارفور أونلاين فيه عطل DNS وصفحات /p/ عندنا وهمية. بنفتح بحث جوجل باسم المنتج + كارفور مصر."
+                            : coupon
+                              ? `الكوبون ${coupon} هيتركب على الرابط. بنفتح بحث المنتج مش صفحة وهمية.`
+                              : "بنفتح بحث الاسم على مصدر موثوق — مش صفحة منتج ملفّقة.",
                       });
-                      window.open(outbound(href, l.storeId, l.coupon, productName), "_blank", "noopener");
+                      window.open(dest, "_blank", "noopener");
                     }}
                   >
                     اشتري من {store?.name ?? "المصدر"}

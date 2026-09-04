@@ -23,7 +23,7 @@ import {
 import type { Product } from "@/lib/types";
 import { useCatalog } from "@/hooks/use-catalog";
 
-const TICKS_KEY = "waffari-quote-ticks-v1";
+const TICKS_KEY = "waffari-quote-ticks-v2";
 const FEEDS_KEY = "waffari-live-feed-urls-v1";
 const POLL_MS = 60_000;
 

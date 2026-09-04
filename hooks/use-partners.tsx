@@ -10,7 +10,7 @@ import {
 } from "react";
 import { buildOutboundUrl, type PartnerRule } from "@/lib/outbound";
 
-const KEY = "waffari-partner-rules-v1";
+const KEY = "waffari-partner-rules-v2";
 
 const defaults: PartnerRule[] = [
   { storeId: "jumia", affiliateId: "", coupon: "", extraQuery: "utm_campaign=bridal" },

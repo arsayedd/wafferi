@@ -1,4 +1,5 @@
 import { buildOutboundUrl } from "./outbound";
+import { storeIdFromUrl } from "./ingest/host-store";
 
 const egp = new Intl.NumberFormat("ar-EG", {
   style: "currency",
@@ -14,6 +15,12 @@ export function formatNumber(value: number) {
   return new Intl.NumberFormat("ar-EG").format(value);
 }
 
-export function affiliateHref(url: string) {
-  return buildOutboundUrl(url);
+export function affiliateHref(url: string, productName?: string) {
+  const storeId = storeIdFromUrl(url);
+  return buildOutboundUrl(
+    url,
+    { storeId, affiliateId: "", coupon: "", extraQuery: "" },
+    undefined,
+    productName,
+  );
 }

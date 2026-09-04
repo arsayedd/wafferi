@@ -7,42 +7,45 @@ export type PartnerRule = {
   extraQuery: string;
 };
 
-function isRealAmazonProduct(pathname: string) {
-  return /\/(dp|gp\/product|gp\/aw\/d)\/[A-Z0-9]{10}/i.test(pathname);
+const DEAD_SHOP =
+  /carrefouregypt|edgesuite\.net|edgekey\.net|mafretailprod|mafegy/i;
+
+function isJumiaHost(hostname: string) {
+  return hostname.includes("jumia.");
 }
 
-/** Drop invented /p/{sku} pages (Bosch, Carrefour, Tradeline…) and Amazon dead slugs. */
+function isGoogleHost(hostname: string) {
+  return hostname.includes("google.");
+}
+
+/** Never send shoppers to invented /p/{sku} pages or Carrefour’s broken Akamai host. */
+export function forceShopOut(url: string, storeId?: string, productName?: string) {
+  const name = productName?.trim() || "منتج جهاز";
+  let id = storeId?.trim() || "";
+  try {
+    const u = new URL(url);
+    if (!id && (DEAD_SHOP.test(u.hostname) || u.hostname.includes("carrefour"))) {
+      id = "carrefour";
+    }
+    const fallback = listingHref(id || "jumia", name);
+    if (DEAD_SHOP.test(u.hostname) || DEAD_SHOP.test(u.pathname)) return fallback;
+    if (isFakeProductPath(url) || /\/p\/[a-z0-9_-]+/i.test(u.pathname)) return fallback;
+    if (u.hostname.includes("carrefour")) return fallback;
+    return u.toString();
+  } catch {
+    return listingHref(id || "jumia", name);
+  }
+}
+
 export function canonicalizeListingUrl(
   rawUrl: string,
   storeId?: string,
   productName?: string,
 ) {
-  if (storeId && productName?.trim()) return listingHref(storeId, productName);
-  try {
-    const u = new URL(rawUrl);
-    if (
-      u.hostname.includes("carrefouregypt.") ||
-      u.hostname.includes("edgesuite.net") ||
-      u.hostname.includes("edgekey.net")
-    ) {
-      return listingHref(storeId ?? "carrefour", productName || "كارفور مصر");
-    }
-    if (isFakeProductPath(rawUrl)) {
-      const slug = u.pathname.split("/").filter(Boolean).pop() ?? "";
-      const guess = decodeURIComponent(slug).replace(/-/g, " ");
-      return listingHref(storeId ?? "", productName || guess);
-    }
-    if (u.hostname.includes("amazon.")) {
-      if (isRealAmazonProduct(u.pathname)) return `https://www.amazon.eg${u.pathname.split("?")[0]}`;
-      const k =
-        u.searchParams.get("k") ||
-        decodeURIComponent((u.pathname.split("/").filter(Boolean)[0] ?? "").replace(/-/g, " "));
-      return listingHref("amazon", productName || k || "أمازون مصر");
-    }
-  } catch {
-    /* keep */
+  if (storeId && productName?.trim()) {
+    return forceShopOut(listingHref(storeId, productName), storeId, productName);
   }
-  return rawUrl;
+  return forceShopOut(rawUrl, storeId, productName);
 }
 
 export function buildOutboundUrl(
@@ -56,21 +59,20 @@ export function buildOutboundUrl(
   try {
     u = new URL(safe);
   } catch {
-    return safe;
+    return listingHref(rule?.storeId ?? "jumia", productName || "منتج جهاز");
   }
-  const amazon = u.hostname.includes("amazon.");
-  const google = u.hostname.includes("google.");
-  if (google) return u.toString();
-  if (amazon) {
-    return listingHref("amazon", productName || u.searchParams.get("k") || "أمازون مصر");
+  if (DEAD_SHOP.test(u.hostname) || isFakeProductPath(u.toString())) {
+    return listingHref(rule?.storeId ?? "carrefour", productName || "كارفور مصر");
+  }
+  if (isGoogleHost(u.hostname)) return u.toString();
+  if (!isJumiaHost(u.hostname)) {
+    return listingHref(rule?.storeId ?? "", productName || "منتج جهاز");
   }
   u.searchParams.set("utm_source", "waffari");
   u.searchParams.set("utm_medium", "affiliate");
   if (rule?.affiliateId.trim()) {
     u.searchParams.set("aff_id", rule.affiliateId.trim());
-    if (u.hostname.includes("jumia.")) {
-      u.searchParams.set("sid", rule.affiliateId.trim());
-    }
+    u.searchParams.set("sid", rule.affiliateId.trim());
   }
   const coupon = (listingCoupon || rule?.coupon || "").trim();
   if (coupon) {

@@ -16,6 +16,7 @@ import type { Product } from "@/lib/types";
 import { useWaffari } from "@/hooks/use-waffari";
 import { useLive } from "@/hooks/use-live";
 import { usePartners } from "@/hooks/use-partners";
+import { listingHref } from "@/lib/store-link";
 
 export function ProductCard({ product: raw }: { product: Product }) {
   const { liveProduct } = useLive();
@@ -86,7 +87,12 @@ export function ProductCard({ product: raw }: { product: Product }) {
           variant="outline"
           title={`افتحي ${store?.name}`}
           onClick={() => {
-            const href = outbound(cheap.url, cheap.storeId, cheap.coupon, product.name);
+            const href = outbound(
+              listingHref(cheap.storeId, product.name),
+              cheap.storeId,
+              cheap.coupon,
+              product.name,
+            );
             toast.message(`المصدر: ${store?.name}`, {
               description: "بحث الاسم على موقعهم — مش صفحة منتج ملفّقة.",
             });

@@ -1,4 +1,5 @@
 import type { AffiliateNetwork, CategoryId, Product } from "./types";
+import { listingHref } from "./store-link";
 
 function hash(s: string) {
   let x = 2166136261;
@@ -36,18 +37,6 @@ function storesFor(cat: CategoryId): [string, string, string] {
   return ["jumia", "noon", "carrefour"];
 }
 
-const SITE: Record<string, string> = {
-  jumia: "https://www.jumia.com.eg/catalog/?q=",
-  noon: "https://www.noon.com/egypt-ar/search/?q=",
-  carrefour: "https://www.carrefouregypt.com/mafegy/ar/search?q=",
-  amazon: "https://www.amazon.eg/-/ar/s?k=",
-  ikea: "https://www.ikea.com/eg/ar/search/?q=",
-  namshi: "https://www.namshi.com/eg-ar/search/?q=",
-  goldenscent: "https://www.goldenscent.com/eg-ar/search?q=",
-  seif: "https://www.seif-online.com/search?q=",
-  homzmart: "https://homzmart.com/ar/search?q=",
-};
-
 export function makeSku(
   id: string,
   name: string,
@@ -65,7 +54,6 @@ export function makeSku(
     { storeId: b, price: p2, extra: 1 },
     { storeId: c, price: p3, extra: 2 },
   ];
-  const q = encodeURIComponent(name);
   return {
     id,
     name,
@@ -87,7 +75,7 @@ export function makeSku(
         row.storeId === "carrefour" || row.storeId === "ikea"
           ? "استلام فرع أو توصيل"
           : "توصيل خلال 2–5 أيام",
-      url: `${SITE[row.storeId] ?? "https://www.jumia.com.eg/catalog/?q="}${q}`,
+      url: listingHref(row.storeId, name),
       sku: `${id}-${row.storeId}`.toUpperCase(),
       affiliateNetwork: NET[row.storeId] ?? "direct",
       oldPrice: row.extra === 0 && n % 5 === 0 ? Math.round(price * 1.18) : undefined,

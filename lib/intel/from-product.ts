@@ -1,6 +1,7 @@
 import type { Product } from "../types";
 import { getStore } from "../catalog";
 import { storeIdFromUrl } from "../ingest/host-store";
+import { listingHref } from "../store-link";
 import { parseStock } from "./stock";
 import type { AdapterKind, CompetitiveSnapshot } from "./types";
 
@@ -15,7 +16,7 @@ export function snapshotFromProduct(
   const availRaw = listing?.inStock === false ? "out_of_stock" : listing ? "in_stock" : "unknown";
   const stock = parseStock(availRaw);
   return {
-    url: listing?.url ?? "",
+    url: listing ? listingHref(listing.storeId, p.name) : "",
     seller,
     adapter,
     name: p.name,
