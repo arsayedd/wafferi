@@ -175,6 +175,8 @@ export function LiveBoard() {
                         id={p.id}
                         category={p.category}
                         name={p.name}
+                        brand={p.brand}
+                        model={p.model}
                         className="h-14 w-[4.5rem] shrink-0 rounded-md"
                       />
                       <div>

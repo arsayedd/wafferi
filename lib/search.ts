@@ -133,8 +133,12 @@ export function searchProducts(
   filters: SearchFilters,
   pool: Product[] = products,
 ): Product[] {
-  const sort = filters.sort ?? "price";
-  const strict = pool.filter((p) => applyFilters(p, filters, true));
+  const sort = filters.sort ?? "best";
+  let strict = pool.filter((p) => applyFilters(p, filters, true));
+  if (!filters.q && !hasStructuredFilters(filters)) {
+    const featured = strict.filter((p) => !p.id.startsWith("br-"));
+    if (featured.length) strict = featured;
+  }
   if (strict.length || !filters.q) return sortList(strict, sort);
 
   if (hasStructuredFilters(filters)) {

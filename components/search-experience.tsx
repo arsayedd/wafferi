@@ -40,7 +40,7 @@ export function SearchExperience({
   const category = initialCategory || params.get("category") || parsed.category || "";
   const brand = params.get("brand") || parsed.brand || "";
   const store = params.get("store") ?? "";
-  const sort = (params.get("sort") as SortKey) || (q ? "best" : "price");
+  const sort = (params.get("sort") as SortKey) || "best";
   const min = params.get("min") ? Number(params.get("min")) : undefined;
   const max = params.get("max") ? Number(params.get("max")) : parsed.max;
   const minRating = params.get("rating") ? Number(params.get("rating")) : parsed.minRating;
@@ -381,7 +381,7 @@ export function SearchExperience({
             <section className="space-y-4">
               {best ? (
                 <article className="grid gap-4 rounded-2xl bg-primary/5 p-5 ring-1 ring-primary/20 md:grid-cols-[200px_1fr]">
-                  <ProductPhoto id={best.id} category={best.category} name={best.name} className="rounded-xl" />
+                  <ProductPhoto id={best.id} category={best.category} name={best.name} brand={best.brand} model={best.model} className="rounded-xl" />
                   <div>
                   <p className="flex items-center gap-2 text-sm text-primary">
                     <Sparkles className="size-4" />

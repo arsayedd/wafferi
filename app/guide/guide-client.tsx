@@ -205,6 +205,8 @@ export default function GuideClient() {
                             id={p.id}
                             category={p.category}
                             name={p.name}
+                            brand={p.brand}
+                            model={p.model}
                             className="h-16 w-20 shrink-0 rounded-lg"
                           />
                         ) : null}

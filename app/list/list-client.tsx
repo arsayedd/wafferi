@@ -331,6 +331,8 @@ export default function ListClient() {
                 id={product.id}
                 category={product.category}
                 name={product.name}
+                brand={"brand" in product ? product.brand : ""}
+                model={"model" in product ? product.model : ""}
                 className="rounded-lg"
               />
               <div className="space-y-2">

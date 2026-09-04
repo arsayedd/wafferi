@@ -62,6 +62,8 @@ export default function ProductPage({
           id={product.id}
           category={product.category}
           name={product.name}
+          brand={product.brand}
+          model={product.model}
           className="rounded-2xl"
         />
         <div className="space-y-4">

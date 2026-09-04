@@ -42,6 +42,23 @@ const BY_CATEGORY: Partial<Record<CategoryId, string[]>> = {
   bathroom: ["/catalog-photos/textiles.jpg"],
 };
 
+export function productPhotoSrc(input: {
+  id: string;
+  category: CategoryId;
+  name: string;
+  brand?: string;
+  model?: string;
+}) {
+  const q = new URLSearchParams({
+    id: input.id,
+    category: input.category,
+    name: input.name,
+    brand: input.brand ?? "",
+    model: input.model ?? "",
+  });
+  return `/api/product-photo?${q.toString()}`;
+}
+
 export function productImage(id: string, category: CategoryId, name = "") {
   if (BY_ID[id]) return BY_ID[id];
   const blob = foldArabic(`${id} ${name}`);
@@ -62,4 +79,4 @@ export function productImageFallback(id: string, category: CategoryId, name = ""
   return "/catalog-photos/living.jpg";
 }
 
-export const PHOTO_CREDIT = "صور الأجهزة من ويكيميديا كومنز — مش صور صفحة المتجر.";
+export const PHOTO_CREDIT = "ويكيميديا · صورة المنتج — مش من صفحة المتجر";

@@ -22,7 +22,7 @@ export default function CategoriesPage() {
               className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10 hover:bg-secondary"
             >
               {sample ? (
-                <ProductPhoto id={sample.id} category={c.id} name={sample.name} />
+                <ProductPhoto id={sample.id} category={c.id} name={sample.name} brand={sample.brand} model={sample.model} />
               ) : null}
               <div className="p-5">
               <h2 className="font-medium">{c.name}</h2>

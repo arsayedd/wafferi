@@ -29,7 +29,7 @@ export function ProductCard({ product: raw }: { product: Product }) {
   return (
     <Card className="h-full py-0">
       <Link href={`/product/${product.id}`} className="block">
-        <ProductPhoto id={product.id} category={product.category} name={product.name} />
+        <ProductPhoto id={product.id} category={product.category} name={product.name} brand={product.brand} model={product.model} />
       </Link>
       <CardContent className="flex flex-1 flex-col gap-2 pt-3">
         <div className="flex items-center justify-between gap-2">

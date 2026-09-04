@@ -43,7 +43,7 @@ export default function ComparePage() {
                 <th className="p-2 text-start">البند</th>
                 {cols.map((p) => (
                   <th key={p.id} className="p-2 text-start">
-                    <ProductPhoto id={p.id} category={p.category} name={p.name} className="mb-2 w-40 rounded-lg" />
+                    <ProductPhoto id={p.id} category={p.category} name={p.name} brand={p.brand} model={p.model} className="mb-2 w-40 rounded-lg" />
                     <Link href={`/product/${p.id}`} className="hover:underline">
                       {p.name}
                     </Link>
