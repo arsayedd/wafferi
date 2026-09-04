@@ -71,7 +71,12 @@ export type StoreKind =
   | "brand"
   | "furniture"
   | "local"
-  | "fashion";
+  | "fashion"
+  | "department"
+  | "district"
+  | "bridal"
+  | "jewelry"
+  | "beauty_retail";
 
 export type ConnectorKind =
   | "affiliate_network"

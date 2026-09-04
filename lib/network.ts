@@ -6,6 +6,7 @@ import type {
   StoreKind,
   VerticalId,
 } from "./types";
+import { mapStores } from "./map-stores";
 
 const ALL_APPLIANCES: VerticalId[] = [
   "laundry",
@@ -439,6 +440,7 @@ export const stores: Store[] = [
     commissionNote: "لياد صيدليات",
     skuEstimate: 6000,
   }),
+  ...mapStores,
 ];
 
 export const kindLabels: Record<StoreKind, string> = {
@@ -449,6 +451,11 @@ export const kindLabels: Record<StoreKind, string> = {
   furniture: "أثاث وبيت",
   local: "محلي وموزّعين",
   fashion: "أزياء وتجميل",
+  department: "ديبارتمنت / وان ستوب",
+  district: "أحياء وأسواق جملة",
+  bridal: "بوتيكات فساتين",
+  jewelry: "ذهب وإكسسوار",
+  beauty_retail: "تجميل وصيدليات",
 };
 
 export const statusLabels: Record<ConnectionStatus, string> = {

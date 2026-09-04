@@ -10,12 +10,11 @@ import { useLive } from "@/hooks/use-live";
 import { SearchBar } from "@/components/search-bar";
 
 const links = [
-  { href: "/guide", label: "دليل العروسة" },
+  { href: "/guide", label: "الدليل" },
+  { href: "/map", label: "الخريطة" },
   { href: "/search", label: "السوق" },
   { href: "/list", label: "القايمة" },
   { href: "/deals", label: "أوفر سعر" },
-  { href: "/live", label: "لحظي" },
-  { href: "/categories", label: "الفئات" },
   { href: "/stores", label: "الشبكة" },
   { href: "/how-it-works", label: "إزاي بنشتغل" },
 ];
@@ -161,13 +160,16 @@ export function SiteFooter() {
         <div className="space-y-2">
           <Logo />
           <p className="text-sm leading-relaxed text-muted-foreground">
-            مقارنة أسعار جهاز العروسة عبر متاجر مصر. الأرخص ظاهر، والعمولة من
-            الأفلييت — من غير ما السعر يزيد عليكي.
+            مقارنة أسعار جهاز العروسة وكل رحلة التجهيز عبر متاجر وأحياء مصر. الأرخص ظاهر
+            للأونلاين، والعمولة من الأفلييت — من غير ما السعر يزيد عليكي.
           </p>
         </div>
         <div>
           <p className="mb-2 text-sm font-medium">اكتشفي</p>
           <ul className="space-y-1 text-sm text-muted-foreground">
+            <li>
+              <Link href="/map">خريطة الشراء</Link>
+            </li>
             <li>
               <Link href="/guide">دليل العروسة</Link>
             </li>

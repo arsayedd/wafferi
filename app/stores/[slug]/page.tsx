@@ -44,8 +44,9 @@ export default async function StorePage({
       </p>
       {list.length === 0 ? (
         <p className="rounded-xl border border-dashed p-8 text-sm text-muted-foreground">
-          المتجر في الشبكة، والفيد الرسمي لسه متصل. حالة الربط الحالية:{" "}
-          {statusLabels[store.status]}.
+          {store.kind === "district" || store.kind === "bridal"
+            ? "المصدر ده أساسًا مقارنة على الطبيعة أو بوتيك. مفيش فيد أسعار لسه — ادخلي الخريطة والدليل، ولما التاجر يرفع كاتالوج هتظهر المنتجات هنا."
+            : `المتجر في الشبكة، والفيد الرسمي لسه متصل. حالة الربط الحالية: ${statusLabels[store.status]}.`}
         </p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

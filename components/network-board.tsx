@@ -84,7 +84,7 @@ export function NetworkBoard() {
       </div>
 
       <p className="text-sm text-muted-foreground">
-        {list.length} متجر من أصل {stores.length} في شبكة الأجهزة
+        {list.length} مصدر من أصل {stores.length} في خريطة العروسة
       </p>
 
       {groups.length === 0 ? (

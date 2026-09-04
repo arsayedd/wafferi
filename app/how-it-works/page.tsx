@@ -5,8 +5,9 @@ export default function HowPage() {
     <article className="mx-auto max-w-3xl space-y-8 px-4 py-10 leading-relaxed">
       <h1 className="font-heading text-3xl font-semibold">إزاي وفّري بتشتغل</h1>
       <p className="text-muted-foreground">
-        وفّري مش متجر. طبقة مقارنة وأفلييت فوق أي إيكوميرس في مصر بيبيع جهاز للحياة
-        اليومية: غسيل، تبريد، تكييف، طبخ، تنظيف، مياه، شاشات، عناية شخصية، وأثاث البيت.
+        وفّري مش متجر. ماركتبليس تجميع للعروسة: من الخطوبة لفستان الفرح لأجهزة البيت
+        ورفايع حمام التلات. بنقارن الأونلاين، وبنحط الأحياء والمصادر الفيزيائية على
+        الخريطة عشان العروسة متتعاملش مع عشرين تاب لوحدها.
       </p>
       <section className="space-y-2">
         <h2 className="text-xl font-medium">إزاي بنوصل بكل المواقع</h2>

@@ -13,6 +13,7 @@ import { ProductCard } from "@/components/product-card";
 import { categories, products, stores, templates } from "@/lib/catalog";
 import { productStats } from "@/lib/stats";
 import { brideItemCount, brideSections } from "@/lib/bride-guide";
+import { journeyStages } from "@/lib/bridal-map";
 
 const homeCats = [
   "kitchen-tools",
@@ -43,22 +44,22 @@ export default function HomePage() {
           <div className="space-y-6">
             <p className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">
               <Sparkles className="size-4" />
-              دليل عروسة من المطبخ لبوكس الطوارئ — مع مقارنة سعر على متاجر مصر
+              ماركتبليس العروسة: من الخطوبة لأول يوم في البيت — أونلاين وأحياء مصر
             </p>
             <h1 className="font-heading text-4xl leading-tight font-semibold md:text-5xl">
-              قايمة الجهاز كاملة: {brideItemCount} بند، والأرخص ظاهر.
+              كل مصدر شراء في خريطة واحدة. كل بند في الدليل. الأرخص ظاهر.
             </h1>
             <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
-              من أطقم الحلل ورفايع الدرج لفوط الحمام واللانجري وشهر العسل. وفّري مش
-              بتبيع المنتج — بتجمع العروض من المتاجر المتصلة في كارت واحد.
+              مش محل جهاز. رحلة كاملة: فستان، ذهب، مكياج، رفايع حمام التلات، أجهزة
+              عبدالعزيز، وايكيا. الأونلاين يتقارن؛ الجملة تتعرفي تروحي فين.
             </p>
             <SearchBar />
             <div className="flex flex-wrap gap-2">
-              <Button nativeButton={false} render={<Link href="/guide" />}>
-                افتحي دليل العروسة
+              <Button nativeButton={false} render={<Link href="/map" />}>
+                خريطة الشراء
               </Button>
-              <Button variant="outline" nativeButton={false} render={<Link href="/list" />}>
-                قايمة الجهاز
+              <Button variant="outline" nativeButton={false} render={<Link href="/guide" />}>
+                دليل العروسة
               </Button>
             </div>
             <div className="flex flex-wrap gap-2 text-sm">
@@ -79,9 +80,15 @@ export default function HomePage() {
               <ul className="grid grid-cols-2 gap-3 text-sm">
                 <li>
                   <strong className="block text-2xl text-primary">
-                    {brideSections.length}
+                    {stores.length}
                   </strong>
-                  باب في دليل العروسة
+                  مصدر شراء في الشبكة
+                </li>
+                <li>
+                  <strong className="block text-2xl text-primary">
+                    {journeyStages.length}
+                  </strong>
+                  مرحلة من الخطوبة للبيت
                 </li>
                 <li>
                   <strong className="block text-2xl text-primary">
@@ -91,15 +98,9 @@ export default function HomePage() {
                 </li>
                 <li>
                   <strong className="block text-2xl text-primary">
-                    {categories.length}
+                    {brideSections.length}
                   </strong>
-                  فئة جهاز
-                </li>
-                <li>
-                  <strong className="block text-2xl text-primary">
-                    {templates.length}
-                  </strong>
-                  قوائم جاهزة
+                  باب في الدليل
                 </li>
               </ul>
               <p className="text-xs leading-relaxed text-muted-foreground">
@@ -108,6 +109,33 @@ export default function HomePage() {
               </p>
             </CardContent>
           </Card>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-12">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <h2 className="font-heading text-2xl font-semibold">رحلة العروسة بـ 21 مرحلة</h2>
+            <p className="text-sm text-muted-foreground">
+              كل مرحلة ليها مصادر أونلاين وأحياء. مش 20 تبويب مفتوح في نفس الوقت.
+            </p>
+          </div>
+          <Button variant="ghost" nativeButton={false} render={<Link href="/map" />}>
+            الخريطة كاملة
+            <ArrowLeft />
+          </Button>
+        </div>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
+          {journeyStages.map((st) => (
+            <Link
+              key={st.id}
+              href={`/map#${st.id}`}
+              className="rounded-xl bg-card p-3 text-sm ring-1 ring-foreground/10 hover:bg-secondary"
+            >
+              <span className="block text-xs text-primary">{st.n}</span>
+              <span className="font-medium">{st.title}</span>
+            </Link>
+          ))}
         </div>
       </section>
 
