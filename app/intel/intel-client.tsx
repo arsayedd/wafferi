@@ -9,28 +9,46 @@ import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/format";
 import { clusterSnapshots } from "@/lib/intel/match";
 import { exportSnapshots } from "@/lib/intel/export";
+import { marketAnalytics } from "@/lib/intel/analytics";
+import { marketInsights } from "@/lib/intel/insights";
+import { learnedInterval } from "@/lib/intel/scheduler";
 import { discountPct, tierLabels, type WatchTier } from "@/lib/intel/types";
+import { Sparkline } from "@/components/sparkline";
 import { useIntel } from "@/hooks/use-intel";
 
 export function IntelClient() {
-  const { watches, events, auto, setAuto, addWatch, removeWatch, setTier, runWatch, polling } =
-    useIntel();
+  const {
+    watches,
+    events,
+    auto,
+    setAuto,
+    addWatch,
+    removeWatch,
+    setTier,
+    runWatch,
+    polling,
+    hits,
+    rules,
+    addRule,
+    removeRule,
+    myPrice,
+    setMyPrice,
+    plan,
+  } = useIntel();
   const [url, setUrl] = useState("");
   const [tier, setNewTier] = useState<WatchTier>(3);
   const [view, setView] = useState<"table" | "cards">("table");
 
   const snapshots = watches.flatMap((w) => w.lastSnapshots ?? []);
   const sellers = new Set(snapshots.map((s) => s.seller)).size;
-  const inStock = snapshots.filter((s) => s.availability === "in_stock").length;
-  const avg =
-    snapshots.length > 0
-      ? Math.round(snapshots.reduce((s, x) => s + x.price, 0) / snapshots.length)
-      : 0;
+  const inStock = snapshots.filter((s) => s.availability === "in_stock" || s.stock === "in_stock").length;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const todayTs = today.getTime();
   const priceToday = events.filter((e) => e.kind === "price" && e.at >= todayTs).length;
   const stockToday = events.filter((e) => e.kind === "stock" && e.at >= todayTs).length;
+  const stats = marketAnalytics(snapshots);
+  const insights = marketInsights(events, snapshots, myPrice || undefined);
   const clusters = useMemo(
     () => clusterSnapshots(snapshots).filter((c) => c.members.length > 1),
     [snapshots],
@@ -65,11 +83,72 @@ export function IntelClient() {
         <Metric label="عروض آخر سحب" value={String(snapshots.length)} />
         <Metric label="بائعون" value={String(sellers)} />
         <Metric label="متوفر" value={String(inStock)} />
-        <Metric label="متوسط السعر" value={avg ? formatPrice(avg) : "—"} />
+        <Metric label="أقل سعر سوق" value={stats.lowest ? formatPrice(stats.lowest) : "—"} />
+        <Metric label="متوسط" value={stats.average ? formatPrice(stats.average) : "—"} />
+        <Metric label="فجوة السوق" value={stats.gap ? formatPrice(stats.gap) : "—"} />
+        <Metric label="توفر %" value={`${stats.stockPct}٪`} />
         <Metric label="تغيّر سعر اليوم" value={String(priceToday)} />
         <Metric label="تغيّر ستوك اليوم" value={String(stockToday)} />
         <Metric label="الجدولة" value={auto ? "شغالة" : "واقفة"} />
       </div>
+
+      <section className="grid gap-3 rounded-2xl bg-card p-4 ring-1 ring-foreground/10 md:grid-cols-2">
+        <div>
+          <p className="text-sm font-medium">رؤى السوق (من بياناتكِ هنا)</p>
+          <ul className="mt-2 list-disc space-y-1 pr-5 text-sm text-muted-foreground">
+            {insights.map((l) => (
+              <li key={l}>{l}</li>
+            ))}
+          </ul>
+          <p className="mt-2 text-xs text-muted-foreground">الخطة الحالية: {plan}</p>
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm">
+            سعركِ المرجعي (للمقارنة والتنبيه)
+            <Input
+              className="mt-1"
+              type="number"
+              value={myPrice || ""}
+              onChange={(e) => setMyPrice(Number(e.target.value) || 0)}
+            />
+          </label>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() =>
+              addRule({
+                name: "أرخص من سعري ١٠٪",
+                kind: "below_mine",
+                myPrice: myPrice || undefined,
+                percent: 10,
+                channel: "dashboard",
+              })
+            }
+          >
+            قاعدة: منافس أرخص ١٠٪
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => addRule({ name: "نزول ٥٠٠ج", kind: "drop_egp", dropEgp: 500, channel: "dashboard" })}
+          >
+            قاعدة: نزول ٥٠٠ جنيه
+          </Button>
+          {rules.map((r) => (
+            <p key={r.id} className="text-xs">
+              {r.name}{" "}
+              <button type="button" className="text-primary" onClick={() => removeRule(r.id)}>
+                حذف
+              </button>
+            </p>
+          ))}
+          {hits.slice(0, 5).map((h) => (
+            <p key={h.ruleId + h.at} className="text-sm text-amber-800">
+              {h.message}
+            </p>
+          ))}
+        </div>
+      </section>
 
       <section className="rounded-2xl bg-card p-4 ring-1 ring-foreground/10">
         <p className="text-sm font-medium">أضيفي مصدر</p>
@@ -88,7 +167,7 @@ export function IntelClient() {
             value={tier}
             onChange={(e) => setNewTier(Number(e.target.value) as WatchTier)}
           >
-            {( [1, 2, 3, 4] as WatchTier[] ).map((t) => (
+            {( [1, 2, 3, 4, 5] as WatchTier[] ).map((t) => (
               <option key={t} value={t}>
                 {tierLabels[t]}
               </option>
@@ -155,7 +234,10 @@ export function IntelClient() {
                   <tr key={w.id} className="border-t">
                     <td className="px-3 py-3">
                       <p className="font-medium">{s?.name ?? w.url}</p>
-                      <p className="text-xs text-muted-foreground">{tierLabels[w.tier]}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {tierLabels[w.tier]} · فحص متعلّم {Math.round(learnedInterval(w) / 60000)} د
+                        {w.platform ? ` · ${w.platform}` : ""}
+                      </p>
                       {w.error ? <p className="text-xs text-destructive">{w.error}</p> : null}
                     </td>
                     <td className="px-3 py-3">{s?.seller ?? "—"}</td>
@@ -166,8 +248,11 @@ export function IntelClient() {
                           {discountPct(s)}٪
                         </Badge>
                       ) : null}
+                      {w.history.length > 1 ? (
+                        <Sparkline values={w.history.map((h) => h.price)} className="mt-1 h-8 w-28" />
+                      ) : null}
                     </td>
-                    <td className="px-3 py-3">{s?.availability ?? "—"}</td>
+                    <td className="px-3 py-3">{s?.stock ?? s?.availability ?? "—"}</td>
                     <td className="px-3 py-3 font-mono text-xs">{w.waterfall.join(" → ") || "—"}</td>
                     <td className="px-3 py-3 text-end">
                       <select
@@ -175,7 +260,7 @@ export function IntelClient() {
                         value={w.tier}
                         onChange={(e) => setTier(w.id, Number(e.target.value) as WatchTier)}
                       >
-                        {([1, 2, 3, 4] as WatchTier[]).map((t) => (
+                        {([1, 2, 3, 4, 5] as WatchTier[]).map((t) => (
                           <option key={t} value={t}>
                             T{t}
                           </option>
@@ -238,7 +323,10 @@ export function IntelClient() {
             const low = Math.min(...prices);
             return (
               <div key={i} className="rounded-xl bg-card p-4 ring-1 ring-foreground/10">
-                <Badge>تطابق {(c.score * 100).toFixed(0)}٪</Badge>
+                <Badge>ثقة {(c.score * 100).toFixed(1)}٪</Badge>
+                {c.reasons?.length ? (
+                  <p className="mt-1 text-xs text-muted-foreground">{c.reasons.join(" · ")}</p>
+                ) : null}
                 <ul className="mt-2 space-y-1 text-sm">
                   {c.members.map((m) => (
                     <li key={m.url + m.seller}>
@@ -261,7 +349,7 @@ export function IntelClient() {
           <ul className="space-y-2 text-sm">
             {events.slice(0, 20).map((e) => (
               <li key={e.id} className="rounded-lg bg-muted/50 px-3 py-2">
-                {e.kind === "price" ? "سعر" : e.kind === "stock" ? "ستوك" : "خصم"}: {e.from} ← {e.to}
+                {e.message ?? `${e.kind}: ${e.from} ← ${e.to}`}
                 <span className="ms-2 text-xs text-muted-foreground">
                   {new Date(e.at).toLocaleString("ar-EG")}
                 </span>
@@ -286,8 +374,12 @@ export function IntelClient() {
           </li>
         </ul>
         <p className="mt-3">
-          اللحظة بلحظة لكل مصر مش ممكن من غير API التاجر. الطبقة ١ = ٤٥ ثانية للمنتجات الحرجة اللي
-          إنتي حاطاها.
+          الطبقة الساخنة = دقيقة، والاكتشاف = ٢٤ ساعة، والجدولة تتعلّم من هدوء المنتج.{" "}
+          <Link href="/admin" className="text-primary underline">لوحة التشغيل</Link>
+          {" · "}
+          <Link href="/legal" className="text-primary underline">الامتثال</Link>
+          {" · "}
+          <Link href="/plans" className="text-primary underline">الخطط</Link>
         </p>
         <Link href="/connectors" className="text-primary underline">
           الموصّلات

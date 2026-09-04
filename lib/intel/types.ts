@@ -1,3 +1,5 @@
+import type { StockStatus } from "./stock";
+
 export type AdapterKind =
   | "shopify"
   | "woocommerce"
@@ -12,7 +14,7 @@ export type AdapterKind =
   | "css"
   | "unknown";
 
-export type WatchTier = 1 | 2 | 3 | 4;
+export type WatchTier = 1 | 2 | 3 | 4 | 5;
 
 /** بيانات تنافسية واقعية فقط — من غير وصف/صور/نصوص تسويق. */
 export type CompetitiveSnapshot = {
@@ -25,22 +27,36 @@ export type CompetitiveSnapshot = {
   gtin?: string;
   variant?: string;
   price: number;
+  previousPrice?: number;
   compareAt?: number;
   currency: "EGP";
   availability: "in_stock" | "out_of_stock" | "unknown";
+  stock?: StockStatus;
+  quantity?: number;
   rating?: number;
   reviewCount?: number;
   category?: string;
   checkedAt: number;
 };
 
+export type ChangeKind =
+  | "price"
+  | "price_down"
+  | "price_up"
+  | "stock"
+  | "discount"
+  | "new_product"
+  | "removed"
+  | "variant";
+
 export type ChangeEvent = {
   id: string;
   url: string;
   at: number;
-  kind: "price" | "stock" | "discount";
+  kind: ChangeKind;
   from: string;
   to: string;
+  message?: string;
 };
 
 export type WatchItem = {
@@ -54,24 +70,32 @@ export type WatchItem = {
   waterfall: string[];
   error?: string;
   discovery?: string[];
+  platform?: string;
+  quietChecks?: number;
+  changeChecks?: number;
+  effectiveMs?: number;
+  robotsNote?: string;
 };
 
 export const TIER_MS: Record<WatchTier, number> = {
-  1: 45_000,
+  1: 60_000,
   2: 5 * 60_000,
   3: 30 * 60_000,
-  4: 12 * 60 * 60_000,
+  4: 6 * 60 * 60_000,
+  5: 24 * 60 * 60_000,
 };
 
 export const tierLabels: Record<WatchTier, string> = {
-  1: "حرج — ٤٥ ثانية",
+  1: "ساخن — دقيقة",
   2: "مهم — ٥ دقايق",
   3: "عادي — ٣٠ دقيقة",
-  4: "اكتشاف كتالوج — ١٢ ساعة",
+  4: "منخفض — ٦ ساعات",
+  5: "اكتشاف — ٢٤ ساعة",
 };
 
 export function watchDue(w: WatchItem, now = Date.now()) {
-  return now - w.lastCheck >= TIER_MS[w.tier];
+  const ms = w.effectiveMs ?? TIER_MS[w.tier];
+  return now - w.lastCheck >= ms;
 }
 
 export function discountPct(s: CompetitiveSnapshot) {

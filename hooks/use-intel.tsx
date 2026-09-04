@@ -12,6 +12,9 @@ import {
 import { useRecipes } from "@/hooks/use-recipes";
 import { diffRuns } from "@/lib/intel/diff";
 import type { InspectResult } from "@/lib/intel/inspect";
+import { afterRunStats } from "@/lib/intel/scheduler";
+import { evaluateRules, type AlertHit, type AlertRule } from "@/lib/intel/alerts";
+import { saasPlans, type PlanId } from "@/lib/intel/plans";
 import {
   type ChangeEvent,
   type WatchItem,
@@ -21,7 +24,14 @@ import {
 
 const KEY = "waffari-intel-v1";
 
-type File = { watches: WatchItem[]; events: ChangeEvent[]; auto: boolean };
+type File = {
+  watches: WatchItem[];
+  events: ChangeEvent[];
+  auto: boolean;
+  rules: AlertRule[];
+  plan: PlanId;
+  myPrice: number;
+};
 
 type IntelState = {
   ready: boolean;
@@ -29,7 +39,15 @@ type IntelState = {
   events: ChangeEvent[];
   auto: boolean;
   polling: boolean;
+  rules: AlertRule[];
+  hits: AlertHit[];
+  plan: PlanId;
+  myPrice: number;
   setAuto: (on: boolean) => void;
+  setPlan: (p: PlanId) => void;
+  setMyPrice: (n: number) => void;
+  addRule: (rule: Omit<AlertRule, "id">) => void;
+  removeRule: (id: string) => void;
   addWatch: (url: string, tier: WatchTier) => Promise<void>;
   removeWatch: (id: string) => void;
   setTier: (id: string, tier: WatchTier) => void;
@@ -47,6 +65,9 @@ export function IntelProvider({ children }: { children: React.ReactNode }) {
   const { extra } = useRecipes();
   const [watches, setWatches] = useState<WatchItem[]>([]);
   const [events, setEvents] = useState<ChangeEvent[]>([]);
+  const [rules, setRules] = useState<AlertRule[]>([]);
+  const [plan, setPlan] = useState<PlanId>("starter");
+  const [myPrice, setMyPrice] = useState(0);
   const [auto, setAuto] = useState(false);
   const [polling, setPolling] = useState(false);
   const [ready, setReady] = useState(false);
@@ -68,6 +89,9 @@ export function IntelProvider({ children }: { children: React.ReactNode }) {
         );
         setEvents(file.events ?? []);
         setAuto(Boolean(file.auto));
+        setRules(file.rules ?? []);
+        setPlan(file.plan ?? "starter");
+        setMyPrice(file.myPrice ?? 0);
       }
     } catch {
       /* ignore */
@@ -77,12 +101,16 @@ export function IntelProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!ready) return;
-    localStorage.setItem(KEY, JSON.stringify({ watches, events, auto } satisfies File));
-  }, [watches, events, auto, ready]);
+    localStorage.setItem(
+      KEY,
+      JSON.stringify({ watches, events, auto, rules, plan, myPrice } satisfies File),
+    );
+  }, [watches, events, auto, rules, plan, myPrice, ready]);
 
-  const applyInspect = useCallback((watch: WatchItem, data: InspectResult): WatchItem => {
+  const applyInspect = useCallback((watch: WatchItem, data: InspectResult, changed: boolean): WatchItem => {
     const snaps = data.snapshots ?? [];
-    const next: WatchItem = {
+    const stats = afterRunStats(watch, changed);
+    return {
       ...watch,
       lastCheck: Date.now(),
       lastSnapshots: snaps,
@@ -91,8 +119,10 @@ export function IntelProvider({ children }: { children: React.ReactNode }) {
       waterfall: data.waterfall ?? [],
       error: data.error,
       discovery: data.discovery,
+      platform: data.platform,
+      robotsNote: data.robotsNote,
+      ...stats,
     };
-    return next;
   }, []);
 
   const runWatch = useCallback(
@@ -112,7 +142,7 @@ export function IntelProvider({ children }: { children: React.ReactNode }) {
         const delta = diffRuns(prevSnaps, nextSnaps);
         setEvents((ev) => [...delta, ...ev].slice(0, 200));
         setWatches((all) =>
-          all.map((w) => (w.id === id ? applyInspect(w, data) : w)),
+          all.map((w) => (w.id === id ? applyInspect(w, data, delta.length > 0) : w)),
         );
       } finally {
         setPolling(false);
@@ -124,6 +154,8 @@ export function IntelProvider({ children }: { children: React.ReactNode }) {
   const addWatch = useCallback(async (url: string, tier: WatchTier) => {
     const trimmed = url.trim();
     if (!trimmed) return;
+    const cap = saasPlans.find((p) => p.id === plan)?.watches ?? 25;
+    if (watches.length >= cap) return;
     const item: WatchItem = {
       id: uid(),
       url: trimmed,
@@ -142,11 +174,11 @@ export function IntelProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({ url: trimmed, recipes: extraRef.current }),
       });
       const data = (await res.json()) as InspectResult;
-      setWatches((all) => all.map((w) => (w.url === trimmed ? applyInspect(w, data) : w)));
+      setWatches((all) => all.map((w) => (w.url === trimmed ? applyInspect(w, data, false) : w)));
     } finally {
       setPolling(false);
     }
-  }, [applyInspect]);
+  }, [applyInspect, plan, watches.length]);
 
   const removeWatch = useCallback((id: string) => {
     setWatches((prev) => prev.filter((w) => w.id !== id));
@@ -169,6 +201,16 @@ export function IntelProvider({ children }: { children: React.ReactNode }) {
     return () => clearInterval(t);
   }, [auto, ready, runDue]);
 
+  const addRule = useCallback((rule: Omit<AlertRule, "id">) => {
+    setRules((prev) => [...prev, { ...rule, id: uid() }]);
+  }, []);
+  const removeRule = useCallback((id: string) => {
+    setRules((prev) => prev.filter((r) => r.id !== id));
+  }, []);
+
+  const snaps = watches.flatMap((w) => w.lastSnapshots ?? []);
+  const hits = evaluateRules(rules, events, snaps);
+
   const value = useMemo(
     () => ({
       ready,
@@ -176,14 +218,39 @@ export function IntelProvider({ children }: { children: React.ReactNode }) {
       events,
       auto,
       polling,
+      rules,
+      hits,
+      plan,
+      myPrice,
       setAuto,
+      setPlan,
+      setMyPrice,
+      addRule,
+      removeRule,
       addWatch,
       removeWatch,
       setTier,
       runWatch,
       runDue,
     }),
-    [ready, watches, events, auto, polling, addWatch, removeWatch, setTier, runWatch, runDue],
+    [
+      ready,
+      watches,
+      events,
+      auto,
+      polling,
+      rules,
+      hits,
+      plan,
+      myPrice,
+      addRule,
+      removeRule,
+      addWatch,
+      removeWatch,
+      setTier,
+      runWatch,
+      runDue,
+    ],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

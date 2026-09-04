@@ -273,7 +273,13 @@ export function SiteFooter() {
               <Link href="/brands">الماركات</Link>
             </li>
             <li>
-              <Link href="/how-it-works">الأفلييت والعمولة</Link>
+              <Link href="/legal">الامتثال</Link>
+            </li>
+            <li>
+              <Link href="/admin">لوحة التشغيل</Link>
+            </li>
+            <li>
+              <Link href="/plans">خطط المراقبة</Link>
             </li>
           </ul>
         </div>
