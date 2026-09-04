@@ -2,7 +2,7 @@ import type { Product } from "../types";
 import { productsFromJsonLd, productsFromOpenGraph } from "./parse-jsonld";
 import { productFromRow } from "./product-from-row";
 import { recipeForHost, type FieldStrategy, type HostRecipe } from "./recipes";
-import { extractCss, extractRegex, extractJsonPath } from "./select";
+import { extractCss, extractCssOrAdaptive, extractRegex, extractJsonPath } from "./select";
 import { parseMoney } from "./money";
 import { votePrices, type PriceCandidate } from "./vote";
 import { storeIdFromUrl } from "./host-store";
@@ -47,6 +47,7 @@ export function extractHtmlProduct(
   }
 
   if (recipe?.price) pushStrategy(html, recipe.price, candidates);
+  else pushAdaptive(html, candidates);
 
   const { winner, needsReview } = votePrices(candidates);
   if (!winner) {
@@ -87,14 +88,41 @@ function applyText(html: string, s: FieldStrategy): string {
   return "";
 }
 
+function pushAdaptive(html: string, candidates: PriceCandidate[]) {
+  const hit = extractCssOrAdaptive(html);
+  const price = parseMoney(hit.text);
+  if (!price) return;
+  candidates.push({
+    price,
+    method: "css-adaptive",
+    context: hit.used,
+    confidence: 0.48,
+  });
+}
+
 function pushStrategy(html: string, s: FieldStrategy, candidates: PriceCandidate[]) {
-  if (s.type === "schema_org") return;
+  if (s.type === "schema_org") {
+    pushAdaptive(html, candidates);
+    return;
+  }
+  if (s.type === "css") {
+    const hit = extractCssOrAdaptive(html, s.value);
+    const price = parseMoney(hit.text);
+    if (!price) return;
+    candidates.push({
+      price,
+      method: hit.adaptive ? "css-adaptive" : "css",
+      context: hit.used,
+      confidence: hit.adaptive ? 0.5 : 0.65,
+    });
+    return;
+  }
   const text = applyText(html, s);
   const price = parseMoney(text);
   if (!price) return;
   candidates.push({
     price,
-    method: s.type === "css" ? "css" : s.type === "regex" ? "regex" : "json",
+    method: s.type === "regex" ? "regex" : "json",
     context: s.value ?? s.type,
     confidence: 0.65,
   });

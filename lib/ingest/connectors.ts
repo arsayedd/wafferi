@@ -39,4 +39,9 @@ export const connectors = [
     title: "وصفة CSS للدومين",
     text: "لو الصفحة معلنة السعر في class معيّن. إنتي بتحددي السيلكتور، مش بنلف على الموقع.",
   },
+  {
+    id: "css-adaptive",
+    title: "سيلكتور متكيّف",
+    text: "لو الكلاس اتغيّر، بندور على itemprop / data-price / class فيه price — فكرة Scrapling adaptive، من غير stealth.",
+  },
 ] as const;

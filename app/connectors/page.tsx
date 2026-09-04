@@ -44,6 +44,11 @@ export default function ConnectorsPage() {
           <strong className="text-foreground">Google Maps Scrapper:</strong> مش مستخدم. أماكن وفّري
           أحياء مصر متجمّعة عندنا، من غير زحف خرائط جوجل.
         </p>
+        <p>
+          <strong className="text-foreground">Scrapling:</strong> المفيد هو الـ adaptive parser: لو وصفة
+          CSS اتكسرت بندور على علامات سعر معلنة قريبة. مش بنركّب StealthyFetcher ولا حل Cloudflare ولا
+          تقليد بصمة TLS — المكتبة بايثون أصلاً، وده تجاوز حماية مش طبقة مقارنة.
+        </p>
       </section>
       <section className="space-y-2 text-sm text-muted-foreground">
         <h2 className="text-lg font-medium text-foreground">جوميا ونون</h2>

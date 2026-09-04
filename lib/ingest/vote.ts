@@ -1,6 +1,6 @@
 import { parseMoney } from "./money";
 
-export type ExtractMethod = "json-ld" | "open-graph" | "css" | "regex" | "json";
+export type ExtractMethod = "json-ld" | "open-graph" | "css" | "regex" | "json" | "css-adaptive";
 
 export type PriceCandidate = {
   price: number;
