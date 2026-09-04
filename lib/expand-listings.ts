@@ -1,6 +1,6 @@
-import type { CategoryId, Product, VerticalId } from "./types";
+import type { CategoryId, Product, Store, VerticalId } from "./types";
 import { stores } from "./network";
-import { storeSearchUrl } from "./store-link";
+import { brandShopFits, storeSearchUrl } from "./store-link";
 
 export const categoryVertical: Record<CategoryId, VerticalId> = {
   washers: "laundry",
@@ -40,11 +40,46 @@ export const categoryVertical: Record<CategoryId, VerticalId> = {
   baby: "baby",
 };
 
+/** Retailers we actually send shoppers to — not every brand portal on every SKU. */
+const EXPAND_IDS = new Set([
+  "jumia",
+  "noon",
+  "amazon",
+  "carrefour",
+  "btech",
+  "twob",
+  "raya",
+  "raneen",
+  "dream2000",
+  "extra",
+  "homzmart",
+  "ikea",
+  "namshi",
+  "defacto",
+  "lgshop",
+  "samsung",
+  "boschshop",
+  "bekoshop",
+  "fresh",
+  "unionaire",
+  "kiriazi",
+  "tornado",
+]);
+
 function jitter(seed: string, base: number) {
   let h = 0;
   for (const c of seed) h = (h * 33 + c.charCodeAt(0)) >>> 0;
   const pct = ((h % 19) - 7) / 100;
   return Math.max(50, Math.round((base * (1 + pct)) / 10) * 10);
+}
+
+function allowedOnProduct(st: Store, p: Product) {
+  if (st.shipsEgypt === false) return false;
+  if (!EXPAND_IDS.has(st.id)) return false;
+  if (st.kind === "brand" || st.connector === "brand_portal") {
+    return brandShopFits(st, p);
+  }
+  return true;
 }
 
 export function expandNetworkListings(products: Product[]): Product[] {
@@ -60,13 +95,10 @@ export function expandNetworkListings(products: Product[]): Product[] {
         (st) =>
           st.verticals.includes(vertical) &&
           !existing.has(st.id) &&
-          (st.status === "connected" ||
-            st.status === "affiliate_ready" ||
-            st.status === "feed_pending") &&
-          st.shipsEgypt !== false,
+          allowedOnProduct(st, p),
       )
       .sort((a, b) => Number(b.status === "connected") - Number(a.status === "connected"))
-      .slice(0, 22)
+      .slice(0, 12)
       .map((s) => {
         const price = jitter(`${s.id}:${p.id}`, base);
         return {

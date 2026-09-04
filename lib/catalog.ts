@@ -8,7 +8,7 @@ import { extraProducts } from "./extra-products";
 import { lifeProducts } from "./life-products";
 import { brideProducts, commercialBundles } from "./bride-guide";
 import { expandNetworkListings } from "./expand-listings";
-import { listingHref, isEgyptSeller, getNetworkStore } from "./store-link";
+import { listingHref, isEgyptSeller, getNetworkStore, brandShopFits } from "./store-link";
 import { stores } from "./network";
 
 export { stores } from "./network";
@@ -650,15 +650,29 @@ const seedProducts: Product[] = [
 export const products = [
   ...expandNetworkListings([...seedProducts, ...extraProducts, ...lifeProducts]),
   ...brideProducts,
-].map((p) => ({
-  ...p,
-  listings: p.listings
-    .filter((l) => l.storeId !== "cartlow" && isEgyptSeller(getNetworkStore(l.storeId)))
+].map((p) => {
+  const seen = new Set<string>();
+  const listings = p.listings
+    .filter((l) => {
+      const st = getNetworkStore(l.storeId);
+      if (l.storeId === "cartlow" || !isEgyptSeller(st)) return false;
+      if (!st) return false;
+      if (st.kind === "brand" || st.connector === "brand_portal") {
+        return brandShopFits(st, p);
+      }
+      return true;
+    })
+    .filter((l) => {
+      if (seen.has(l.storeId)) return false;
+      seen.add(l.storeId);
+      return true;
+    })
     .map((l) => ({
       ...l,
       url: listingHref(l.storeId, p.name),
-    })),
-}));
+    }));
+  return { ...p, listings };
+});
 
 const productById = new Map(products.map((p) => [p.id, p]));
 

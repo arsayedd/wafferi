@@ -1,4 +1,4 @@
-import { listingHref } from "./store-link";
+import { isFakeProductPath, listingHref } from "./store-link";
 
 export type PartnerRule = {
   storeId: string;
@@ -11,7 +11,7 @@ function isRealAmazonProduct(pathname: string) {
   return /\/(dp|gp\/product|gp\/aw\/d)\/[A-Z0-9]{10}/i.test(pathname);
 }
 
-/** Fake paths like amazon.eg/samsung-18 show Amazon's "Looking for something?" page. */
+/** Drop invented /p/{sku} pages (Bosch, Carrefour, Tradeline…) and Amazon dead slugs. */
 export function canonicalizeListingUrl(
   rawUrl: string,
   storeId?: string,
@@ -20,6 +20,11 @@ export function canonicalizeListingUrl(
   if (storeId && productName?.trim()) return listingHref(storeId, productName);
   try {
     const u = new URL(rawUrl);
+    if (isFakeProductPath(rawUrl)) {
+      const slug = u.pathname.split("/").filter(Boolean).pop() ?? "";
+      const guess = decodeURIComponent(slug).replace(/-/g, " ");
+      return listingHref(storeId ?? "", productName || guess);
+    }
     if (u.hostname.includes("amazon.")) {
       if (isRealAmazonProduct(u.pathname)) return `https://www.amazon.eg${u.pathname.split("?")[0]}`;
       if (u.pathname.includes("/s")) {
@@ -50,10 +55,12 @@ export function buildOutboundUrl(
     return safe;
   }
   const amazon = u.hostname.includes("amazon.");
+  const google = u.hostname.includes("google.");
   if (amazon) {
     if (rule?.affiliateId.trim()) u.searchParams.set("tag", rule.affiliateId.trim());
     return u.toString();
   }
+  if (google) return u.toString();
   u.searchParams.set("utm_source", "waffari");
   u.searchParams.set("utm_medium", "affiliate");
   if (rule?.affiliateId.trim()) {

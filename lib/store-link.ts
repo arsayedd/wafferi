@@ -1,4 +1,5 @@
-import type { Store } from "./types";
+import type { Product, Store } from "./types";
+import { foldArabic } from "./ar-fold";
 import { stores } from "./network";
 
 export function getNetworkStore(id: string) {
@@ -19,46 +20,72 @@ export function storeLogoUrl(website: string) {
   return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=128`;
 }
 
-const SEARCH: Record<string, (q: string) => string> = {
+/** Only these search URLs are known to work in Egypt. Everything else is a Google query. */
+const TRUSTED_SEARCH: Record<string, (q: string) => string> = {
   jumia: (q) => `https://www.jumia.com.eg/catalog/?q=${q}`,
   noon: (q) => `https://www.noon.com/egypt-ar/search/?q=${q}`,
   amazon: (q) => `https://www.amazon.eg/-/ar/s?k=${q}`,
   carrefour: (q) => `https://www.carrefouregypt.com/mafegy/ar/search?q=${q}`,
   btech: (q) => `https://btech.com/eg-ar/catalogsearch/result/?q=${q}`,
   twob: (q) => `https://2b.com.eg/ar/catalogsearch/result/?q=${q}`,
-  raya: (q) => `https://rayashop.com/search?q=${q}`,
-  raneen: (q) => `https://raneen.com/en/catalogsearch/result/?q=${q}`,
   ikea: (q) => `https://www.ikea.com/eg/ar/search/?q=${q}`,
-  homzmart: (q) => `https://homzmart.com/ar/search?q=${q}`,
   namshi: (q) => `https://www.namshi.com/eg-ar/search/?q=${q}`,
-  samsung: (q) => `https://www.samsung.com/eg/search/?searchvalue=${q}`,
-  lgshop: (q) => `https://www.lg.com/eg/search/?search=${q}`,
-  boschshop: (q) => `https://www.bosch-home.com/eg/search?text=${q}`,
-  bekoshop: (q) => `https://www.beko.com/eg-ar/search?q=${q}`,
-  dream2000: (q) => `https://dream2000.com/catalogsearch/result/?q=${q}`,
-  extra: (q) => `https://www.extra.com/ar-eg/search?q=${q}`,
-  defacto: (q) => `https://www.defacto.com.eg/search?q=${q}`,
-  tradeline: (q) => `https://www.tradelinestores.com/search?q=${q}`,
-  sixthstreet: (q) => `https://www.6thstreet.com/eg-ar/search?q=${q}`,
-  goldenscent: (q) => `https://www.goldenscent.com/eg-ar/search?q=${q}`,
 };
 
-/** Search on the merchant, or Google for the product + store in Egypt — never a fake /p/{id} page. */
+const BRAND_SHOPS: Record<string, string[]> = {
+  lgshop: ["lg", "ال جي", "إل جي"],
+  samsung: ["samsung", "سامسونج"],
+  boschshop: ["bosch", "بوش"],
+  bekoshop: ["beko", "بيكو"],
+  fresh: ["fresh", "فريش"],
+  unionaire: ["unionaire", "يونيون"],
+  kiriazi: ["kiriazi", "كريازي"],
+  tornado: ["tornado", "تورنيدو"],
+  cottonil: ["cottonil", "كوتونيل"],
+  defacto: ["defacto", "ديفاكتو"],
+  elaraby: ["العربي", "elaraby"],
+};
+
+export function brandShopFits(store: Store, product: { brand: string; name: string }) {
+  const keys = BRAND_SHOPS[store.id];
+  if (!keys) {
+    if (store.kind !== "brand" && store.connector !== "brand_portal") return true;
+    const token = foldArabic(store.name).split(/\s+/)[0] ?? "";
+    if (token.length < 3) return false;
+    return foldArabic(`${product.brand} ${product.name}`).includes(token);
+  }
+  const blob = foldArabic(`${product.brand} ${product.name}`);
+  return keys.some((k) => blob.includes(foldArabic(k)));
+}
+
 export function storeSearchUrl(store: Store, productName: string) {
   const q = encodeURIComponent(productName);
-  const known = SEARCH[store.id];
-  if (known) return known(q);
+  const trusted = TRUSTED_SEARCH[store.id];
+  if (trusted) return trusted(q);
   return `https://www.google.com/search?q=${encodeURIComponent(`${productName} ${store.name} مصر`)}`;
 }
 
 export function listingHref(storeId: string, productName: string, _fallbackUrl?: string) {
   const store = getNetworkStore(storeId);
-  if (!store) return "#";
-  if (store.shipsEgypt === false) return store.website;
+  if (!store) {
+    return `https://www.google.com/search?q=${encodeURIComponent(`${productName} مصر`)}`;
+  }
+  if (store.shipsEgypt === false) {
+    return `https://www.google.com/search?q=${encodeURIComponent(`${productName} مصر`)}`;
+  }
   return storeSearchUrl(store, productName);
 }
 
 export function isEgyptSeller(store?: Store) {
   if (!store) return false;
   return store.shipsEgypt !== false;
+}
+
+export function isFakeProductPath(url: string) {
+  try {
+    const path = new URL(url).pathname;
+    return /\/p\/[a-z0-9_-]+$/i.test(path) || /\/catalog\/[a-z0-9_-]+$/i.test(path);
+  } catch {
+    return false;
+  }
 }
