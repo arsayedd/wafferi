@@ -651,6 +651,8 @@ export const products = [
   ...brideProducts,
 ];
 
+const productById = new Map(products.map((p) => [p.id, p]));
+
 export const templates: ChecklistTemplate[] = [
   {
     id: "kitchen-core",
@@ -743,7 +745,7 @@ export const templates: ChecklistTemplate[] = [
 ];
 
 export function getProduct(id: string) {
-  return products.find((p) => p.id === id);
+  return productById.get(id);
 }
 
 export function getStore(id: string) {

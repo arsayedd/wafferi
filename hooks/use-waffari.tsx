@@ -18,6 +18,7 @@ const COMPARE_KEY = "waffari-compare-v1";
 const BUDGET_KEY = "waffari-budget-v1";
 
 type ListState = {
+  ready: boolean;
   items: ListItem[];
   budget: number;
   alerts: PriceAlert[];
@@ -192,6 +193,7 @@ export function WaffariProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo(
     () => ({
+      ready,
       items,
       budget,
       alerts,
@@ -211,6 +213,7 @@ export function WaffariProvider({ children }: { children: React.ReactNode }) {
       clearCompare,
     }),
     [
+      ready,
       items,
       budget,
       alerts,

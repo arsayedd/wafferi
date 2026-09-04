@@ -33,7 +33,8 @@ export function Logo({ className = "" }: { className?: string }) {
 
 export function SiteHeader() {
   const path = usePathname();
-  const { items, alerts, compare } = useWaffari();
+  const { items, alerts, compare, ready } = useWaffari();
+  const listLabel = ready ? `القايمة (${items.length})` : "القايمة";
   const { unread } = useLive();
   const bellCount = unread || alerts.length;
   const [menuOpen, setMenuOpen] = useState(false);
@@ -89,7 +90,7 @@ export function SiteHeader() {
           </Button>
           <Button nativeButton={false} render={<Link href="/list" />} size="sm" className="hidden sm:inline-flex">
             <ShoppingBag />
-            القايمة ({items.length})
+            {listLabel}
           </Button>
           <Button
             variant="ghost"
@@ -148,7 +149,7 @@ export function SiteHeader() {
                   onClick={() => setMenuOpen(false)}
                   className="rounded-lg px-2 py-2 text-sm hover:bg-muted"
                 >
-                  القايمة ({items.length})
+                  {listLabel}
                 </Link>
               </aside>
             </div>
