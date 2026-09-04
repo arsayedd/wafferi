@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import PlanClient from "./plan-client";
 
-export const metadata = { title: "خطة جهاز العروسة" };
+export const metadata = { title: "رحلة العروسة — خطة الجهاز" };
 
 export default function Page() {
   return (

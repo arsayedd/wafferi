@@ -14,6 +14,7 @@ import { categories, products, stores, templates } from "@/lib/catalog";
 import { productStats } from "@/lib/stats";
 import { brideItemCount, brideSections } from "@/lib/bride-guide";
 import { journeyStages } from "@/lib/bridal-map";
+import { fiveArcs, needItemCount } from "@/lib/need-taxonomy";
 
 const homeCats = [
   "kitchen-tools",
@@ -44,32 +45,33 @@ export default function HomePage() {
           <div className="space-y-6">
             <p className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">
               <Sparkles className="size-4" />
-              ماركتبليس العروسة: من الخطوبة لأول يوم في البيت — أونلاين وأحياء مصر
+              ماركتبليس + مخطِّط جهاز: من الخطوبة لأول شهر في البيت
             </p>
             <h1 className="font-heading text-4xl leading-tight font-semibold md:text-5xl">
-              كل مصدر شراء في خريطة واحدة. كل بند في الدليل. الأرخص ظاهر.
+              مش متجر. رحلة عروسة تطلع قايمة جهاز حسب ميزانيتك والشقة.
             </h1>
             <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
-              مش محل جهاز. رحلة كاملة: فستان، ذهب، مكياج، رفايع حمام التلات، أجهزة
-              عبدالعزيز، وايكيا. الأونلاين يتقارن؛ الجملة تتعرفي تروحي فين.
+              تاريخ الفرح، الميزانية، التشطيب، المطبخ، الأجهزة. السيستم يشيل الموجود
+              ويوزّع الضروري والمهم والرفاهيات — اقتصادي أو متوسط أو فاخر — ويربط كل بند
+              بمصدر شراء في مصر.
             </p>
             <SearchBar />
             <div className="flex flex-wrap gap-2">
-              <Button nativeButton={false} render={<Link href="/map" />}>
-                خريطة الشراء
+              <Button nativeButton={false} render={<Link href="/plan" />}>
+                رحلة العروسة
               </Button>
-              <Button nativeButton={false} render={<Link href="/guide" />}>
-                دليل العروسة
+              <Button nativeButton={false} render={<Link href="/needs" />}>
+                كل الاحتياجات
+              </Button>
+              <Button variant="outline" nativeButton={false} render={<Link href="/map" />}>
+                خريطة الشراء
               </Button>
               <Button variant="outline" nativeButton={false} render={<Link href="/places" />}>
                 لو هتنزلي
               </Button>
-              <Button variant="outline" nativeButton={false} render={<Link href="/plan" />}>
-                خطتي
-              </Button>
             </div>
             <div className="flex flex-wrap gap-2 text-sm">
-              {["طقم حلل", "ستارة حمام", "بوكس الطوارئ", "شنطة سفر"].map((s) => (
+              {["قاعة أفراح", "ثلاجة", "عصارة ثوم", "بوكس أول شهر"].map((s) => (
                 <Link
                   key={s}
                   href={`/search?q=${encodeURIComponent(s)}`}
@@ -92,15 +94,15 @@ export default function HomePage() {
                 </li>
                 <li>
                   <strong className="block text-2xl text-primary">
-                    {journeyStages.length}
+                    {fiveArcs.length}
                   </strong>
-                  مرحلة من الخطوبة للبيت
+                  مراحل رحلة العروسة
                 </li>
                 <li>
                   <strong className="block text-2xl text-primary">
-                    {products.length}
+                    {needItemCount}
                   </strong>
-                  منتج موحّد
+                  بند احتياج
                 </li>
                 <li>
                   <strong className="block text-2xl text-primary">
@@ -115,6 +117,33 @@ export default function HomePage() {
               </p>
             </CardContent>
           </Card>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-12">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <h2 className="font-heading text-2xl font-semibold">خمس مراحل، مش تبويبات متجر</h2>
+            <p className="text-sm text-muted-foreground">
+              قبل الجواز، يوم الفرح، تجهيز البيت، أول شهر، بعد الجواز — خدمات ومنتجات.
+            </p>
+          </div>
+          <Button variant="ghost" nativeButton={false} render={<Link href="/plan" />}>
+            ابنِي الجهاز
+            <ArrowLeft />
+          </Button>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {fiveArcs.map((arc, i) => (
+            <Link
+              key={arc}
+              href={`/needs?arc=${encodeURIComponent(arc)}`}
+              className="rounded-xl bg-card p-4 ring-1 ring-foreground/10 hover:bg-secondary"
+            >
+              <span className="text-xs text-primary">{String(i + 1).padStart(2, "0")}</span>
+              <span className="mt-1 block font-medium">{arc}</span>
+            </Link>
+          ))}
         </div>
       </section>
 

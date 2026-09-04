@@ -248,33 +248,43 @@ export const sourcingCategories: SourcingCategory[] = [
     wholesale: ["dokki", "nasr-city", "nozha", "maadi"],
     factory: [],
   },
+  {
+    id: "home-services",
+    title: "خدمات البيت",
+    blurb: "تركيب وصيانة ونقل وتنظيف قبل السكن — مش منتجات.",
+    products: ["تركيب تكييف", "سباكة", "نقل عفش", "تنظيف عميق", "تفصيل مطبخ"],
+    keywords: ["تركيب", "صيانة", "سباكة", "نقل", "تنظيف عميق", "ألوميتال"],
+    online: [],
+    wholesale: ["nasr-city", "october-industry", "dokki"],
+    factory: [],
+  },
 ];
 
 export const houseTiers = [
   {
     id: "basic",
-    name: "Basic",
+    name: "اقتصادي",
     budget: 10000,
     blurb: "أساسيات المطبخ والحمام والتنظيف من الجملة + ماركتبليس.",
     rooms: ["مطبخ رفايع", "حمام", "تنظيف"],
   },
   {
     id: "smart",
-    name: "Smart",
+    name: "متوسط",
     budget: 25000,
     blurb: "الأساسي + مفروشات وتنظيم وأجهزة صغيرة.",
     rooms: ["مطبخ", "مفروشات", "تنظيم", "أجهزة صغيرة"],
   },
   {
     id: "premium",
-    name: "Premium",
+    name: "فاخر",
     budget: 50000,
     blurb: "جهاز أوضح: حلل أحسن، مفروشات، ديكور، عناية.",
     rooms: ["مطبخ كامل", "غرفة", "ديكور", "تجميل"],
   },
   {
     id: "full",
-    name: "Full House",
+    name: "جهاز كامل",
     budget: 100000,
     blurb: "أجهزة كبيرة + أثاث دمياط أو ايكيا + باقي البيت.",
     rooms: ["أجهزة", "أثاث", "كل الغرف"],
