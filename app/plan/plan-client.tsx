@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { buildJourney, priceBands, TIER_AR, type PlanAnswers } from "@/lib/bride-plan";
 import { houseTiers } from "@/lib/sourcing";
 import { cn } from "@/lib/utils";
-import type { NeedItem } from "@/lib/need-taxonomy";
+import type { FiveArc, NeedItem } from "@/lib/need-taxonomy";
 
 const STORAGE = "waffari-bride-journey-v1";
 
@@ -38,7 +38,9 @@ export default function PlanClient() {
   const [shown, setShown] = useState(false);
   const [owned, setOwned] = useState<Record<string, boolean>>({});
   const [band, setBand] = useState<Record<string, Band>>({});
-  const [hydrated, setHydrated] = useState(false);
+  const [openArc, setOpenArc] = useState<FiveArc | "">("");
+  const hydrated = useRef(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     try {
@@ -53,14 +55,15 @@ export default function PlanClient() {
     } catch {
       /* ignore */
     }
-    setHydrated(true);
+    hydrated.current = true;
+    setReady(true);
   }, []);
 
   useEffect(() => {
-    if (!hydrated) return;
+    if (!ready || !hydrated.current) return;
     const payload: Saved = { answers: a, owned, band, shown };
     localStorage.setItem(STORAGE, JSON.stringify(payload));
-  }, [a, owned, band, shown, hydrated]);
+  }, [a, owned, band, shown, ready]);
 
   const journey = useMemo(() => buildJourney(a), [a]);
 
@@ -79,6 +82,14 @@ export default function PlanClient() {
 
   const remaining = allItems.filter((it) => !owned[it.name]);
   const n = Math.max(remaining.length, 1);
+
+  function revealPlan() {
+    setShown(true);
+    if (!openArc) setOpenArc(journey.stages[0]?.arc ?? "");
+    requestAnimationFrame(() => {
+      document.getElementById("plan-result")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
 
   function pickedTotal() {
     return remaining.reduce((sum, it) => {
@@ -104,10 +115,11 @@ export default function PlanClient() {
       </div>
 
       <form
+        noValidate
         className="space-y-5 rounded-xl bg-card p-5 ring-1 ring-foreground/10"
         onSubmit={(e) => {
           e.preventDefault();
-          setShown(true);
+          revealPlan();
         }}
       >
         <label className="block space-y-1 text-sm">
@@ -180,11 +192,13 @@ export default function PlanClient() {
             />
           </label>
         </div>
-        <Button type="submit">طلّعي خطة الجهاز</Button>
+        <button type="submit" className={cn(buttonVariants(), "h-11 px-4")}>
+          طلّعي خطة الجهاز
+        </button>
       </form>
 
       {shown ? (
-        <section className="space-y-6">
+        <section id="plan-result" className="scroll-mt-24 space-y-6">
           <div>
             <p className="text-sm text-primary">{journey.packageName}</p>
             <p className="text-sm text-muted-foreground">
@@ -220,69 +234,84 @@ export default function PlanClient() {
             ))}
           </div>
 
-          {journey.stages.map((st) => (
-            <div key={st.arc} className="space-y-2">
-              <h2 className="font-heading text-xl font-semibold">{st.arc}</h2>
-              <p className="text-sm text-muted-foreground">{st.focus}</p>
-              <ul className="divide-y rounded-xl bg-card text-sm ring-1 ring-foreground/10">
-                {st.items.map((it) => {
-                  const prices = priceBands(a.budget, n, it.pri);
-                  const pick = band[it.name] ?? "mid";
-                  const have = Boolean(owned[it.name]);
-                  return (
-                    <li key={`${st.arc}-${it.name}`} className="space-y-2 px-4 py-3">
-                      <label className="flex items-start gap-2">
-                        <input
-                          type="checkbox"
-                          className="mt-1"
-                          checked={have}
-                          onChange={() =>
-                            setOwned((o) => ({ ...o, [it.name]: !o[it.name] }))
-                          }
-                        />
-                        <span className={have ? "text-muted-foreground line-through" : ""}>
-                          {it.name}
-                        </span>
-                      </label>
-                      {!have ? (
-                        <div className="flex flex-wrap gap-1 ps-6">
-                          {(
-                            [
-                              ["eco", "اقتصادي", prices.eco],
-                              ["mid", "متوسط", prices.mid],
-                              ["prem", "فاخر", prices.prem],
-                            ] as const
-                          ).map(([k, lab, p]) => (
-                            <button
-                              key={k}
-                              type="button"
-                              onClick={() => setBand((b) => ({ ...b, [it.name]: k }))}
-                              className={cn(
-                                "rounded-full px-2 py-0.5 text-xs",
-                                pick === k
-                                  ? "bg-primary text-primary-foreground"
-                                  : "bg-muted",
-                              )}
-                            >
-                              {lab} {p.toLocaleString("ar-EG")}
-                            </button>
-                          ))}
-                          <Link
-                            className="px-2 text-xs text-primary underline"
-                            href={`/sourcing?q=${encodeURIComponent(it.name)}&cat=${it.source}`}
-                          >
-                            منين
-                          </Link>
-                        </div>
-                      ) : (
-                        <p className="ps-6 text-xs text-muted-foreground">موجود — اتشال من الناقص</p>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
+          {journey.stages.map((st) => {
+            const open = openArc === st.arc;
+            const left = st.items.filter((it) => !owned[it.name]).length;
+            return (
+              <div key={st.arc} className="space-y-2">
+                <button
+                  type="button"
+                  onClick={() => setOpenArc(open ? "" : st.arc)}
+                  className="flex w-full items-center justify-between rounded-xl bg-card px-4 py-3 text-start ring-1 ring-foreground/10"
+                >
+                  <span>
+                    <span className="font-heading text-xl font-semibold">{st.arc}</span>
+                    <span className="mt-1 block text-sm text-muted-foreground">{st.focus}</span>
+                  </span>
+                  <span className="text-xs text-primary">{open ? "طوي" : `${left} ناقص`}</span>
+                </button>
+                {open ? (
+                  <ul className="divide-y rounded-xl bg-card text-sm ring-1 ring-foreground/10">
+                    {st.items.map((it) => {
+                      const prices = priceBands(a.budget, n, it.pri);
+                      const pick = band[it.name] ?? "mid";
+                      const have = Boolean(owned[it.name]);
+                      return (
+                        <li key={`${st.arc}-${it.name}`} className="space-y-2 px-4 py-3">
+                          <label className="flex items-start gap-2">
+                            <input
+                              type="checkbox"
+                              className="mt-1"
+                              checked={have}
+                              onChange={() =>
+                                setOwned((o) => ({ ...o, [it.name]: !o[it.name] }))
+                              }
+                            />
+                            <span className={have ? "text-muted-foreground line-through" : ""}>
+                              {it.name}
+                            </span>
+                          </label>
+                          {!have ? (
+                            <div className="flex flex-wrap gap-1 ps-6">
+                              {(
+                                [
+                                  ["eco", "اقتصادي", prices.eco],
+                                  ["mid", "متوسط", prices.mid],
+                                  ["prem", "فاخر", prices.prem],
+                                ] as const
+                              ).map(([k, lab, p]) => (
+                                <button
+                                  key={k}
+                                  type="button"
+                                  onClick={() => setBand((b) => ({ ...b, [it.name]: k }))}
+                                  className={cn(
+                                    "rounded-full px-2 py-0.5 text-xs",
+                                    pick === k
+                                      ? "bg-primary text-primary-foreground"
+                                      : "bg-muted",
+                                  )}
+                                >
+                                  {lab} {p.toLocaleString("ar-EG")}
+                                </button>
+                              ))}
+                              <Link
+                                className="px-2 text-xs text-primary underline"
+                                href={`/sourcing?q=${encodeURIComponent(it.name)}&cat=${it.source}`}
+                              >
+                                منين
+                              </Link>
+                            </div>
+                          ) : (
+                            <p className="ps-6 text-xs text-muted-foreground">موجود — اتشال من الناقص</p>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : null}
+              </div>
+            );
+          })}
 
           <div className="flex flex-wrap gap-2">
             <Link href="/needs" className={cn(buttonVariants())}>
