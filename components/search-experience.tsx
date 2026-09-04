@@ -125,7 +125,7 @@ export function SearchExperience({
         <p className="text-muted-foreground">
           {q
             ? "أي كتابة — حتى لو فيها غلط إملائي. النتيجة منتج واحد وكل بائعيه."
-            : `الكتالوج كامل: ${allProducts.length} منتج من ${net.catalog} مصدر مصري (رنين، التوحيد والنور، الريادة، جوميا…). الأسعار مرجعية؛ المخزون على موقع المتجر.`}
+            : `الكتالوج: ${allProducts.length} صنف مرجعي من أجهزة وبيت ولبس — بحث «ثلاجة» يطلّع كل الثلاجات في الدليل مش عينتين.`}
         </p>
         <p className="text-xs text-muted-foreground">
           شبكة الكتالوج: {net.catalog} متجر إيكومرس + أحياء على الخريطة · {net.ready} جاهز للعروض
