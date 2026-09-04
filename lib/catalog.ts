@@ -12,6 +12,7 @@ import { marketCatalog } from "./market-catalog";
 import { brideProducts, commercialBundles } from "./bride-guide";
 import { expandNetworkListings } from "./expand-listings";
 import { listingHref, isEgyptSeller, getNetworkStore, brandShopFits, canShopOut } from "./store-link";
+import { shopQueryFromProduct } from "./shop-query";
 import { stores } from "./network";
 
 export { stores } from "./network";
@@ -690,7 +691,7 @@ export const products = [
     })
     .map((l) => ({
       ...l,
-      url: listingHref(l.storeId, p.name),
+      url: listingHref(l.storeId, shopQueryFromProduct(p)),
     }));
   return { ...p, listings };
 });

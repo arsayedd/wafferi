@@ -12,6 +12,7 @@ import { SellerStrip } from "@/components/seller-strip";
 import { ShopLink } from "@/components/shop-link";
 import { ShopOutButton } from "@/components/shop-out-button";
 import { getStore } from "@/lib/catalog";
+import { shopQueryFromProduct } from "@/lib/shop-query";
 import { formatNumber, formatPrice } from "@/lib/format";
 import { productStats } from "@/lib/stats";
 import type { Product } from "@/lib/types";
@@ -48,7 +49,7 @@ export function ProductCard({ product: raw }: { product: Product }) {
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <ShopLink
               storeId={cheap.storeId}
-              productName={product.name}
+              productName={shopQueryFromProduct(product)}
               className="inline-flex items-center gap-1 hover:underline"
             >
               <StoreLogo name={store?.name ?? ""} website={store?.website} size={16} />
@@ -89,7 +90,7 @@ export function ProductCard({ product: raw }: { product: Product }) {
         </Button>
         <ShopOutButton
           storeId={cheap.storeId}
-          productName={product.name}
+          productName={shopQueryFromProduct(product)}
           coupon={cheap.coupon}
           compact
         />

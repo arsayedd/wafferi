@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { getCategory, getProduct, getStore, products } from "@/lib/catalog";
+import { shopQueryFromProduct } from "@/lib/shop-query";
 import { formatPrice } from "@/lib/format";
 import { productStats } from "@/lib/stats";
 import { priceIntel, whyBest } from "@/lib/best-choice";
@@ -124,7 +125,7 @@ export default function ProductPage({
             أوفر سعر حي من{" "}
             <ShopLink
               storeId={cheap.storeId}
-              productName={product.name}
+              productName={shopQueryFromProduct(product)}
               className="inline-flex items-center gap-1 text-primary hover:underline"
             >
               <StoreLogo
@@ -198,7 +199,7 @@ export default function ProductPage({
         <h2 className="font-heading text-xl font-semibold">
           العروض مربوطة بمصادرها ({product.listings.length} عرض)
         </h2>
-        <PriceTable listings={product.listings} productName={product.name} />
+        <PriceTable listings={product.listings} productName={shopQueryFromProduct(product)} />
       </section>
 
       <div id="secSpecs" className="scroll-mt-28">

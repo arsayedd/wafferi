@@ -1,5 +1,6 @@
 import type { AffiliateNetwork, CategoryId, Product } from "./types";
 import { listingHref } from "./store-link";
+import { shopQueryFromProduct } from "./shop-query";
 
 function hash(s: string) {
   let x = 2166136261;
@@ -97,7 +98,7 @@ export function makeSku(
         row.storeId === "elaraby"
           ? "استلام فرع أو توصيل"
           : "توصيل خلال 2–5 أيام",
-      url: listingHref(row.storeId, name),
+      url: listingHref(row.storeId, shopQueryFromProduct({ id, name, brand })),
       sku: `${id}-${row.storeId}`.toUpperCase(),
       affiliateNetwork: NET[row.storeId] ?? "direct",
       oldPrice: row.extra === 0 && n % 5 === 0 ? Math.round(price * 1.18) : undefined,

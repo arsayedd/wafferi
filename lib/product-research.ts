@@ -1,10 +1,10 @@
 import { FLAGSHIP_VERSUS } from "./flagship-tech";
 import { virtualSearch } from "./virtual-catalog";
-import { googleShopUrl, safeShopQuery } from "./shop-query";
+import { googleShopUrl, safeShopQuery, shopQueryFromProduct } from "./shop-query";
 import type { Product } from "./types";
 
 export function youtubeReviewUrl(product: Product, extra = "review") {
-  const q = encodeURIComponent(safeShopQuery(`${product.brand} ${product.name}`, extra));
+  const q = encodeURIComponent(safeShopQuery(shopQueryFromProduct(product), extra));
   return `https://www.youtube.com/results?search_query=${q}`;
 }
 
@@ -17,16 +17,16 @@ export function videoQueries(product: Product) {
 }
 
 export function gsmarenaSearchUrl(product: Product) {
-  const q = encodeURIComponent(safeShopQuery(`${product.brand} ${product.name}`));
+  const q = encodeURIComponent(safeShopQuery(shopQueryFromProduct(product)));
   return `https://www.gsmarena.com/res.php3?sSearch=${q}`;
 }
 
 export function mobizilSearchUrl(product: Product) {
-  return googleShopUrl(`${product.brand} ${product.name}`, "mobizil");
+  return googleShopUrl(shopQueryFromProduct(product), "mobizil");
 }
 
 export function pricenaSearchUrl(product: Product) {
-  return googleShopUrl(`${product.brand} ${product.name}`, "pricena Egypt");
+  return googleShopUrl(shopQueryFromProduct(product), "pricena Egypt");
 }
 
 export function similarVirtual(product: Product, take = 6) {

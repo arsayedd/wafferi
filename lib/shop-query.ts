@@ -25,6 +25,18 @@ export function safeShopQuery(productName: string, storeHint = "") {
   return core || "Egypt store";
 }
 
+/** Brand, model, and id slug keep Google/Jumia queries useful after Arabic is stripped. */
+export function shopQueryFromProduct(p: {
+  id?: string;
+  brand?: string;
+  name: string;
+  model?: string;
+  capacity?: string;
+}) {
+  const slug = (p.id ?? "").replace(/-/g, " ");
+  return [p.brand, p.model, p.capacity, p.name, slug].filter(Boolean).join(" ");
+}
+
 export function googleShopUrl(productName: string, storeHint = "") {
   const q = safeShopQuery(productName, storeHint);
   return `https://www.google.com/search?q=${encodeURIComponent(`${q} Egypt buy`)}`;

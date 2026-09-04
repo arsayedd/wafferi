@@ -2,6 +2,7 @@ import type { Product } from "../types";
 import { getStore } from "../catalog";
 import { storeIdFromUrl } from "../ingest/host-store";
 import { listingHref } from "../store-link";
+import { shopQueryFromProduct } from "../shop-query";
 import { parseStock } from "./stock";
 import type { AdapterKind, CompetitiveSnapshot } from "./types";
 
@@ -16,7 +17,7 @@ export function snapshotFromProduct(
   const availRaw = listing?.inStock === false ? "out_of_stock" : listing ? "in_stock" : "unknown";
   const stock = parseStock(availRaw);
   return {
-    url: listing ? listingHref(listing.storeId, p.name) : "",
+    url: listing ? listingHref(listing.storeId, shopQueryFromProduct(p)) : "",
     seller,
     adapter,
     name: p.name,
@@ -47,7 +48,7 @@ export function snapshotsFromCatalogProduct(p: Product, checkedAt = Date.now()):
       const availRaw = listing.inStock === false ? "out_of_stock" : "in_stock";
       const stock = parseStock(availRaw);
       return {
-        url: listingHref(listing.storeId, p.name),
+        url: listingHref(listing.storeId, shopQueryFromProduct(p)),
         seller,
         adapter: "unknown" as AdapterKind,
         name: p.name,

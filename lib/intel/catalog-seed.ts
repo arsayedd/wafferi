@@ -1,6 +1,7 @@
 import { products } from "../catalog";
 import { listingHref } from "../store-link";
 import { snapshotsFromCatalogProduct } from "./from-product";
+import { shopQueryFromProduct } from "../shop-query";
 import type { ChangeEvent, WatchItem } from "./types";
 
 const SEED_IDS = [
@@ -30,7 +31,7 @@ export function catalogReferenceWatches(now = CATALOG_REF_AT): WatchItem[] {
     const snaps = snapshotsFromCatalogProduct(p, now);
     return {
       id: `catalog-${p.id}`,
-      url: listingHref("jumia", p.name),
+      url: listingHref("jumia", shopQueryFromProduct(p)),
       tier: ((i % 5) + 1) as 1 | 2 | 3 | 4 | 5,
       lastCheck: now,
       snapshot: snaps[0],

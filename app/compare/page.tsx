@@ -7,6 +7,7 @@ import { SellerStrip } from "@/components/seller-strip";
 import { ShopLink } from "@/components/shop-link";
 import { StoreLogo } from "@/components/store-logo";
 import { cheapestListing, getStore } from "@/lib/catalog";
+import { shopQueryFromProduct } from "@/lib/shop-query";
 import { formatPrice } from "@/lib/format";
 import { productStats } from "@/lib/stats";
 import { useWaffari } from "@/hooks/use-waffari";
@@ -80,7 +81,7 @@ export default function ComparePage() {
                       <div className="text-xs font-normal text-muted-foreground">
                         <ShopLink
                           storeId={c.storeId}
-                          productName={p.name}
+                          productName={shopQueryFromProduct(p)}
                           className="inline-flex items-center gap-1 hover:underline"
                         >
                           <StoreLogo

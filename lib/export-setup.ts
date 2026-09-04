@@ -2,6 +2,7 @@ import { getStore } from "./catalog";
 import { cheapestListing } from "./catalog";
 import { listingHref } from "./store-link";
 import type { ListItem, Product } from "./types";
+import { shopQueryFromProduct } from "./shop-query";
 
 function csvCell(v: string | number) {
   const s = String(v ?? "");
@@ -52,7 +53,7 @@ export function setupToCsv(
         offer.rating,
         offer.reviews,
         offer.inStock ? "in_stock" : "out_of_stock",
-        csvCell(listingHref(offer.storeId, p.name)),
+        csvCell(listingHref(offer.storeId, shopQueryFromProduct(p))),
         item.purchased ? "yes" : "no",
       ].join(","),
     );
@@ -99,7 +100,7 @@ export function setupSellersCsv(
           offer.reviews,
           offer.inStock ? "in_stock" : "out_of_stock",
           csvCell(offer.shipping),
-          csvCell(listingHref(offer.storeId, p.name)),
+          csvCell(listingHref(offer.storeId, shopQueryFromProduct(p))),
           offer.storeId === chosen ? "yes" : "no",
         ].join(","),
       );

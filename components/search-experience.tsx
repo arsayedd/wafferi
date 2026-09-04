@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { brands, categories, cheapestListing, getStore } from "@/lib/catalog";
+import { shopQueryFromProduct } from "@/lib/shop-query";
 import { departments } from "@/lib/departments";
 import { catalogStores, networkStats } from "@/lib/network";
 import { searchProductsPage, SEARCH_PAGE_SIZE, type SortKey } from "@/lib/search";
@@ -473,7 +474,7 @@ export function SearchExperience({
                         {intel.reviews.toLocaleString("ar-EG")} مراجعة · {intel.stores} متاجر · الأرخص:{" "}
                         <ShopLink
                           storeId={intel.cheapestStoreId}
-                          productName={best.name}
+                          productName={shopQueryFromProduct(best)}
                           className="inline-flex items-center gap-1 hover:underline"
                         >
                           <StoreLogo name={store?.name ?? ""} website={store?.website} size={16} />

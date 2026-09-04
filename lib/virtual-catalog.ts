@@ -1,6 +1,7 @@
 import type { CategoryId, Product } from "./types";
 import { listingHref } from "./store-link";
 import { makeSku } from "./sku-factory";
+import { shopQueryFromProduct } from "./shop-query";
 import { foldArabic, similarArabic } from "./ar-fold";
 
 export const VIRTUAL_STORES = [
@@ -919,7 +920,7 @@ export function hydrateVirtual(id: string): Product | undefined {
       storeId === "elaraby" || storeId === "raneen" || storeId === "tawhid-nour" || storeId === "alreyada"
         ? "فرع العربي/رنين/التوحيد/الريادة أو توصيل"
         : "توصيل خلال 2–5 أيام",
-    url: listingHref(storeId, name),
+    url: listingHref(storeId, shopQueryFromProduct({ id, name, brand, model: product.model, capacity: size })),
     sku: `${id}-${storeId}`.toUpperCase(),
     affiliateNetwork: storeId === "jumia" ? "jumia" : storeId === "noon" ? "noon" : "direct",
   }));
