@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, Search, ShoppingBag, Bell, GitCompare } from "lucide-react";
+import { Menu, ShoppingBag, Bell, GitCompare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useWaffari } from "@/hooks/use-waffari";
 import { useLive } from "@/hooks/use-live";
@@ -49,33 +49,12 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-background/90 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
+      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2.5">
         <Logo />
-        <nav className="hidden items-center gap-1 md:flex">
-          {links.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={`rounded-lg px-2.5 py-1.5 text-sm ${
-                path === l.href || path.startsWith(l.href + "/")
-                  ? "bg-secondary text-foreground"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              }`}
-            >
-              {l.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="ms-auto hidden flex-1 justify-end lg:flex">
-          <div className="w-full max-w-xl">
-            <SearchBar compact />
-          </div>
+        <div className="min-w-0 flex-1">
+          <SearchBar compact />
         </div>
-        <div className="ms-auto flex items-center gap-1 md:ms-0">
-          <Button variant="ghost" size="icon" nativeButton={false} render={<Link href="/search" />}>
-            <Search className="lg:hidden" />
-            <span className="sr-only">بحث</span>
-          </Button>
+        <div className="flex shrink-0 items-center gap-1">
           <Button variant="ghost" size="icon" nativeButton={false} render={<Link href="/alerts" />}>
             <span className="relative">
               <Bell />
@@ -112,7 +91,26 @@ export function SiteHeader() {
           >
             <Menu />
           </Button>
-          {menuOpen ? (
+        </div>
+      </div>
+      <nav className="hidden border-t border-border/60 md:block">
+        <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 py-1.5">
+          {links.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className={`shrink-0 rounded-lg px-2.5 py-1.5 text-sm ${
+                path === l.href || path.startsWith(l.href + "/")
+                  ? "bg-secondary text-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              {l.label}
+            </Link>
+          ))}
+        </div>
+      </nav>
+      {menuOpen ? (
             <div className="fixed inset-0 z-50 md:hidden">
               <button
                 type="button"
@@ -184,8 +182,6 @@ export function SiteHeader() {
               </aside>
             </div>
           ) : null}
-        </div>
-      </div>
     </header>
   );
 }
