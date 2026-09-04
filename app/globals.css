@@ -204,17 +204,3 @@
 .rise-4 {
   animation: rise-in 1s ease-out 0.24s both;
 }
-
-.shimmer-text {
-  background: linear-gradient(
-    90deg,
-    var(--color-primary) 0%,
-    oklch(0.62 0.14 40) 40%,
-    var(--color-primary) 80%
-  );
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: shimmer-line 4s ease-in-out infinite;
-}

@@ -60,7 +60,7 @@ export function HomeHero({
             منصة جهاز العروسة في مصر
           </p>
           <h1 className="rise-2 font-heading text-4xl leading-[1.15] font-semibold md:text-6xl">
-            <span className="shimmer-text">وفّري</span>
+            <span className="text-primary">وفّري</span>
             <span className="mt-2 block">تعرّفي السيستم قبل ما تشتري حاجة.</span>
           </h1>
           <p className="rise-3 max-w-xl text-lg leading-relaxed text-muted-foreground">
