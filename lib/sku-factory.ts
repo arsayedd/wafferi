@@ -25,35 +25,10 @@ const NET: Record<string, AffiliateNetwork> = {
 };
 
 function storesFor(cat: CategoryId): [string, string, string] {
-  if (cat === "beauty" || cat === "personal-care") return ["jumia", "noon", "goldenscent"];
-  if (
-    cat === "women-wear" ||
-    cat === "pajamas" ||
-    cat === "bridal-wear" ||
-    cat === "shoes" ||
-    cat === "bags" ||
-    cat === "jewelry"
-  )
-    return ["jumia", "noon", "tawhid-nour"];
-  if (cat === "textiles" || cat === "bathroom" || cat === "decor" || cat === "storage")
-    return ["jumia", "tawhid-nour", "ikea"];
-  if (cat === "emergency") return ["jumia", "amazon", "raneen"];
-  if (cat === "travel") return ["jumia", "noon", "amazon"];
-  if (cat === "stoves" || cat === "dishwashers") return ["jumia", "alreyada", "elaraby"];
-  if (
-    cat === "fridges" ||
-    cat === "washers" ||
-    cat === "acs" ||
-    cat === "freezers" ||
-    cat === "heaters" ||
-    cat === "small-appliances" ||
-    cat === "tvs"
-  )
-    return ["jumia", "elaraby", "raneen"];
-  if (cat === "phones" || cat === "tablets" || cat === "laptops" || cat === "gaming")
-    return ["jumia", "noon", "btech"];
-  if (cat === "grocery" || cat === "pets") return ["jumia", "noon", "amazon"];
-  return ["jumia", "noon", "raneen"];
+  if (cat === "textiles" || cat === "bathroom" || cat === "decor" || cat === "storage" || cat === "bedroom" || cat === "living") {
+    return ["jumia", "noon", "ikea"];
+  }
+  return ["jumia", "noon", "amazon"];
 }
 
 export function makeSku(

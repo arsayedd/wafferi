@@ -1,6 +1,6 @@
 import type { CategoryId, Product, Store, VerticalId } from "./types";
 import { stores } from "./network";
-import { brandShopFits, storeSearchUrl } from "./store-link";
+import { brandShopFits, hasNativeShopSearch, storeSearchUrl } from "./store-link";
 import { isDeadShopUrl } from "./dead-hosts";
 
 export const categoryVertical: Record<CategoryId, VerticalId> = {
@@ -83,6 +83,7 @@ export function expandNetworkListings(products: Product[]): Product[] {
     const extras = stores
       .filter(
         (st) =>
+          hasNativeShopSearch(st.id) &&
           st.verticals.includes(vertical) &&
           !existing.has(st.id) &&
           allowedOnProduct(st, p),
@@ -96,8 +97,10 @@ export function expandNetworkListings(products: Product[]): Product[] {
         if (ra !== rb) return ra - rb;
         return Number(b.status === "connected") - Number(a.status === "connected");
       })
-      .slice(0, 20)
+      .slice(0, 4)
       .map((s) => {
+        const url = storeSearchUrl(s, p.name);
+        if (!url) return null;
         const price = jitter(`${s.id}:${p.id}`, base);
         return {
           storeId: s.id,
@@ -106,12 +109,13 @@ export function expandNetworkListings(products: Product[]): Product[] {
           reviews: 12 + (price % 200),
           inStock: price % 17 !== 0,
           shipping: s.kind === "hypermarket" || s.kind === "department" ? "استلام فرع أو توصيل" : "توصيل خلال 2–5 أيام",
-          url: storeSearchUrl(s, p.name),
+          url,
           sku: `${p.id}-${s.id}`.toUpperCase(),
           affiliateNetwork: s.network,
           oldPrice: price % 5 === 0 ? Math.round(price * 1.12) : undefined,
         };
-      });
+      })
+      .filter((row): row is NonNullable<typeof row> => Boolean(row));
     return { ...p, listings: [...p.listings, ...extras] };
   });
 }

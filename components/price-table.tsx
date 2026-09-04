@@ -47,7 +47,12 @@ export function PriceTable({
   return (
     <div className="overflow-x-auto rounded-xl ring-1 ring-foreground/10">
       <div className="flex flex-wrap items-center justify-between gap-2 bg-muted/40 px-3 py-2">
-        <p className="text-sm font-medium">فين تشتري</p>
+        <div>
+          <p className="text-sm font-medium">فين تشتري</p>
+          <p className="text-[11px] text-muted-foreground">
+            بنظهر جوميا ونون وأمازون وايكيا بس — الروابط بتتنفحص، والميت يتشال.
+          </p>
+        </div>
         <select
           className="h-8 rounded-lg border border-input bg-background px-2 text-xs"
           value={sort}

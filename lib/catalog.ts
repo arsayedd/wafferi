@@ -678,6 +678,7 @@ export const products = [
     .filter((l) => {
       const st = getNetworkStore(l.storeId);
       if (l.storeId === "cartlow" || l.storeId === "carrefour" || !canShopOut(l.storeId) || !isEgyptSeller(st)) return false;
+      if (!listingHref(l.storeId, shopQueryFromProduct(p))) return false;
       if (!st) return false;
       if (st.kind === "brand" || st.connector === "brand_portal") {
         return brandShopFits(st, p);
@@ -802,13 +803,15 @@ export function getCategory(id: string) {
 }
 
 export function cheapestListing(product: Product) {
-  const inStock = product.listings.filter((l) => l.inStock);
-  const pool = inStock.length ? inStock : product.listings;
-  return [...pool].sort((a, b) => a.price - b.price)[0];
+  const shoppable = product.listings.filter((l) => canShopOut(l.storeId) && Boolean(listingHref(l.storeId, product.name)));
+  const inStock = shoppable.filter((l) => l.inStock);
+  const pool = inStock.length ? inStock : shoppable;
+  return [...pool].sort((a, b) => a.price - b.price)[0] ?? product.listings[0];
 }
 
 export function maxListing(product: Product) {
-  return [...product.listings].sort((a, b) => b.price - a.price)[0];
+  const shoppable = product.listings.filter((l) => canShopOut(l.storeId));
+  return [...(shoppable.length ? shoppable : product.listings)].sort((a, b) => b.price - a.price)[0];
 }
 
 export function savings(product: Product) {

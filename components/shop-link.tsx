@@ -2,6 +2,7 @@
 
 import { shopHref } from "@/components/shop-out-button";
 import { usePartners } from "@/hooks/use-partners";
+import { useLiveShopHref } from "@/hooks/use-live-shop-href";
 import { getStore } from "@/lib/catalog";
 
 export function ShopLink({
@@ -17,7 +18,10 @@ export function ShopLink({
 }) {
   const { outbound } = usePartners();
   const href = shopHref(storeId, productName, undefined, outbound);
+  const { ok, checked } = useLiveShopHref(href);
   const name = getStore(storeId)?.name ?? storeId;
+  if (!href || (checked && !ok)) return null;
+  if (!checked) return null;
   return (
     <a
       href={href}

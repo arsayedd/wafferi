@@ -1,20 +1,11 @@
-import type { CategoryId, Product } from "./types";
+import type { AffiliateNetwork, CategoryId, Product } from "./types";
 import { listingHref } from "./store-link";
 import { makeSku } from "./sku-factory";
 import { shopQueryFromProduct } from "./shop-query";
 import { foldArabic, similarArabic } from "./ar-fold";
 import { triggeredSynonymGroups, hayMatchesSynonyms } from "./search-synonyms";
 
-export const VIRTUAL_STORES = [
-  "jumia",
-  "noon",
-  "raneen",
-  "elaraby",
-  "tawhid-nour",
-  "alreyada",
-  "amazon",
-  "btech",
-] as const;
+export const VIRTUAL_STORES = ["jumia", "noon", "amazon", "ikea"] as const;
 
 const APPLIANCE_BRANDS = [
   "توشيبا",
@@ -909,7 +900,7 @@ export function hydrateVirtual(id: string): Product | undefined {
   product.highlights = [
     `${size} · ${kind} · ${color} · ${grade}`,
     "تركيبة مرجعية لسوق مصر — مش سحب لحظي من رف التاجر",
-    "أفتحي رنين / العربي / جوميا / نون على نفس الاسم",
+    "افتحي جوميا أو نون أو أمازون على نفس الاسم",
   ];
   product.listings = VIRTUAL_STORES.map((storeId, i) => ({
     storeId,
@@ -917,14 +908,11 @@ export function hydrateVirtual(id: string): Product | undefined {
     rating: 4 + (i % 8) / 10,
     reviews: 20 + ((decoded.local + i * 13) % 400),
     inStock: (decoded.local + i) % 17 !== 0,
-    shipping:
-      storeId === "elaraby" || storeId === "raneen" || storeId === "tawhid-nour" || storeId === "alreyada"
-        ? "فرع العربي/رنين/التوحيد/الريادة أو توصيل"
-        : "توصيل خلال 2–5 أيام",
+    shipping: "توصيل خلال 2–5 أيام",
     url: listingHref(storeId, shopQueryFromProduct({ id, name, brand, model: product.model, capacity: size })),
     sku: `${id}-${storeId}`.toUpperCase(),
-    affiliateNetwork: storeId === "jumia" ? "jumia" : storeId === "noon" ? "noon" : "direct",
-  }));
+    affiliateNetwork: (storeId === "jumia" ? "jumia" : storeId === "noon" ? "noon" : "direct") as AffiliateNetwork,
+  })).filter((l) => Boolean(l.url));
   return product;
 }
 

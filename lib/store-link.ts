@@ -22,13 +22,17 @@ export function storeLogoUrl(website: string) {
   return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=128`;
 }
 
-/** Official search pages that usually accept a short encoded query. Everything else → Google. */
-const NATIVE_SEARCH: Record<string, (q: string) => string> = {
+/** Official search pages that open a real store, not Google. */
+export const NATIVE_SEARCH: Record<string, (q: string) => string> = {
   jumia: (q) => `https://www.jumia.com.eg/catalog/?q=${q}`,
   amazon: (q) => `https://www.amazon.eg/s?k=${q}`,
   noon: (q) => `https://www.noon.com/egypt-ar/search?q=${q}`,
   ikea: (q) => `https://www.ikea.com/eg/ar/search/products/?q=${q}`,
 };
+
+export function hasNativeShopSearch(storeId: string) {
+  return Object.hasOwn(NATIVE_SEARCH, storeId);
+}
 
 export function canShopOut(storeId: string) {
   const store = getNetworkStore(storeId);
@@ -36,16 +40,15 @@ export function canShopOut(storeId: string) {
   if (store.kind === "district" || store.kind === "factory") return false;
   if (store.skuEstimate === 0) return false;
   if (isDeadShopUrl(store.website)) return false;
+  if (!hasNativeShopSearch(storeId)) return false;
   return true;
 }
 
 export function storeSearchUrl(store: Store, productName: string) {
-  const native = Object.hasOwn(NATIVE_SEARCH, store.id) ? NATIVE_SEARCH[store.id] : undefined;
-  const host = storeHostname(store.website);
-  const hint = native ? "" : !host || host.includes("google.") ? store.id : host;
-  const q = encodeURIComponent(safeShopQuery(productName, hint));
+  const native = hasNativeShopSearch(store.id) ? NATIVE_SEARCH[store.id] : undefined;
+  const q = encodeURIComponent(safeShopQuery(productName));
   if (native) return native(q);
-  return googleShopUrl(productName, hint);
+  return "";
 }
 
 const BRAND_SHOPS: Record<string, string[]> = {
@@ -97,12 +100,7 @@ export function storeHomeHref(website: string, storeId?: string, storeName?: str
 
 export function listingHref(storeId: string, productName: string, _fallbackUrl?: string) {
   const store = getNetworkStore(storeId);
-  if (!store) {
-    return googleShopUrl(productName);
-  }
-  if (store.shipsEgypt === false) {
-    return googleShopUrl(productName);
-  }
+  if (!store || store.shipsEgypt === false) return "";
   return storeSearchUrl(store, productName);
 }
 
