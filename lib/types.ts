@@ -17,7 +17,17 @@ export type CategoryId =
   | "living"
   | "kitchen-tools"
   | "textiles"
-  | "decor";
+  | "decor"
+  | "women-wear"
+  | "men-wear"
+  | "kids-wear"
+  | "bridal-wear"
+  | "pajamas"
+  | "shoes"
+  | "bags"
+  | "jewelry"
+  | "beauty"
+  | "accessories";
 
 export type VerticalId =
   | "laundry"
@@ -31,7 +41,17 @@ export type VerticalId =
   | "personal_care"
   | "furniture"
   | "textiles"
-  | "decor";
+  | "decor"
+  | "fashion_women"
+  | "fashion_men"
+  | "fashion_kids"
+  | "bridal"
+  | "sleepwear"
+  | "shoes"
+  | "bags"
+  | "jewelry"
+  | "beauty"
+  | "accessories";
 
 export type StoreKind =
   | "marketplace"
@@ -39,7 +59,8 @@ export type StoreKind =
   | "hypermarket"
   | "brand"
   | "furniture"
-  | "local";
+  | "local"
+  | "fashion";
 
 export type ConnectorKind =
   | "affiliate_network"

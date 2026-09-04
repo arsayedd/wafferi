@@ -25,18 +25,19 @@ export default function HomePage() {
           <div className="space-y-6">
             <p className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">
               <Sparkles className="size-4" />
-              مقارنة أسعار لكل أجهزة البيت عبر متاجر مصر
+              مقارنة أسعار لكل حاجة بتتباع في مصر: جهاز، لبس، فوط، بيجامات، عرايس
             </p>
             <h1 className="font-heading text-4xl leading-tight font-semibold md:text-5xl">
-              أي جهاز في الحياة… من أرخص متجر إيكوميرس في مصر.
+              من الغسالة لفستان الفرح… الأرخص من كل المتاجر المتصلة.
             </h1>
             <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
-              وفّري بتربط ماركتبليس وسلاسل أجهزة وهايبر ومتاجر العلامات: من الغسالة
-              والتكييف لحد المروحة والسشوار والقلاية. نفس المنتج كارت واحد، والأرخص ظاهر.
+              وفّري طبقة مقارنة فوق ماركتبليس الأزياء والأجهزة والهايبر: لبس العرايس،
+              بيجامات، فوط، رفايع، وأجهزة البيت. السحب الحي بيتم بفيد وأفلييت رسمي،
+              مش سكرابينج عشوائي لكل الإنترنت.
             </p>
             <SearchBar />
             <div className="flex flex-wrap gap-2 text-sm">
-              {["غسالة 8 كيلو", "قلاية هوائية", "مروحة", "سشوار"].map((s) => (
+              {["فستان فرح", "بيجاما قطن", "فوط حمام", "غسالة 8 كيلو"].map((s) => (
                 <Link
                   key={s}
                   href={`/search?q=${encodeURIComponent(s)}`}

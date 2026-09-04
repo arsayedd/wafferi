@@ -5,6 +5,7 @@ import type {
   Product,
 } from "./types";
 import { extraProducts } from "./extra-products";
+import { lifeProducts } from "./life-products";
 import { expandNetworkListings } from "./expand-listings";
 import { stores } from "./network";
 
@@ -28,8 +29,18 @@ export const categories: Category[] = [
   { id: "bedroom", name: "غرف نوم", description: "سرير، دولاب، تسريحة", room: "bedroom", vertical: "furniture" },
   { id: "living", name: "صالون وسفرة", description: "كنب، ترابيزات، كراسي", room: "living", vertical: "furniture" },
   { id: "kitchen-tools", name: "أدوات مطبخ", description: "طقم حلل، سكاكين، أواني", room: "kitchen", vertical: "small_kitchen" },
-  { id: "textiles", name: "مفروشات", description: "لحاف، مناشف، ستائر", room: "bedroom", vertical: "textiles" },
+  { id: "textiles", name: "مفروشات وفوط", description: "لحاف، مناشف، فوط حمام، ستائر", room: "bedroom", vertical: "textiles" },
   { id: "decor", name: "ديكور وإضاءة", description: "نجف، مرايا، إكسسوار البيت", room: "living", vertical: "decor" },
+  { id: "women-wear", name: "لبس حريمي", description: "جلابيات، عبايات، خروج", room: "general", vertical: "fashion_women" },
+  { id: "men-wear", name: "لبس رجالي", description: "جلابيات وملابس يومية", room: "general", vertical: "fashion_men" },
+  { id: "kids-wear", name: "لبس أطفال", description: "بيجامات وملابس المدارس", room: "general", vertical: "fashion_kids" },
+  { id: "bridal-wear", name: "لبس العرايس", description: "فستان، عباية كتب الكتاب، إكسسوار", room: "general", vertical: "bridal" },
+  { id: "pajamas", name: "بيجامات", description: "قطن ومنزلي للعروسين", room: "bedroom", vertical: "sleepwear" },
+  { id: "shoes", name: "أحذية وشباشب", description: "خروج وقاعة وعروسة", room: "general", vertical: "shoes" },
+  { id: "bags", name: "شنط", description: "يد، كلتش، سفر", room: "general", vertical: "bags" },
+  { id: "jewelry", name: "إكسسوار", description: "طقم زركون وحلق وسلاسل", room: "general", vertical: "jewelry" },
+  { id: "beauty", name: "عطور وتجميل", description: "عطر، مكياج، عناية", room: "general", vertical: "beauty" },
+  { id: "accessories", name: "رفايع البيت", description: "فوط مطبخ، مريلة، حاجات صغيرة", room: "kitchen", vertical: "accessories" },
 ];
 
 export const brands: Brand[] = [
@@ -52,6 +63,9 @@ export const brands: Brand[] = [
   { id: "xiaomi", name: "Xiaomi", origin: "الصين" },
   { id: "remington", name: "ريمنجتون", origin: "أمريكا" },
   { id: "tornado", name: "تورنيدو", origin: "مصر" },
+  { id: "defacto", name: "ديفاكتو", origin: "تركيا" },
+  { id: "cottonil", name: "كوتونيل", origin: "مصر" },
+  { id: "lattafa", name: "لطافة", origin: "الإمارات" },
 ];
 
 function listing(
@@ -621,7 +635,11 @@ const seedProducts: Product[] = [
   },
 ];
 
-export const products = expandNetworkListings([...seedProducts, ...extraProducts]);
+export const products = expandNetworkListings([
+  ...seedProducts,
+  ...extraProducts,
+  ...lifeProducts,
+]);
 
 export const templates: ChecklistTemplate[] = [
   {
@@ -687,6 +705,21 @@ export const templates: ChecklistTemplate[] = [
       "water-dispenser-fresh",
       "remington-dryer",
       "robot-vacuum-tuya",
+    ],
+  },
+  {
+    id: "bride-wardrobe",
+    name: "لبس العروسة والبيجامات",
+    description: "فستان/عباية، بيجامة، شباشب، كلتش، فوط، عطر",
+    suggestedBudget: 15000,
+    productIds: [
+      "bridal-dress",
+      "bridal-abaya",
+      "cotton-pajamas",
+      "bride-slippers",
+      "evening-bag",
+      "bath-towels-8",
+      "lattafa-perfume",
     ],
   },
 ];

@@ -36,6 +36,25 @@ const byCategory: Record<CategoryId, string> = {
     "https://images.unsplash.com/photo-1582735689369-4fe89db71132?auto=format&fit=crop&w=900&q=80",
   decor:
     "https://images.unsplash.com/photo-1543198126-a8ad8e47fb22?auto=format&fit=crop&w=900&q=80",
+  "women-wear":
+    "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80",
+  "men-wear":
+    "https://images.unsplash.com/photo-1490578474895-aec7c82d818b?auto=format&fit=crop&w=900&q=80",
+  "kids-wear":
+    "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=900&q=80",
+  "bridal-wear":
+    "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=80",
+  pajamas:
+    "https://images.unsplash.com/photo-1617331721439-c4ae9d6d0d0d?auto=format&fit=crop&w=900&q=80",
+  shoes:
+    "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=900&q=80",
+  bags: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=900&q=80",
+  jewelry:
+    "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=900&q=80",
+  beauty:
+    "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80",
+  accessories:
+    "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=900&q=80",
 };
 
 const byProduct: Record<string, string> = {
@@ -78,6 +97,18 @@ const byProduct: Record<string, string> = {
     "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=900&q=80",
   "towel-set": byCategory.textiles,
   "crystal-chandelier": byCategory.decor,
+  "bridal-dress": byCategory["bridal-wear"],
+  "bridal-abaya": byCategory["bridal-wear"],
+  "cotton-pajamas": byCategory.pajamas,
+  "kids-pajamas": byCategory["kids-wear"],
+  "women-galabiya": byCategory["women-wear"],
+  "men-galabiya": byCategory["men-wear"],
+  "bride-slippers": byCategory.shoes,
+  "evening-bag": byCategory.bags,
+  "zircon-set": byCategory.jewelry,
+  "lattafa-perfume": byCategory.beauty,
+  "bath-towels-8": byCategory.textiles,
+  "kitchen-linens": byCategory.accessories,
 };
 
 export function productImage(id: string, category: CategoryId) {

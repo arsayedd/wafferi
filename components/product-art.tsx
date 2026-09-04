@@ -20,6 +20,13 @@ import {
   Snowflake,
   GlassWater,
   Scissors,
+  Shirt,
+  Baby,
+  Moon,
+  Footprints,
+  ShoppingBag,
+  Gem,
+  Sparkle,
   type LucideIcon,
 } from "lucide-react";
 import type { CategoryId } from "@/lib/types";
@@ -44,6 +51,16 @@ const icons: Record<CategoryId, LucideIcon> = {
   "kitchen-tools": Utensils,
   textiles: Layers,
   decor: Lamp,
+  "women-wear": Shirt,
+  "men-wear": Shirt,
+  "kids-wear": Baby,
+  "bridal-wear": Sparkle,
+  pajamas: Moon,
+  shoes: Footprints,
+  bags: ShoppingBag,
+  jewelry: Gem,
+  beauty: Sparkles,
+  accessories: Utensils,
 };
 
 const tints: Record<CategoryId, string> = {
@@ -66,6 +83,16 @@ const tints: Record<CategoryId, string> = {
   "kitchen-tools": "from-yellow-100 to-white text-yellow-800",
   textiles: "from-pink-100 to-white text-pink-800",
   decor: "from-yellow-50 to-amber-100 text-amber-900",
+  "women-wear": "from-rose-100 to-white text-rose-800",
+  "men-wear": "from-slate-100 to-white text-slate-800",
+  "kids-wear": "from-orange-50 to-white text-orange-800",
+  "bridal-wear": "from-amber-50 to-rose-100 text-rose-900",
+  pajamas: "from-violet-50 to-white text-violet-800",
+  shoes: "from-stone-100 to-white text-stone-800",
+  bags: "from-yellow-50 to-white text-yellow-900",
+  jewelry: "from-amber-100 to-white text-amber-900",
+  beauty: "from-fuchsia-50 to-white text-fuchsia-800",
+  accessories: "from-lime-50 to-white text-lime-800",
 };
 
 export function ProductArt({

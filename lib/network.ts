@@ -19,7 +19,37 @@ const ALL_APPLIANCES: VerticalId[] = [
   "personal_care",
 ];
 
-const BIG_HOME: VerticalId[] = [...ALL_APPLIANCES, "furniture", "textiles", "decor"];
+const LIFE: VerticalId[] = [
+  ...ALL_APPLIANCES,
+  "furniture",
+  "textiles",
+  "decor",
+  "fashion_women",
+  "fashion_men",
+  "fashion_kids",
+  "bridal",
+  "sleepwear",
+  "shoes",
+  "bags",
+  "jewelry",
+  "beauty",
+  "accessories",
+];
+
+const FASHION: VerticalId[] = [
+  "fashion_women",
+  "fashion_men",
+  "fashion_kids",
+  "bridal",
+  "sleepwear",
+  "shoes",
+  "bags",
+  "jewelry",
+  "beauty",
+  "accessories",
+];
+
+const BIG_HOME: VerticalId[] = LIFE;
 const FURNITURE: VerticalId[] = ["furniture", "textiles", "decor", "small_kitchen"];
 const AV: VerticalId[] = ["av", "small_kitchen", "climate"];
 
@@ -57,7 +87,7 @@ export const stores: Store[] = [
   s("jumia", "جوميا", "marketplace", "direct_affiliate", "connected", "jumia", BIG_HOME, {
     city: "كل المحافظات",
     website: "https://www.jumia.com.eg",
-    specialty: "ماركتبليس: أجهزة، إلكترونيات، بيت",
+    specialty: "ماركتبليس: أجهزة، لبس، بيت، رفايع، عرايس",
     commissionNote: "برنامج جوميا أفلييت المباشر",
     skuEstimate: 180000,
   }),
@@ -327,6 +357,83 @@ export const stores: Store[] = [
     commissionNote: "شراكة تطبيق",
     skuEstimate: 200,
   }),
+  s("namshi", "نمشي", "fashion", "affiliate_network", "connected", "arabclicks", FASHION, {
+    city: "أونلاين مصر",
+    website: "https://www.namshi.com",
+    specialty: "أزياء وأحذية وشنط",
+    commissionNote: "ArabClicks / Noon fashion",
+    skuEstimate: 40000,
+  }),
+  s("sixthstreet", "6th Street", "fashion", "affiliate_network", "connected", "arabclicks", FASHION, {
+    city: "أونلاين",
+    website: "https://www.6thstreet.com",
+    specialty: "ملابس وماركات عالمية",
+    commissionNote: "شبكات أفلييت",
+    skuEstimate: 35000,
+  }),
+  s("max", "ماكس فاشن", "fashion", "partnership", "affiliate_ready", "direct", FASHION, {
+    city: "مولات مصر",
+    website: "https://www.maxfashion.com/eg",
+    specialty: "لبس عائلي وبيجامات وفوط",
+    commissionNote: "شراكة سلسلة",
+    skuEstimate: 18000,
+  }),
+  s("lcw", "السي واكيك", "fashion", "partnership", "affiliate_ready", "direct", FASHION, {
+    city: "فروع",
+    website: "https://www.lcwaikiki.eg",
+    specialty: "لبس يومي وبيجامات وأطفال",
+    commissionNote: "فيد سلسلة",
+    skuEstimate: 22000,
+  }),
+  s("hm", "H&M مصر", "fashion", "brand_portal", "feed_pending", "direct", FASHION, {
+    city: "مولات",
+    website: "https://www2.hm.com/en_eg",
+    specialty: "أزياء سريعة",
+    commissionNote: "بوابة علامة",
+    skuEstimate: 15000,
+  }),
+  s("centrepoint", "سنتربوينت", "fashion", "affiliate_network", "affiliate_ready", "arabclicks", [...FASHION, "textiles"], {
+    city: "مولات",
+    website: "https://www.centrepointstores.com",
+    specialty: "لبس ومنزل وهوم سنتر",
+    commissionNote: "شبكات إقليمية",
+    skuEstimate: 25000,
+  }),
+  s("defacto", "ديفاكتو", "fashion", "affiliate_network", "connected", "admitad", FASHION, {
+    city: "أونلاين + فروع",
+    website: "https://www.defacto.com.eg",
+    specialty: "لبس وبيجامات بأسعار شعبية",
+    commissionNote: "Admitad",
+    skuEstimate: 12000,
+  }),
+  s("cottonil", "كوتونيل", "fashion", "official_feed", "feed_pending", "direct", ["sleepwear", "fashion_women", "fashion_men", "textiles"], {
+    city: "مصر",
+    website: "https://cottonil.com",
+    specialty: "بيجامات وملابس داخلية قطن",
+    commissionNote: "فيد رسمي",
+    skuEstimate: 3000,
+  }),
+  s("dice", "دايس", "fashion", "partnership", "outreach", "direct", ["fashion_women", "bridal", "bags"], {
+    city: "القاهرة",
+    website: "https://diceshops.com",
+    specialty: "لبس حريمي وعبايات",
+    commissionNote: "شراكة محلية",
+    skuEstimate: 4000,
+  }),
+  s("goldenscent", "جولدن سنت", "fashion", "affiliate_network", "affiliate_ready", "arabclicks", ["beauty", "accessories"], {
+    city: "أونلاين",
+    website: "https://www.goldenscent.com",
+    specialty: "عطور وتجميل",
+    commissionNote: "شبكات أفلييت",
+    skuEstimate: 8000,
+  }),
+  s("seif", "سيف للتجميل", "local", "partnership", "outreach", "direct", ["beauty", "personal_care"], {
+    city: "فروع",
+    website: "https://seif.eg",
+    specialty: "صيدلية تجميل وعناية",
+    commissionNote: "لياد صيدليات",
+    skuEstimate: 6000,
+  }),
 ];
 
 export const kindLabels: Record<StoreKind, string> = {
@@ -336,6 +443,7 @@ export const kindLabels: Record<StoreKind, string> = {
   brand: "متجر علامة",
   furniture: "أثاث وبيت",
   local: "محلي وموزّعين",
+  fashion: "أزياء وتجميل",
 };
 
 export const statusLabels: Record<ConnectionStatus, string> = {
@@ -364,8 +472,18 @@ export const verticalLabels: Record<VerticalId, string> = {
   small_kitchen: "أجهزة مطبخ صغيرة",
   personal_care: "عناية شخصية",
   furniture: "أثاث",
-  textiles: "مفروشات",
+  textiles: "مفروشات وفوط",
   decor: "ديكور",
+  fashion_women: "لبس حريمي",
+  fashion_men: "لبس رجالي",
+  fashion_kids: "لبس أطفال",
+  bridal: "لبس العرايس",
+  sleepwear: "بيجامات ومنزلي",
+  shoes: "أحذية",
+  bags: "شنط",
+  jewelry: "إكسسوار وذهب موضة",
+  beauty: "عطور وتجميل",
+  accessories: "رفايع",
 };
 
 export function networkStats() {
