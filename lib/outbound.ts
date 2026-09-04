@@ -20,6 +20,13 @@ export function canonicalizeListingUrl(
   if (storeId && productName?.trim()) return listingHref(storeId, productName);
   try {
     const u = new URL(rawUrl);
+    if (
+      u.hostname.includes("carrefouregypt.") ||
+      u.hostname.includes("edgesuite.net") ||
+      u.hostname.includes("edgekey.net")
+    ) {
+      return listingHref(storeId ?? "carrefour", productName || "كارفور مصر");
+    }
     if (isFakeProductPath(rawUrl)) {
       const slug = u.pathname.split("/").filter(Boolean).pop() ?? "";
       const guess = decodeURIComponent(slug).replace(/-/g, " ");
@@ -27,13 +34,10 @@ export function canonicalizeListingUrl(
     }
     if (u.hostname.includes("amazon.")) {
       if (isRealAmazonProduct(u.pathname)) return `https://www.amazon.eg${u.pathname.split("?")[0]}`;
-      if (u.pathname.includes("/s")) {
-        const k = u.searchParams.get("k");
-        if (k) return `https://www.amazon.eg/-/ar/s?k=${encodeURIComponent(k)}`;
-      }
-      const slug = u.pathname.split("/").filter(Boolean)[0] ?? "";
-      const k = decodeURIComponent(slug).replace(/-/g, " ").trim() || "home";
-      return `https://www.amazon.eg/-/ar/s?k=${encodeURIComponent(k)}`;
+      const k =
+        u.searchParams.get("k") ||
+        decodeURIComponent((u.pathname.split("/").filter(Boolean)[0] ?? "").replace(/-/g, " "));
+      return listingHref("amazon", productName || k || "أمازون مصر");
     }
   } catch {
     /* keep */
@@ -56,11 +60,10 @@ export function buildOutboundUrl(
   }
   const amazon = u.hostname.includes("amazon.");
   const google = u.hostname.includes("google.");
-  if (amazon) {
-    if (rule?.affiliateId.trim()) u.searchParams.set("tag", rule.affiliateId.trim());
-    return u.toString();
-  }
   if (google) return u.toString();
+  if (amazon) {
+    return listingHref("amazon", productName || u.searchParams.get("k") || "أمازون مصر");
+  }
   u.searchParams.set("utm_source", "waffari");
   u.searchParams.set("utm_medium", "affiliate");
   if (rule?.affiliateId.trim()) {

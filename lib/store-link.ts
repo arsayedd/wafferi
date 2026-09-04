@@ -20,16 +20,9 @@ export function storeLogoUrl(website: string) {
   return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=128`;
 }
 
-/** Only these search URLs are known to work in Egypt. Everything else is a Google query. */
+/** Direct search only on hosts that are not Akamai-origin DNS traps. Carrefour Egypt fails with edgesuite DNS. */
 const TRUSTED_SEARCH: Record<string, (q: string) => string> = {
   jumia: (q) => `https://www.jumia.com.eg/catalog/?q=${q}`,
-  noon: (q) => `https://www.noon.com/egypt-ar/search/?q=${q}`,
-  amazon: (q) => `https://www.amazon.eg/-/ar/s?k=${q}`,
-  carrefour: (q) => `https://www.carrefouregypt.com/mafegy/ar/search?q=${q}`,
-  btech: (q) => `https://btech.com/eg-ar/catalogsearch/result/?q=${q}`,
-  twob: (q) => `https://2b.com.eg/ar/catalogsearch/result/?q=${q}`,
-  ikea: (q) => `https://www.ikea.com/eg/ar/search/?q=${q}`,
-  namshi: (q) => `https://www.namshi.com/eg-ar/search/?q=${q}`,
 };
 
 const BRAND_SHOPS: Record<string, string[]> = {
@@ -60,9 +53,8 @@ export function brandShopFits(store: Store, product: { brand: string; name: stri
 
 export function storeSearchUrl(store: Store, productName: string) {
   const q = encodeURIComponent(productName);
-  const trusted = TRUSTED_SEARCH[store.id];
-  if (trusted) return trusted(q);
-  return `https://www.google.com/search?q=${encodeURIComponent(`${productName} ${store.name} مصر`)}`;
+  if (store.id === "jumia") return TRUSTED_SEARCH.jumia(q);
+  return `https://www.google.com/search?q=${encodeURIComponent(`${productName} ${store.name} مصر للبيع`)}`;
 }
 
 export function listingHref(storeId: string, productName: string, _fallbackUrl?: string) {
