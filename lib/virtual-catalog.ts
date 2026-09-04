@@ -5,7 +5,7 @@ import { shopQueryFromProduct } from "./shop-query";
 import { foldArabic, similarArabic } from "./ar-fold";
 import { triggeredSynonymGroups, hayMatchesSynonyms } from "./search-synonyms";
 
-export const VIRTUAL_STORES = ["jumia", "noon", "amazon", "ikea"] as const;
+export const VIRTUAL_STORES = ["jumia", "noon", "amazon", "raneen", "btech", "ikea"] as const;
 
 const APPLIANCE_BRANDS = [
   "توشيبا",

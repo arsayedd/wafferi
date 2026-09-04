@@ -10,8 +10,6 @@ function isFakeProductPath(url: string) {
 }
 
 const BOT_WALL = new Set([401, 403, 429, 503]);
-const MARKET =
-  /jumia\.|noon\.|amazon\.|ikea\.|amazon\.eg|noon\.com|jumia\.com/i;
 
 export function isGoogleShopUrl(url: string) {
   try {
@@ -68,7 +66,7 @@ export async function probeListingUrl(url: string): Promise<LinkHealth> {
       });
     }
     const status = res.status;
-    const ok = (status > 0 && status < 400) || (BOT_WALL.has(status) && MARKET.test(host));
+    const ok = (status > 0 && status < 400) || BOT_WALL.has(status);
     const row = { ok, status, host };
     mem.set(url, row);
     return row;

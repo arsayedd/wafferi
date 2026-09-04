@@ -50,7 +50,7 @@ export function PriceTable({
         <div>
           <p className="text-sm font-medium">فين تشتري</p>
           <p className="text-[11px] text-muted-foreground">
-            بنظهر جوميا ونون وأمازون وايكيا بس — الروابط بتتنفحص، والميت يتشال.
+            الرابط يفتح موقع المتجر نفسه (أو بحث جوميا/نون). اللي مش شغال بيتشال بعد الفحص.
           </p>
         </div>
         <select

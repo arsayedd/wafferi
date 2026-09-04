@@ -28,7 +28,10 @@ function storesFor(cat: CategoryId): [string, string, string] {
   if (cat === "textiles" || cat === "bathroom" || cat === "decor" || cat === "storage" || cat === "bedroom" || cat === "living") {
     return ["jumia", "noon", "ikea"];
   }
-  return ["jumia", "noon", "amazon"];
+  if (cat === "phones" || cat === "tablets" || cat === "laptops" || cat === "gaming") {
+    return ["jumia", "noon", "btech"];
+  }
+  return ["jumia", "noon", "raneen"];
 }
 
 export function makeSku(

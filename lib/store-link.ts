@@ -1,7 +1,8 @@
 import type { Store } from "./types";
 import { foldArabic } from "./ar-fold";
 import { isDeadShopUrl } from "./dead-hosts";
-import { googleShopUrl, safeShopQuery } from "./shop-query";
+import { isGoogleShopUrl } from "./link-health";
+import { safeShopQuery } from "./shop-query";
 import { stores } from "./network";
 
 export function getNetworkStore(id: string) {
@@ -34,21 +35,35 @@ export function hasNativeShopSearch(storeId: string) {
   return Object.hasOwn(NATIVE_SEARCH, storeId);
 }
 
+/** The merchant’s own site — never Google. */
+export function storeSiteHref(store: Store) {
+  if (store.id === "tradeline") return "https://www.tradelinestores.com/";
+  if (store.id === "olympic") return "https://olympicelectric.com/";
+  const raw = store.website || "";
+  if (!raw || isDeadShopUrl(raw)) return "";
+  try {
+    const u = new URL(raw);
+    if (isGoogleShopUrl(raw) || u.hostname.includes("google.")) return "";
+    return `${u.protocol}//${u.host}/`;
+  } catch {
+    return "";
+  }
+}
+
 export function canShopOut(storeId: string) {
   const store = getNetworkStore(storeId);
   if (!store || store.shipsEgypt === false) return false;
   if (store.kind === "district" || store.kind === "factory") return false;
   if (store.skuEstimate === 0) return false;
-  if (isDeadShopUrl(store.website)) return false;
-  if (!hasNativeShopSearch(storeId)) return false;
-  return true;
+  if (isDeadShopUrl(store.website) && !storeSiteHref(store)) return false;
+  return Boolean(hasNativeShopSearch(storeId) || storeSiteHref(store));
 }
 
 export function storeSearchUrl(store: Store, productName: string) {
   const native = hasNativeShopSearch(store.id) ? NATIVE_SEARCH[store.id] : undefined;
   const q = encodeURIComponent(safeShopQuery(productName));
   if (native) return native(q);
-  return "";
+  return storeSiteHref(store);
 }
 
 const BRAND_SHOPS: Record<string, string[]> = {
@@ -78,24 +93,24 @@ export function brandShopFits(store: Store, product: { brand: string; name: stri
 }
 
 export function storeHomeHref(website: string, storeId?: string, storeName?: string) {
-  const raw = website || "";
-  if (!raw || isDeadShopUrl(raw) || /olympic\.com\.eg|cara-eg\.com/i.test(raw)) {
-    if (storeId === "tradeline" || raw.toLowerCase().includes("tradeline.com.eg")) {
-      return "https://www.tradelinestores.com";
-    }
-    if (storeId === "olympic") return "https://olympicelectric.com";
-    return googleShopUrl(storeName || storeId || "Egypt store", storeId || "");
+  const store = storeId ? getNetworkStore(storeId) : undefined;
+  if (store) {
+    const site = storeSiteHref(store);
+    if (site) return site;
   }
+  const raw = website || "";
+  if (storeId === "tradeline" || raw.toLowerCase().includes("tradeline.com.eg")) {
+    return "https://www.tradelinestores.com/";
+  }
+  if (storeId === "olympic") return "https://olympicelectric.com/";
+  if (!raw || isDeadShopUrl(raw) || isGoogleShopUrl(raw)) return "";
   try {
     const u = new URL(raw);
-    if (u.hostname.includes("google.")) {
-      const q = (u.searchParams.get("q") || storeName || storeId || "").replace(/\+/g, " ");
-      return googleShopUrl(q, storeId || "");
-    }
+    if (u.hostname.includes("google.")) return "";
+    return `${u.protocol}//${u.host}/`;
   } catch {
-    return googleShopUrl(storeName || storeId || "Egypt store", storeId || "");
+    return "";
   }
-  return raw;
 }
 
 export function listingHref(storeId: string, productName: string, _fallbackUrl?: string) {

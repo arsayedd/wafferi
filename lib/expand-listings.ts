@@ -1,6 +1,6 @@
 import type { CategoryId, Product, Store, VerticalId } from "./types";
 import { stores } from "./network";
-import { brandShopFits, hasNativeShopSearch, storeSearchUrl } from "./store-link";
+import { brandShopFits, storeSearchUrl } from "./store-link";
 import { isDeadShopUrl } from "./dead-hosts";
 
 export const categoryVertical: Record<CategoryId, VerticalId> = {
@@ -83,10 +83,10 @@ export function expandNetworkListings(products: Product[]): Product[] {
     const extras = stores
       .filter(
         (st) =>
-          hasNativeShopSearch(st.id) &&
           st.verticals.includes(vertical) &&
           !existing.has(st.id) &&
-          allowedOnProduct(st, p),
+          allowedOnProduct(st, p) &&
+          Boolean(storeSearchUrl(st, p.name)),
       )
       .filter((st, i, arr) => arr.findIndex((x) => x.id === st.id) === i)
       .sort((a, b) => {
@@ -97,7 +97,7 @@ export function expandNetworkListings(products: Product[]): Product[] {
         if (ra !== rb) return ra - rb;
         return Number(b.status === "connected") - Number(a.status === "connected");
       })
-      .slice(0, 4)
+      .slice(0, 8)
       .map((s) => {
         const url = storeSearchUrl(s, p.name);
         if (!url) return null;
