@@ -8,9 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { HomeHero } from "@/components/home-hero";
-import { ProductCard } from "@/components/product-card";
-import { categories, products, stores, templates } from "@/lib/catalog";
-import { productStats } from "@/lib/stats";
+import { categories, stores, templates } from "@/lib/catalog";
 import { brideItemCount, brideSections } from "@/lib/bride-guide";
 import { journeyStages } from "@/lib/bridal-map";
 import { fiveArcs } from "@/lib/need-taxonomy";
@@ -31,11 +29,8 @@ const homeCats = [
 ] as const;
 
 export default function HomePage() {
-  const deals = [...products]
-    .sort((a, b) => productStats(b).save - productStats(a).save)
-    .slice(0, 6);
-  const roomTemplates = templates.filter((t) => t.kind !== "bundle");
-  const bundleTemplates = templates.filter((t) => t.kind === "bundle");
+  const roomTemplates = templates.filter((t) => t.kind !== "bundle").slice(0, 6);
+  const bundleTemplates = templates.filter((t) => t.kind === "bundle").slice(0, 6);
 
   return (
     <div>
@@ -82,7 +77,7 @@ export default function HomePage() {
           </Button>
         </div>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
-          {journeyStages.map((st) => (
+          {journeyStages.slice(0, 14).map((st) => (
             <Link
               key={st.id}
               href={`/map#${st.id}`}
@@ -153,17 +148,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-4">
-        <div className="mb-6">
-          <h2 className="font-heading text-2xl font-semibold">أكبر فرق سعر بين المتاجر</h2>
-          <p className="text-sm text-muted-foreground">
-            نفس المنتج، متاجر مختلفة — الشراء من الأرخص يوفّر الفرق ده
-          </p>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {deals.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
+      <section className="mx-auto max-w-6xl px-4 py-10">
+        <div className="mb-4 flex items-end justify-between gap-3">
+          <div>
+            <h2 className="font-heading text-2xl font-semibold">السوق والمقارنة</h2>
+            <p className="text-sm text-muted-foreground">
+              نفس المنتج من أكتر من متجر. الصور والعروض على صفحة السوق مش الهوم عشان الصفحة تفتح خفيفة.
+            </p>
+          </div>
+          <Button nativeButton={false} render={<Link href="/search" />}>
+            فتح السوق
+            <ArrowLeft />
+          </Button>
         </div>
       </section>
 
