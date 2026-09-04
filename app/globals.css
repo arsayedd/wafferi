@@ -137,3 +137,84 @@
     transform: translateX(50%);
   }
 }
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(12px, -18px, 0) scale(1.05);
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(-40px, 30px, 0) rotate(12deg);
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer-line {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+.orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(28px);
+  pointer-events: none;
+  animation: floaty 9s ease-in-out infinite;
+}
+
+.orb-slow {
+  animation: drift 18s linear infinite alternate;
+}
+
+.rise {
+  animation: rise-in 0.7s ease-out both;
+}
+
+.rise-2 {
+  animation: rise-in 0.8s ease-out 0.08s both;
+}
+
+.rise-3 {
+  animation: rise-in 0.9s ease-out 0.16s both;
+}
+
+.rise-4 {
+  animation: rise-in 1s ease-out 0.24s both;
+}
+
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    var(--color-primary) 0%,
+    oklch(0.62 0.14 40) 40%,
+    var(--color-primary) 80%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer-line 4s ease-in-out infinite;
+}

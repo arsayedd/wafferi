@@ -11,11 +11,11 @@ const cairo = Cairo({
 
 export const metadata: Metadata = {
   title: {
-    default: "وفّري — أجهزة البيت بأوفر سعر في مصر",
+    default: "وفّري — مخطِّط جهاز العروسة وماركتبليس مصر",
     template: "%s | وفّري",
   },
   description:
-    "جهاز العروسة وأجهزة البيت: قارني الأسعار عبر شبكة متاجر مصر.",
+    "رحلة العروسة: خطة جهاز حسب الميزانية والشقة، مقارنة أسعار، وخريطة أحياء مصر.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

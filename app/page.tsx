@@ -4,17 +4,16 @@ import {
   CheckCircle2,
   ListChecks,
   Search,
-  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { SearchBar } from "@/components/search-bar";
+import { HomeHero } from "@/components/home-hero";
 import { ProductCard } from "@/components/product-card";
 import { categories, products, stores, templates } from "@/lib/catalog";
 import { productStats } from "@/lib/stats";
 import { brideItemCount, brideSections } from "@/lib/bride-guide";
 import { journeyStages } from "@/lib/bridal-map";
-import { fiveArcs, needItemCount } from "@/lib/need-taxonomy";
+import { fiveArcs } from "@/lib/need-taxonomy";
 
 const homeCats = [
   "kitchen-tools",
@@ -40,87 +39,9 @@ export default function HomePage() {
 
   return (
     <div>
-      <section className="relative overflow-hidden border-b bg-[radial-gradient(circle_at_20%_20%,oklch(0.92_0.05_75),transparent_45%),radial-gradient(circle_at_90%_10%,oklch(0.93_0.04_20),transparent_40%)]">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 md:grid-cols-[1.2fr_0.8fr] md:py-20">
-          <div className="space-y-6">
-            <p className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">
-              <Sparkles className="size-4" />
-              ماركتبليس + مخطِّط جهاز: من الخطوبة لأول شهر في البيت
-            </p>
-            <h1 className="font-heading text-4xl leading-tight font-semibold md:text-5xl">
-              مش متجر. رحلة عروسة تطلع قايمة جهاز حسب ميزانيتك والشقة.
-            </h1>
-            <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
-              تاريخ الفرح، الميزانية، التشطيب، المطبخ، الأجهزة. السيستم يشيل الموجود
-              ويوزّع الضروري والمهم والرفاهيات — اقتصادي أو متوسط أو فاخر — ويربط كل بند
-              بمصدر شراء في مصر.
-            </p>
-            <SearchBar />
-            <div className="flex flex-wrap gap-2">
-              <Button nativeButton={false} render={<Link href="/plan" />}>
-                رحلة العروسة
-              </Button>
-              <Button nativeButton={false} render={<Link href="/needs" />}>
-                كل الاحتياجات
-              </Button>
-              <Button variant="outline" nativeButton={false} render={<Link href="/map" />}>
-                خريطة الشراء
-              </Button>
-              <Button variant="outline" nativeButton={false} render={<Link href="/places" />}>
-                لو هتنزلي
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2 text-sm">
-              {["قاعة أفراح", "ثلاجة", "عصارة ثوم", "بوكس أول شهر"].map((s) => (
-                <Link
-                  key={s}
-                  href={`/search?q=${encodeURIComponent(s)}`}
-                  className="rounded-full bg-background px-3 py-1 ring-1 ring-foreground/10 hover:bg-muted"
-                >
-                  {s}
-                </Link>
-              ))}
-            </div>
-          </div>
-          <Card className="bg-background/80 py-5 shadow-lg backdrop-blur">
-            <CardContent className="space-y-4">
-              <p className="text-sm font-medium">تغطية الدليل</p>
-              <ul className="grid grid-cols-2 gap-3 text-sm">
-                <li>
-                  <strong className="block text-2xl text-primary">
-                    {stores.length}
-                  </strong>
-                  مصدر شراء في الشبكة
-                </li>
-                <li>
-                  <strong className="block text-2xl text-primary">
-                    {fiveArcs.length}
-                  </strong>
-                  مراحل رحلة العروسة
-                </li>
-                <li>
-                  <strong className="block text-2xl text-primary">
-                    {needItemCount}
-                  </strong>
-                  بند احتياج
-                </li>
-                <li>
-                  <strong className="block text-2xl text-primary">
-                    {brideSections.length}
-                  </strong>
-                  باب في الدليل
-                </li>
-              </ul>
-              <p className="text-xs leading-relaxed text-muted-foreground">
-                البيانات تجريبية للتفاعل. الشبكة فيها ماركتبليس وسلاسل وهايبر وعلامات،
-                والربط الحي بيمشي أفلييت ثم فيد رسمي — من غير سكرابينج كعمود فقري.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+      <HomeHero stages={journeyStages.length} sections={brideSections.length} />
 
-      <section className="mx-auto max-w-6xl px-4 py-12">
+      <section className="mx-auto max-w-6xl px-4 py-14">
         <div className="mb-6 flex items-end justify-between">
           <div>
             <h2 className="font-heading text-2xl font-semibold">خمس مراحل، مش تبويبات متجر</h2>
@@ -201,6 +122,34 @@ export default function HomePage() {
               </Link>
             );
           })}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4">
+        <div className="overflow-hidden rounded-3xl bg-primary px-6 py-10 text-primary-foreground md:px-10">
+          <p className="text-sm text-primary-foreground/80">جاهزة تبدئي؟</p>
+          <h2 className="mt-2 font-heading text-3xl font-semibold">سجّلي الفرح والشقة — الخطة بتتبني لوحدها</h2>
+          <p className="mt-3 max-w-2xl text-sm text-primary-foreground/85">
+            التسجيل فيه الاسم، العريس، المحافظة، الميزانية، التشطيب، المطبخ، الأجهزة.
+            بعدين تفتحي الخطة بنفس الأرقام من غير ما تملي تاني.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-2">
+            <Button
+              variant="secondary"
+              nativeButton={false}
+              render={<Link href="/register" />}
+            >
+              إنشاء حساب
+            </Button>
+            <Button
+              variant="ghost"
+              className="text-primary-foreground hover:bg-primary-foreground/10"
+              nativeButton={false}
+              render={<Link href="/login" />}
+            >
+              دخول
+            </Button>
+          </div>
         </div>
       </section>
 

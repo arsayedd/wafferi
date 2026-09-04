@@ -7,6 +7,8 @@ import { Menu, Search, ShoppingBag, Bell, GitCompare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useWaffari } from "@/hooks/use-waffari";
 import { useLive } from "@/hooks/use-live";
+import { useSession } from "@/hooks/use-session";
+import { displayName } from "@/lib/session";
 import { SearchBar } from "@/components/search-bar";
 
 const links = [
@@ -94,6 +96,7 @@ export function SiteHeader() {
             <ShoppingBag />
             {listLabel}
           </Button>
+          <AuthButtons />
           <Button
             variant="ghost"
             size="icon"
@@ -153,12 +156,55 @@ export function SiteHeader() {
                 >
                   {listLabel}
                 </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-lg px-2 py-2 text-sm hover:bg-muted"
+                >
+                  تسجيل
+                </Link>
+                <Link
+                  href="/login"
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-lg px-2 py-2 text-sm hover:bg-muted"
+                >
+                  دخول
+                </Link>
+                <Link
+                  href="/account"
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-lg px-2 py-2 text-sm hover:bg-muted"
+                >
+                  حسابي
+                </Link>
               </aside>
             </div>
           ) : null}
         </div>
       </div>
     </header>
+  );
+}
+
+export function AuthButtons() {
+  const { user, ready } = useSession();
+  if (!ready) return null;
+  if (user) {
+    return (
+      <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/account" />}>
+        {displayName(user).split(" ")[0]}
+      </Button>
+    );
+  }
+  return (
+    <div className="hidden items-center gap-1 sm:flex">
+      <Button variant="ghost" size="sm" nativeButton={false} render={<Link href="/login" />}>
+        دخول
+      </Button>
+      <Button size="sm" nativeButton={false} render={<Link href="/register" />}>
+        سجّلي
+      </Button>
+    </div>
   );
 }
 
@@ -195,7 +241,13 @@ export function SiteFooter() {
               <Link href="/deals">أوفر سعر اليوم</Link>
             </li>
             <li>
-              <Link href="/list">قايمة الجهاز</Link>
+              <Link href="/register">تسجيل عروسة</Link>
+            </li>
+            <li>
+              <Link href="/login">دخول</Link>
+            </li>
+            <li>
+              <Link href="/account">حسابي</Link>
             </li>
             <li>
               <Link href="/ingest">فيد وأفلييت</Link>
