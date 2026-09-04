@@ -51,6 +51,10 @@ export const categories: Category[] = [
   { id: "travel", name: "سفر وشهر العسل", description: "شنط، منظمات سفر، باسبور هولدر", room: "general", vertical: "travel" },
   { id: "emergency", name: "طوارئ وإسعاف", description: "بوكس إسعافات وعدة صغيرة", room: "general", vertical: "emergency" },
   { id: "baby", name: "مستقبل الأطفال", description: "ملايات وفوط ومنظمات ممكن تتجاب بدري", room: "general", vertical: "baby" },
+  { id: "phones", name: "موبايلات", description: "أندرويد وآيفون حسب المساحة والشبكة", room: "general", vertical: "mobile" },
+  { id: "laptops", name: "لابتوبات", description: "دراسة، شغل، جيمنج حسب الرامة والشاشة", room: "general", vertical: "computing" },
+  { id: "tablets", name: "تابلت", description: "شاشات لمس ودراسة", room: "general", vertical: "mobile" },
+  { id: "gaming", name: "جيمنج", description: "بلايستيشن، إكس بوكس، إكسسوار لعب", room: "general", vertical: "gaming" },
 ];
 
 export const brands: Brand[] = [
@@ -71,6 +75,14 @@ export const brands: Brand[] = [
   { id: "ikea", name: "ايكيا", origin: "السويد" },
   { id: "philips", name: "فيليبس", origin: "هولندا" },
   { id: "xiaomi", name: "Xiaomi", origin: "الصين" },
+  { id: "apple", name: "Apple", origin: "أمريكا" },
+  { id: "oppo", name: "OPPO", origin: "الصين" },
+  { id: "realme", name: "realme", origin: "الصين" },
+  { id: "infinix", name: "Infinix", origin: "الصين" },
+  { id: "hp", name: "HP", origin: "أمريكا" },
+  { id: "dell", name: "Dell", origin: "أمريكا" },
+  { id: "lenovo", name: "Lenovo", origin: "الصين" },
+  { id: "asus", name: "ASUS", origin: "تايوان" },
   { id: "remington", name: "ريمنجتون", origin: "أمريكا" },
   { id: "tornado", name: "تورنيدو", origin: "مصر" },
   { id: "defacto", name: "ديفاكتو", origin: "تركيا" },

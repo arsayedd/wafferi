@@ -7,7 +7,7 @@ import type {
   VerticalId,
 } from "./types";
 import { mapStores } from "./map-stores";
-import { egyptChains } from "./egypt-chains";
+import { egyptWebstores } from "./egypt-webstores";
 
 const ALL_APPLIANCES: VerticalId[] = [
   "laundry",
@@ -19,6 +19,9 @@ const ALL_APPLIANCES: VerticalId[] = [
   "av",
   "small_kitchen",
   "personal_care",
+  "mobile",
+  "computing",
+  "gaming",
 ];
 
 const LIFE: VerticalId[] = [
@@ -41,6 +44,9 @@ const LIFE: VerticalId[] = [
   "travel",
   "emergency",
   "baby",
+  "mobile",
+  "computing",
+  "gaming",
 ];
 
 const FASHION: VerticalId[] = [
@@ -505,7 +511,7 @@ export const stores: Store[] = [
     commissionNote: "توجيه",
     skuEstimate: 0,
   }),
-  ...egyptChains,
+  ...egyptWebstores,
   ...mapStores,
 ];
 
@@ -568,6 +574,9 @@ export const verticalLabels: Record<VerticalId, string> = {
   travel: "سفر",
   emergency: "طوارئ",
   baby: "أطفال مستقبلًا",
+  mobile: "موبايلات وتابلت",
+  computing: "لابتوب وكمبيوتر",
+  gaming: "جيمنج",
 };
 
 export function catalogStores() {

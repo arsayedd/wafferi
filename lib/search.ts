@@ -21,6 +21,8 @@ export type SearchFilters = {
   minReviews?: number;
   minDiscount?: number;
   capacity?: string;
+  kind?: string;
+  color?: string;
   delivery?: "same_day" | "next_day" | "free";
   sort?: SortKey;
 };
@@ -109,6 +111,8 @@ function applyFilters(p: Product, filters: SearchFilters, withText: boolean) {
   if (filters.minRating != null && avgRating(p) < filters.minRating) return false;
   if (filters.minReviews != null && totalReviews(p) < filters.minReviews) return false;
   if (filters.minDiscount != null && offerDiscountPct(p) < filters.minDiscount) return false;
+  if (filters.kind && !foldArabic(haystack(p)).includes(foldArabic(filters.kind))) return false;
+  if (filters.color && !foldArabic(`${p.name} ${p.capacity ?? ""}`).includes(foldArabic(filters.color))) return false;
   if (!capacityHit(p, filters.capacity)) return false;
   if (!deliveryHit(p, filters.delivery)) return false;
   return true;
@@ -188,6 +192,8 @@ export function searchProductsPage(
             brand: filters.brand,
             q: filters.q,
             capacity: filters.capacity,
+            kind: filters.kind,
+            color: filters.color,
           },
           0,
           0,
@@ -209,6 +215,8 @@ export function searchProductsPage(
         brand: filters.brand,
         q: filters.q,
         capacity: filters.capacity,
+        kind: filters.kind,
+        color: filters.color,
       },
       vOff,
       pageSize - items.length,

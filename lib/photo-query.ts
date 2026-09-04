@@ -36,6 +36,10 @@ const CATEGORY_EN: Record<CategoryId, string> = {
   travel: "suitcase luggage",
   emergency: "first aid kit",
   baby: "baby bedding",
+  phones: "smartphone mobile phone",
+  laptops: "laptop notebook computer",
+  tablets: "android tablet",
+  gaming: "game console controller",
 };
 
 const BRAND_EN: Record<string, string> = {

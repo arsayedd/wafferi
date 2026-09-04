@@ -33,7 +33,11 @@ export type CategoryId =
   | "storage"
   | "travel"
   | "emergency"
-  | "baby";
+  | "baby"
+  | "phones"
+  | "laptops"
+  | "tablets"
+  | "gaming";
 
 export type VerticalId =
   | "laundry"
@@ -62,7 +66,10 @@ export type VerticalId =
   | "storage"
   | "travel"
   | "emergency"
-  | "baby";
+  | "baby"
+  | "mobile"
+  | "computing"
+  | "gaming";
 
 export type StoreKind =
   | "marketplace"

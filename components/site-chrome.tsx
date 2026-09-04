@@ -66,7 +66,7 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="ms-auto hidden flex-1 justify-end lg:flex">
-          <div className="w-full max-w-md">
+          <div className="w-full max-w-xl">
             <SearchBar compact />
           </div>
         </div>

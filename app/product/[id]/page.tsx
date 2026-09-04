@@ -21,6 +21,7 @@ import { useWaffari } from "@/hooks/use-waffari";
 import { useLive } from "@/hooks/use-live";
 import { useCatalog } from "@/hooks/use-catalog";
 import { ProductCard } from "@/components/product-card";
+import { similarVirtual, youtubeReviewUrl, gsmarenaSearchUrl, mobizilSearchUrl } from "@/lib/product-research";
 
 export default function ProductPage({
   params,
@@ -51,9 +52,10 @@ export default function ProductPage({
   const history = quoteHistory(product.id, cheap.storeId);
   const cat = getCategory(product.category);
   const inList = items.some((i) => i.productId === product.id);
-  const related = products
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 3);
+  const related = [
+    ...products.filter((p) => p.category === product.category && p.id !== product.id),
+    ...similarVirtual(product, 6),
+  ].filter((p, i, arr) => arr.findIndex((x) => x.id === p.id) === i).slice(0, 6);
 
   return (
     <div className="mx-auto max-w-6xl space-y-10 px-4 py-8">
@@ -219,6 +221,28 @@ export default function ProductPage({
               <p className="text-sm text-muted-foreground">لسه مفيش مقتطفات تقييم للمنتج ده.</p>
             )}
           </div>
+        </div>
+      </section>
+
+      <section className="rounded-2xl bg-card p-5 ring-1 ring-foreground/10">
+        <h2 className="font-heading text-xl font-semibold">مراجعات ومقارنة من برّه</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          مش بنسحب يوتيوب ولا موبيزيل. دي روابط بحث جاهزة على الاسم — زي ما بتعملي على مواقع الموبايلات.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button nativeButton={false} render={<a href={youtubeReviewUrl(product)} target="_blank" rel="noreferrer" />}>
+            فيديوهات مراجعة على يوتيوب
+          </Button>
+          {(product.category === "phones" || product.category === "tablets") && (
+            <>
+              <Button variant="secondary" nativeButton={false} render={<a href={gsmarenaSearchUrl(product)} target="_blank" rel="noreferrer" />}>
+                مواصفات GSMArena
+              </Button>
+              <Button variant="outline" nativeButton={false} render={<a href={mobizilSearchUrl(product)} target="_blank" rel="noreferrer" />}>
+                بحث موبيزيل
+              </Button>
+            </>
+          )}
         </div>
       </section>
 

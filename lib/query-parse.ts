@@ -17,6 +17,10 @@ const CATEGORY_ALIASES: { id: CategoryId; words: string[] }[] = [
   { id: "heaters", words: ["سخان", "سخانات", "heater"] },
   { id: "water", words: ["فلتر مياه", "مبرد مياه", "فلاتر", "filter"] },
   { id: "small-appliances", words: ["خلاط", "قلايه", "قلاية", "ميكروويف", "ميكرويف", "كتل", "blender", "air fryer", "microwave"] },
+  { id: "phones", words: ["موبايل", "موبيل", "تليفون", "هاتف", "ايفون", "آيفون", "اندرويد", "phone", "smartphone"] },
+  { id: "laptops", words: ["لابتوب", "لاب", "لابتوبات", "كمبيوتر محمول", "notebook", "laptop"] },
+  { id: "tablets", words: ["تابلت", "ايباد", "آيباد", "tablet"] },
+  { id: "gaming", words: ["بلايستيشن", "بلاي ستيشن", "اكس بوكس", "جيمنج", "playstation", "xbox"] },
   { id: "personal-care", words: ["سشوار", "مكواة شعر"] },
   { id: "textiles", words: ["مفروشات", "لحاف", "فوط", "مناشف", "ملايه", "ملاية", "towel", "duvet"] },
   { id: "bedroom", words: ["غرفة نوم", "غرفه نوم", "سرير", "دولاب", "تسريحه"] },
@@ -312,4 +316,7 @@ export const POPULAR_SEARCHES = [
   "شاشة 55",
   "قلاية هوائية",
   "طقم حلل",
+  "موبايل سامسونج",
+  "آيفون",
+  "لابتوب HP",
 ];

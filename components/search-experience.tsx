@@ -19,7 +19,7 @@ import { parseShopperQuery, POPULAR_SEARCHES } from "@/lib/query-parse";
 import { pickBestChoice, priceIntel, whyBest } from "@/lib/best-choice";
 import { matchAreas } from "@/lib/egypt-areas";
 import { formatNumber, formatPrice } from "@/lib/format";
-import { VIRTUAL_SKU_COUNT } from "@/lib/virtual-catalog";
+import { VIRTUAL_SKU_COUNT, virtualFacets } from "@/lib/virtual-catalog";
 import { useCatalog } from "@/hooks/use-catalog";
 import { useWaffari } from "@/hooks/use-waffari";
 import { toast } from "sonner";
@@ -49,6 +49,9 @@ export function SearchExperience({
   const minDiscount = params.get("discount") ? Number(params.get("discount")) : parsed.minDiscount;
   const inStock = params.get("stock") === "1" || Boolean(parsed.inStock);
   const delivery = (params.get("delivery") as "same_day" | "next_day" | "free" | "") || "";
+  const kind = params.get("kind") ?? "";
+  const color = params.get("color") ?? "";
+  const size = params.get("size") ?? parsed.capacity ?? "";
   const tab = (params.get("tab") as Tab) || "all";
   const page = Math.max(1, Number(params.get("page") || "1") || 1);
 
@@ -79,7 +82,9 @@ export function SearchExperience({
           minRating,
           minReviews,
           minDiscount,
-          capacity: parsed.capacity,
+          capacity: size || parsed.capacity,
+          kind: kind || undefined,
+          color: color || undefined,
           delivery: delivery || undefined,
         },
         allProducts,
@@ -102,6 +107,9 @@ export function SearchExperience({
       minReviews,
       minDiscount,
       delivery,
+      kind,
+      color,
+      size,
       allProducts,
       page,
     ],
@@ -117,9 +125,13 @@ export function SearchExperience({
       ),
     [],
   );
-  const uniqueBrands = [...new Set(brands.map((b) => b.name))];
-  const showWaffari = tab !== "go";
-  const showGo = tab !== "waffari" && Boolean(q.trim());
+  const uniqueBrands = useMemo(() => {
+    const { brands: vb } = virtualFacets(category || undefined);
+    return [...new Set([...brands.map((b) => b.name), ...vb])].sort((a, b) => a.localeCompare(b, "ar"));
+  }, [category]);
+  const facets = useMemo(() => virtualFacets(category || undefined), [category]);
+  const showWaffari = true;
+  const showGo = tab === "go" || (tab !== "waffari" && areas.length > 0);
   const empty = (!showWaffari || results.total === 0) && (!showGo || areas.length === 0);
 
   return (
@@ -219,6 +231,51 @@ export function SearchExperience({
               {uniqueBrands.map((b) => (
                 <option key={b} value={b}>
                   {b}
+                </option>
+              ))}
+              </select>
+            </fieldset>
+          <fieldset className="space-y-2">
+            <legend className="text-sm font-medium">النوع</legend>
+            <select
+              className="h-9 w-full rounded-lg border border-input bg-background px-2 text-sm"
+              value={kind}
+              onChange={(e) => setParam("kind", e.target.value)}
+            >
+              <option value="">كل الأنواع</option>
+              {facets.kinds.slice(0, 80).map((k) => (
+                <option key={k} value={k}>
+                  {k}
+                </option>
+              ))}
+            </select>
+          </fieldset>
+          <fieldset className="space-y-2">
+            <legend className="text-sm font-medium">اللون</legend>
+            <select
+              className="h-9 w-full rounded-lg border border-input bg-background px-2 text-sm"
+              value={color}
+              onChange={(e) => setParam("color", e.target.value)}
+            >
+              <option value="">كل الألوان</option>
+              {facets.colors.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </fieldset>
+          <fieldset className="space-y-2">
+            <legend className="text-sm font-medium">المقاس / المساحة</legend>
+            <select
+              className="h-9 w-full rounded-lg border border-input bg-background px-2 text-sm"
+              value={size}
+              onChange={(e) => setParam("size", e.target.value)}
+            >
+              <option value="">كل المقاسات</option>
+              {facets.sizes.slice(0, 60).map((s) => (
+                <option key={s} value={s}>
+                  {s}
                 </option>
               ))}
             </select>

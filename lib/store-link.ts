@@ -48,6 +48,13 @@ const TRUSTED_SEARCH: Record<string, (q: string) => string> = {
   cara: (q) => `https://www.google.com.eg/search?q=${encodeURIComponent("كارا")}%20${q}%20مصر`,
   spinneys: (q) => `https://www.spinneys-egypt.com/search?q=${q}`,
   gourmet: (q) => `https://gourmetegypt.com/catalogsearch/result/?q=${q}`,
+  orange: (q) => `https://www.google.com.eg/search?q=${encodeURIComponent("أورنج مصر")}%20${q}`,
+  "egypt-gamer": (q) => `https://www.google.com.eg/search?q=${encodeURIComponent("Egypt Gamer")}%20${q}`,
+  "egypt-laptop": (q) => `https://www.google.com.eg/search?q=${encodeURIComponent("Egypt Laptop")}%20${q}`,
+  hubfurniture: (q) => `https://www.hubfurniture.com.eg/search?q=${q}`,
+  hm: (q) => `https://www2.hm.com/en_eg/search-results.html?q=${q}`,
+  americaneagle: (q) => `https://www.google.com.eg/search?q=${encodeURIComponent("American Eagle")}%20${q}%20مصر`,
+  "future-electronics": (q) => `https://www.google.com.eg/search?q=${encodeURIComponent("Future Electronics")}%20${q}%20مصر`,
 };
 
 export function canShopOut(storeId: string) {

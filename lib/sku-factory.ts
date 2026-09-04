@@ -20,6 +20,7 @@ const NET: Record<string, AffiliateNetwork> = {
   "tawhid-nour": "direct",
   alreyada: "direct",
   elaraby: "direct",
+  btech: "arabclicks",
 };
 
 function storesFor(cat: CategoryId): [string, string, string] {
@@ -48,6 +49,8 @@ function storesFor(cat: CategoryId): [string, string, string] {
     cat === "tvs"
   )
     return ["jumia", "elaraby", "raneen"];
+  if (cat === "phones" || cat === "tablets" || cat === "laptops" || cat === "gaming")
+    return ["jumia", "noon", "btech"];
   return ["jumia", "noon", "raneen"];
 }
 

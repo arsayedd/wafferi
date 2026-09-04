@@ -50,7 +50,10 @@ const RULES: { keys: string[]; emoji: string }[] = [
   { keys: ["شنط", "شنطه", "كلتش"], emoji: "👜" },
   { keys: ["زركون", "حلق", "سلسل"], emoji: "💍" },
   { keys: ["عطر"], emoji: "🧴" },
-  { keys: ["مبرد مياه", "فلتر"], emoji: "💧" },
+  { keys: ["موبايل", "موبيل", "ايفون", "آيفون"], emoji: "📱" },
+  { keys: ["لابتوب", "لاب "], emoji: "💻" },
+  { keys: ["تابلت", "ايباد"], emoji: "📲" },
+  { keys: ["بلايستيشن", "جيمنج", "اكس بوكس"], emoji: "🎮" },
 ];
 
 const CATEGORY_EMOJI: Partial<Record<CategoryId, string>> = {
@@ -89,6 +92,10 @@ const CATEGORY_EMOJI: Partial<Record<CategoryId, string>> = {
   travel: "🧳",
   emergency: "🩹",
   baby: "🍼",
+  phones: "📱",
+  laptops: "💻",
+  tablets: "📲",
+  gaming: "🎮",
 };
 
 function hue(id: string) {
@@ -108,13 +115,62 @@ export function itemEmoji(name: string, category: CategoryId) {
 export function productGlyphSvg(input: { id: string; name: string; category: CategoryId }) {
   const emoji = itemEmoji(input.name, input.category);
   const h = hue(input.id || input.name);
-  const bg = `hsl(${h} 42% 93%)`;
-  const fg = `hsl(${h} 35% 28%)`;
-  const label = input.name.replace(/[<>&"]/g, "");
+  const bg = `hsl(${h} 38% 92%)`;
+  const body = `hsl(${h} 22% 42%)`;
+  const door = `hsl(${h} 18% 62%)`;
+  const accent = `hsl(${(h + 40) % 360} 45% 48%)`;
+  const fg = `hsl(${h} 30% 22%)`;
+  const label = input.name.replace(/[<>&"]/g, "").slice(0, 42);
+  const cat = input.category;
+  let drawing = `<text x="320" y="200" text-anchor="middle" font-size="110">${emoji}</text>`;
+  if (cat === "fridges" || cat === "freezers") {
+    drawing = `<rect x="210" y="50" rx="18" width="220" height="340" fill="${body}"/>
+      <rect x="222" y="62" rx="12" width="196" height="150" fill="${door}"/>
+      <rect x="222" y="222" rx="12" width="196" height="152" fill="${door}"/>
+      <rect x="390" y="110" width="12" height="54" rx="4" fill="${accent}"/>
+      <rect x="390" y="270" width="12" height="54" rx="4" fill="${accent}"/>`;
+  } else if (cat === "washers" || cat === "dishwashers") {
+    drawing = `<rect x="180" y="70" rx="24" width="280" height="320" fill="${body}"/>
+      <circle cx="320" cy="250" r="88" fill="${bg}" stroke="${door}" stroke-width="18"/>
+      <circle cx="320" cy="250" r="42" fill="${accent}" opacity="0.35"/>
+      <rect x="210" y="95" width="200" height="28" rx="8" fill="${door}"/>`;
+  } else if (cat === "acs") {
+    drawing = `<rect x="140" y="140" rx="20" width="360" height="160" fill="${body}"/>
+      <rect x="160" y="165" width="320" height="18" rx="6" fill="${door}"/>
+      <rect x="160" y="200" width="320" height="18" rx="6" fill="${door}"/>
+      <rect x="160" y="235" width="220" height="18" rx="6" fill="${door}"/>`;
+  } else if (cat === "tvs") {
+    drawing = `<rect x="90" y="80" rx="16" width="460" height="280" fill="${body}"/>
+      <rect x="110" y="98" width="420" height="230" fill="#111"/>
+      <rect x="280" y="360" width="80" height="18" fill="${door}"/>
+      <rect x="240" y="378" width="160" height="12" rx="4" fill="${accent}"/>`;
+  } else if (cat === "phones" || cat === "tablets") {
+    const w = cat === "tablets" ? 200 : 140;
+    const x = 320 - w / 2;
+    drawing = `<rect x="${x}" y="50" rx="28" width="${w}" height="340" fill="${body}"/>
+      <rect x="${x + 10}" y="72" width="${w - 20}" height="280" rx="12" fill="#111"/>
+      <circle cx="320" cy="372" r="10" fill="${accent}"/>`;
+  } else if (cat === "laptops") {
+    drawing = `<rect x="120" y="70" rx="10" width="400" height="230" fill="${body}"/>
+      <rect x="140" y="88" width="360" height="190" fill="#111"/>
+      <rect x="90" y="300" rx="8" width="460" height="70" fill="${door}"/>
+      <rect x="200" y="318" width="240" height="10" rx="4" fill="${accent}"/>`;
+  } else if (cat === "stoves") {
+    drawing = `<rect x="140" y="80" rx="12" width="360" height="300" fill="${body}"/>
+      <circle cx="230" cy="160" r="36" fill="${bg}" stroke="${accent}" stroke-width="8"/>
+      <circle cx="410" cy="160" r="36" fill="${bg}" stroke="${accent}" stroke-width="8"/>
+      <circle cx="230" cy="250" r="36" fill="${bg}" stroke="${accent}" stroke-width="8"/>
+      <circle cx="410" cy="250" r="36" fill="${bg}" stroke="${accent}" stroke-width="8"/>`;
+  } else if (cat === "gaming") {
+    drawing = `<rect x="160" y="150" rx="40" width="320" height="160" fill="${body}"/>
+      <circle cx="230" cy="230" r="28" fill="${accent}"/>
+      <circle cx="410" cy="230" r="28" fill="${door}"/>`;
+  }
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="${label}">
   <rect width="640" height="480" fill="${bg}"/>
-  <text x="320" y="210" text-anchor="middle" font-size="120">${emoji}</text>
-  <text x="320" y="340" text-anchor="middle" font-size="28" fill="${fg}" font-family="Tahoma, Arial, sans-serif">${label}</text>
+  ${drawing}
+  <text x="320" y="455" text-anchor="middle" font-size="18" fill="${fg}" font-family="Tahoma, Arial, sans-serif">${label}</text>
 </svg>`;
 }

@@ -32,6 +32,10 @@ import {
   Archive,
   Plane,
   HeartPulse,
+  Smartphone,
+  Laptop,
+  Tablet,
+  Gamepad2,
   type LucideIcon,
 } from "lucide-react";
 import type { CategoryId } from "@/lib/types";
@@ -72,6 +76,10 @@ const icons: Record<CategoryId, LucideIcon> = {
   travel: Plane,
   emergency: HeartPulse,
   baby: Baby,
+  phones: Smartphone,
+  laptops: Laptop,
+  tablets: Tablet,
+  gaming: Gamepad2,
 };
 
 const tints: Record<CategoryId, string> = {
@@ -110,6 +118,10 @@ const tints: Record<CategoryId, string> = {
   travel: "from-indigo-50 to-white text-indigo-800",
   emergency: "from-red-50 to-white text-red-800",
   baby: "from-orange-50 to-white text-orange-800",
+  phones: "from-slate-100 to-white text-slate-800",
+  laptops: "from-zinc-100 to-white text-zinc-800",
+  tablets: "from-sky-50 to-white text-sky-800",
+  gaming: "from-violet-100 to-white text-violet-900",
 };
 
 export function ProductArt({

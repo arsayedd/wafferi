@@ -3,7 +3,16 @@ import { listingHref } from "./store-link";
 import { makeSku } from "./sku-factory";
 import { foldArabic, similarArabic } from "./ar-fold";
 
-export const VIRTUAL_STORES = ["jumia", "noon", "raneen", "elaraby", "tawhid-nour", "alreyada"] as const;
+export const VIRTUAL_STORES = [
+  "jumia",
+  "noon",
+  "raneen",
+  "elaraby",
+  "tawhid-nour",
+  "alreyada",
+  "amazon",
+  "btech",
+] as const;
 
 const APPLIANCE_BRANDS = [
   "توشيبا",
@@ -110,6 +119,64 @@ const HOME_BRANDS = [
   "مفروشات مصر",
   "نيست هوم",
 ];
+
+const TECH_BRANDS = [
+  "Samsung",
+  "Apple",
+  "Xiaomi",
+  "OPPO",
+  "realme",
+  "Infinix",
+  "Tecno",
+  "Huawei",
+  "Honor",
+  "Nokia",
+  "Vivo",
+  "Motorola",
+  "OnePlus",
+  "Google",
+  "Nothing",
+  "Sony",
+  "ASUS",
+  "Lenovo",
+  "TCL",
+  "Itel",
+  "Poco",
+  "Redmi",
+  "iQOO",
+  "ZTE",
+  "HTC",
+  "Blackview",
+  "Oukitel",
+  "Fairphone",
+  "CAT",
+  "Nubia",
+];
+
+const LAPTOP_BRANDS = [
+  "HP",
+  "Dell",
+  "Lenovo",
+  "ASUS",
+  "Acer",
+  "MSI",
+  "Apple",
+  "Samsung",
+  "Huawei",
+  "LG",
+  "Toshiba",
+  "Microsoft",
+  "Razer",
+  "Gigabyte",
+  "Chuwi",
+  "Honor",
+  "Xiaomi",
+  "Fujitsu",
+  "Alienware",
+  "Vaio",
+];
+
+const TECH_COLORS = ["أسود", "أبيض", "أزرق", "أخضر", "ذهبي", "فضي", "بنفسجي", "وردي", "رمادي", "تيتانيوم"];
 
 const BEAUTY_BRANDS = [
   "لطافة",
@@ -591,6 +658,101 @@ const families: Family[] = [
     75,
     (b, size, kind, color, grade) => `${kind} ${b} ${color} ${grade}`,
   ),
+  F(
+    "ph",
+    "phones",
+    TECH_BRANDS,
+    ["64 جيجا", "128 جيجا", "256 جيجا", "512 جيجا", "1 تيرا", "32 جيجا", "8+256", "12+512", "16+1T", "4+128", "6+128", "8+128"],
+    [
+      "فئة A",
+      "فئة S",
+      "نوت",
+      "رينو",
+      "ريدمي",
+      "بوكو",
+      "سبارك",
+      "هوت",
+      "كامون",
+      "نورد",
+      "فلاجشيب",
+      "قابل للطي",
+      "جيمنج",
+      "كاميرا برو",
+      "ميني",
+      "بلس",
+      "أولترا",
+      "سي",
+      "واي",
+      "نوفا",
+      "إيج",
+      "جي تي",
+      "بكسيل كلاس",
+      "اقتصادي",
+      "فئة وسط",
+      "5G ماكس",
+      "دوال شريحة",
+      "مقاوم ماء",
+      "شحن سريع",
+      "بطارية كبيرة",
+    ],
+    TECH_COLORS,
+    ["4G", "5G", "8 رام", "12 رام", "16 رام", "دوال SIM"],
+    ["موبايل", "موبيل", "تليفون", "ايفون", "آيفون", "اندرويد", "هاتف"],
+    4200,
+    (b, size, kind, color, grade) => `موبايل ${b} ${kind} ${size} ${color} ${grade}`,
+  ),
+  F(
+    "lp",
+    "laptops",
+    LAPTOP_BRANDS,
+    ["8 رام", "16 رام", "32 رام", "64 رام", "i5", "i7", "Ryzen 5", "Ryzen 7", "M3", "M4"],
+    [
+      "أولترا بوك",
+      "جيمنج",
+      "محطة عمل",
+      "2 في 1",
+      "دراسة",
+      "مكتب",
+      "خفيفة",
+      "15 بوصة",
+      "14 بوصة",
+      "16 بوصة",
+      "OLED",
+      "RTX",
+      "طلاب",
+      "هندسة",
+      "مونتاج",
+    ],
+    TECH_COLORS,
+    ["256 SSD", "512 SSD", "1 تيرا SSD", "HDD+SSD"],
+    ["لابتوب", "لاب", "كمبيوتر محمول", "نوت بوك"],
+    14500,
+    (b, size, kind, color, grade) => `لابتوب ${b} ${kind} ${size} ${color} ${grade}`,
+  ),
+  F(
+    "tb",
+    "tablets",
+    TECH_BRANDS,
+    ["64 جيجا", "128 جيجا", "256 جيجا", "512 جيجا", "واي فاي", "LTE"],
+    ["10 بوصة", "11 بوصة", "12.9 بوصة", "دراسة", "رسم", "أندرويد", "آيباد كلاس", "أطفال"],
+    TECH_COLORS,
+    ["واي فاي", "شريحة", "قلم", "كيبورد"],
+    ["تابلت", "ايباد", "آيباد"],
+    6800,
+    (b, size, kind, color, grade) => `تابلت ${b} ${kind} ${size} ${color} ${grade}`,
+  ),
+  F(
+    "gm",
+    "gaming",
+    ["Sony", "Microsoft", "Nintendo", "Logitech", "Razer", "SteelSeries", "Meta", "Valve", "ASUS", "Samsung"],
+    ["ديجيتال", "قرص", "حزمة", "جهاز فقط"],
+    ["بلايستيشن 5", "إكس بوكس سيريز", "نينتندو سويتش", "يد تحكم", "سماعة جيمنج", "كرسي", "شاشة 144هرتز", "VR"],
+    ["أسود", "أبيض", "أحمر"],
+    ["عادي", "برو", "إصدار محدود"],
+    ["بلايستيشن", "جيمنج", "اكس بوكس", "سويتش"],
+    8900,
+    (b, size, kind, color, grade) => `${kind} ${b} ${size} ${color} ${grade}`,
+  ),
 ];
 
 const offsets: number[] = [];
@@ -650,6 +812,14 @@ export function hydrateVirtual(id: string): Product | undefined {
   const product = makeSku(id, name, brand, decoded.family.category, price, `${size} · ${kind}`);
   product.model = `${decoded.family.key}-${decoded.local}`;
   product.capacity = size;
+  product.specs = [
+    { label: "الماركة", value: brand },
+    { label: "الفئة", value: kind },
+    { label: "المقاس / المساحة", value: size },
+    { label: "اللون", value: color },
+    { label: "الدرجة", value: grade },
+    { label: "الاستخدام", value: decoded.family.category === "phones" ? "موبايل سوق مصر" : "جهاز وبيت" },
+  ];
   product.highlights = [
     `${size} · ${kind} · ${color} · ${grade}`,
     "تركيبة مرجعية لسوق مصر — مش سحب لحظي من رف التاجر",
@@ -681,6 +851,8 @@ type QueryBits = {
   brand?: string;
   q?: string;
   capacity?: string;
+  kind?: string;
+  color?: string;
 };
 
 function pickIndexes(list: string[], want?: string) {
@@ -724,6 +896,14 @@ function assignDims(f: Family, filters: QueryBits) {
   let colorIdx = allIdx(f.colors.length);
   let gradeIdx = allIdx(f.grades.length);
 
+  if (filters.kind) {
+    const hits = pickIndexes(f.kinds, filters.kind);
+    if (hits.length) kindIdx = hits;
+  }
+  if (filters.color) {
+    const hits = pickIndexes(f.colors, filters.color);
+    if (hits.length) colorIdx = hits;
+  }
   if (!brandIdx.length) brandIdx = allIdx(f.brands.length);
   if (!sizeIdx.length) sizeIdx = allIdx(f.sizes.length);
 
@@ -796,4 +976,15 @@ export function virtualSearch(filters: QueryBits, offset: number, limit: number)
 
 export function virtualTotalForCategory(category?: string) {
   return families.filter((f) => !category || f.category === category).reduce((n, f) => n + familySize(f), 0);
+}
+
+export function virtualFacets(category?: string) {
+  const fams = families.filter((f) => !category || f.category === category);
+  const uniq = (xs: string[]) => [...new Set(xs)];
+  return {
+    brands: uniq(fams.flatMap((f) => f.brands)).sort((a, b) => a.localeCompare(b, "ar")),
+    kinds: uniq(fams.flatMap((f) => f.kinds)),
+    colors: uniq(fams.flatMap((f) => f.colors)),
+    sizes: uniq(fams.flatMap((f) => f.sizes)),
+  };
 }
