@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ExternalLink, BadgeCheck, Ticket } from "lucide-react";
+import { BadgeCheck, Ticket } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,8 +9,7 @@ import { SourceCopyright } from "@/components/source-copyright";
 import { getStore } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { StoreLogo } from "@/components/store-logo";
-import { listingHref } from "@/lib/store-link";
-import { isDeadShopUrl } from "@/lib/dead-hosts";
+import { ShopOutButton } from "@/components/shop-out-button";
 import type { Listing } from "@/lib/types";
 import type { LiveListing } from "@/lib/live-quotes";
 import { usePartners } from "@/hooks/use-partners";
@@ -26,7 +25,7 @@ export function PriceTable({
   listings: Listing[];
   productName: string;
 }) {
-  const { outbound, ruleFor } = usePartners();
+  const { ruleFor } = usePartners();
   const [sort, setSort] = useState<"price" | "rating" | "reviews" | "discount">("price");
   const egypt = [...listings].filter((l) => {
     const st = getStore(l.storeId);
@@ -76,7 +75,6 @@ export function PriceTable({
             const cheapest = l.price === min;
             const rule = ruleFor(l.storeId);
             const coupon = l.coupon || rule?.coupon || "";
-            const href = listingHref(l.storeId, productName, l.url);
             return (
               <tr key={`${l.storeId}-${l.sku}-${i}`} className={cheapest ? "bg-emerald-50/80" : "border-t"}>
                 <td className="px-3 py-3">
@@ -132,29 +130,13 @@ export function PriceTable({
                   )}
                 </td>
                 <td className="px-3 py-3 text-end">
-                  <Button
-                    size="sm"
-                    variant={cheapest ? "default" : "outline"}
-                    disabled={!l.inStock}
-                    onClick={() => {
-                      let dest = outbound(href, l.storeId, l.coupon, productName);
-                      if (isDeadShopUrl(dest)) dest = listingHref(l.storeId, productName);
-                      toast.message(`هتحوّلي على ${store?.name ?? "المصدر"}`, {
-                        description:
-                          l.storeId === "carrefour"
-                            ? "موقع كارفور أونلاين فيه عطل DNS وصفحات /p/ عندنا وهمية. بنفتح بحث جوجل باسم المنتج + كارفور مصر."
-                            : l.storeId === "tradeline"
-                              ? "tradeline.com.eg مش موجود في الـ DNS. بنفتح بحث المنتج على tradelinestores.com."
-                            : coupon
-                              ? `الكوبون ${coupon} هيتركب على الرابط. بنفتح بحث المنتج مش صفحة وهمية.`
-                              : "بنفتح بحث الاسم على مصدر موثوق — مش صفحة منتج ملفّقة.",
-                      });
-                      window.open(dest, "_blank", "noopener");
-                    }}
-                  >
-                    اشتري من {store?.name ?? "المصدر"}
-                    <ExternalLink />
-                  </Button>
+                  <ShopOutButton
+                    storeId={l.storeId}
+                    productName={productName}
+                    coupon={l.coupon}
+                    inStock={l.inStock}
+                    cheapest={cheapest}
+                  />
                 </td>
               </tr>
             );

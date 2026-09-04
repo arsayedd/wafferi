@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Star, TrendingDown, ExternalLink } from "lucide-react";
+import { Star, TrendingDown } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,14 +9,13 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { ProductPhoto } from "@/components/product-photo";
 import { StoreLogo } from "@/components/store-logo";
 import { SellerStrip } from "@/components/seller-strip";
+import { ShopOutButton } from "@/components/shop-out-button";
 import { getStore } from "@/lib/catalog";
 import { formatNumber, formatPrice } from "@/lib/format";
 import { productStats } from "@/lib/stats";
 import type { Product } from "@/lib/types";
 import { useWaffari } from "@/hooks/use-waffari";
 import { useLive } from "@/hooks/use-live";
-import { usePartners } from "@/hooks/use-partners";
-import { listingHref } from "@/lib/store-link";
 
 export function ProductCard({ product: raw }: { product: Product }) {
   const { liveProduct } = useLive();
@@ -24,7 +23,6 @@ export function ProductCard({ product: raw }: { product: Product }) {
   const { cheap, save, rating, stores } = productStats(product);
   const store = getStore(cheap.storeId);
   const { addItem, items, toggleCompare, compare } = useWaffari();
-  const { outbound } = usePartners();
   const inList = items.some((i) => i.productId === product.id);
   const inCompare = compare.includes(product.id);
 
@@ -82,28 +80,12 @@ export function ProductCard({ product: raw }: { product: Product }) {
         >
           قارني
         </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          title={`افتحي ${store?.name}`}
-          onClick={() => {
-            let href = outbound(
-              listingHref(cheap.storeId, product.name),
-              cheap.storeId,
-              cheap.coupon,
-              product.name,
-            );
-            if (href.includes("tradeline.com.eg") || href.includes("carrefouregypt.com")) {
-              href = listingHref(cheap.storeId, product.name);
-            }
-            toast.message(`المصدر: ${store?.name}`, {
-              description: "بحث الاسم على موقعهم — مش صفحة منتج ملفّقة.",
-            });
-            window.open(href, "_blank", "noopener");
-          }}
-        >
-          <ExternalLink />
-        </Button>
+        <ShopOutButton
+          storeId={cheap.storeId}
+          productName={product.name}
+          coupon={cheap.coupon}
+          compact
+        />
       </CardFooter>
     </Card>
   );
