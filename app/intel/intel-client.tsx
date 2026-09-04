@@ -14,6 +14,7 @@ import { marketInsights } from "@/lib/intel/insights";
 import { learnedInterval } from "@/lib/intel/scheduler";
 import { discountPct, tierLabels, type WatchTier } from "@/lib/intel/types";
 import { Sparkline } from "@/components/sparkline";
+import { catalogSpreadEvents } from "@/lib/intel/catalog-seed";
 import { useIntel } from "@/hooks/use-intel";
 
 export function IntelClient() {
@@ -54,6 +55,11 @@ export function IntelClient() {
     () => clusterSnapshots(snapshots).filter((c) => c.members.length > 1),
     [snapshots],
   );
+  const alertFeed = useMemo(() => {
+    const spread = catalogSpreadEvents(watches);
+    const seen = new Set(events.map((e) => e.id));
+    return [...events, ...spread.filter((s) => !seen.has(s.id))];
+  }, [events, watches]);
 
   async function add() {
     if (!url.trim()) {
@@ -352,14 +358,16 @@ export function IntelClient() {
       ) : null}
 
       <section className="space-y-2">
-        <h2 className="font-heading text-xl font-semibold">التنبيهات (تغيير عن آخر قراءة)</h2>
-        {events.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            لسه مفيش دلتا. العروض الحالية مرجعية من الكتالوج. حدّثي فيد مصدر مرتين عشان يظهر التغيير.
-          </p>
+        <h2 className="font-heading text-xl font-semibold">فجوات الأسعار والتنبيهات</h2>
+        <p className="text-sm text-muted-foreground">
+          اللي ظاهر دلوقتي فرق السعر بين البائعين في الكتالوج المرجعي. دلتا الزمن (نزول/ارتفاع بعد
+          قراءتين) تظهر بعد فيد حي يتقري مرتين.
+        </p>
+        {alertFeed.length === 0 ? (
+          <p className="text-sm text-muted-foreground">مفيش فجوة متسجّلة. حمّلي عيّنة الكتالوج.</p>
         ) : (
           <ul className="space-y-2 text-sm">
-            {events.slice(0, 20).map((e) => (
+            {alertFeed.slice(0, 20).map((e) => (
               <li key={e.id} className="rounded-lg bg-muted/50 px-3 py-2">
                 {e.message ?? `${e.kind}: ${e.from} ← ${e.to}`}
                 <span className="ms-2 text-xs text-muted-foreground">
@@ -371,32 +379,25 @@ export function IntelClient() {
         )}
       </section>
 
-      <section className="text-sm leading-relaxed text-muted-foreground">
-        <h2 className="text-lg font-medium text-foreground">إيه اللي اتاخد من الـ GitHub وإيه اللي لأ</h2>
-        <ul className="mt-2 list-disc space-y-1 pr-5">
-          <li>
-            ChangeDetection.io: طبقات جدولة، مراقبة جزء من الصفحة عبر الوصفات، تنبيه عند التغيير — من غير
-            محركهم.
-          </li>
-          <li>Crawlee: طوابير/إعادة محاولة كمفهوم. مش مثبتين المكتبة ولا Playwright.</li>
-          <li>Apify ecommerce workflow: Scrape → Match → Compare → Alert بالحقول الواقعية فقط.</li>
-          <li>
-            ecommerce-price-tracker: JSON-LD/OG/CSS، جدول/كروت، CSV/JSON، تاريخ. مش proxy rotation ولا
-            infinite scroll ولا زحف كتالوج.
-          </li>
-        </ul>
-        <p className="mt-3">
-          الطبقة الساخنة = دقيقة، والاكتشاف = ٢٤ ساعة، والجدولة تتعلّم من هدوء المنتج.{" "}
-          <Link href="/admin" className="text-primary underline">لوحة التشغيل</Link>
-          {" · "}
-          <Link href="/legal" className="text-primary underline">الامتثال</Link>
-          {" · "}
-          <Link href="/plans" className="text-primary underline">الخطط</Link>
-        </p>
+      <p className="text-sm text-muted-foreground">
+        المراقبة HTTP لفيد مصرّح، من غير Playwright. التفاصيل على{" "}
+        <Link href="/legal" className="text-primary underline">
+          الامتثال
+        </Link>
+        {" · "}
         <Link href="/connectors" className="text-primary underline">
           الموصّلات
         </Link>
-      </section>
+        {" · "}
+        <Link href="/admin" className="text-primary underline">
+          التشغيل
+        </Link>
+        {" · "}
+        <Link href="/plans" className="text-primary underline">
+          الخطط
+        </Link>
+        .
+      </p>
     </div>
   );
 }

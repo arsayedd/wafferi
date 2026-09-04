@@ -25,7 +25,7 @@ import { catalogReferenceWatches, catalogSpreadEvents, defaultMyPrice, hydrateIn
 import { snapshotsFromCatalogProduct } from "@/lib/intel/from-product";
 import { getProduct } from "@/lib/catalog";
 
-const KEY = "waffari-intel-v3";
+const KEY = "waffari-intel-v4";
 
 type File = {
   watches: WatchItem[];
@@ -142,20 +142,19 @@ export function IntelProvider({ children }: { children: React.ReactNode }) {
         const snaps = snapshotsFromCatalogProduct(p);
         const prevSnaps = current.lastSnapshots ?? [];
         const delta = diffRuns(prevSnaps, snaps);
-        setEvents((ev) => [...delta, ...ev].slice(0, 200));
-        setWatches((all) =>
-          all.map((w) =>
-            w.id === id
-              ? {
-                  ...w,
-                  lastCheck: Date.now(),
-                  lastSnapshots: snaps,
-                  snapshot: snaps[0],
-                  history: snaps[0] ? [...w.history, snaps[0]].slice(-40) : w.history,
-                }
-              : w,
-          ),
-        );
+        const updated: WatchItem = {
+          ...current,
+          lastCheck: Date.now(),
+          lastSnapshots: snaps,
+          snapshot: snaps[0],
+          history: snaps[0] ? [...current.history, snaps[0]].slice(-40) : current.history,
+        };
+        const spread = catalogSpreadEvents([updated]);
+        setEvents((ev) => {
+          const keep = ev.filter((e) => !e.id.startsWith(`spread-${updated.id}`));
+          return [...spread, ...delta, ...keep].slice(0, 200);
+        });
+        setWatches((all) => all.map((w) => (w.id === id ? updated : w)));
         return;
       }
       setPolling(true);
