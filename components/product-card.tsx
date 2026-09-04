@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Star, Store, TrendingDown, ExternalLink } from "lucide-react";
+import { Star, TrendingDown, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { ProductPhoto } from "@/components/product-photo";
+import { StoreLogo } from "@/components/store-logo";
 import { getStore } from "@/lib/catalog";
+import { listingHref } from "@/lib/store-link";
 import { formatNumber, formatPrice } from "@/lib/format";
 import { productStats } from "@/lib/stats";
 import type { Product } from "@/lib/types";
@@ -43,22 +45,26 @@ export function ProductCard({ product: raw }: { product: Product }) {
         </Link>
         <div>
           <p className="text-lg font-semibold text-primary">{formatPrice(cheap.price)}</p>
-          <p className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Store className="size-3" />
+          <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <StoreLogo name={store?.name ?? ""} website={store?.website} size={16} />
             الأرخص: {store?.name}
           </p>
           <ul className="mt-2 flex flex-wrap gap-1">
             {[...product.listings]
               .sort((a, b) => a.price - b.price)
               .slice(0, 8)
-              .map((l) => (
-                <li key={l.sku}>
-                  <span className="inline-block rounded-full bg-muted px-2 py-0.5 text-[11px]">
-                    {getStore(l.storeId)?.name ?? l.storeId} {formatPrice(l.price)}
+              .map((l, i) => {
+                const st = getStore(l.storeId);
+                return (
+                <li key={`${l.storeId}-${l.sku}-${i}`}>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[11px]">
+                    <StoreLogo name={st?.name ?? l.storeId} website={st?.website} size={14} />
+                    {st?.name ?? l.storeId} {formatPrice(l.price)}
                     {!l.inStock ? " ✕" : ""}
                   </span>
                 </li>
-              ))}
+                );
+              })}
             {product.listings.length > 8 ? (
               <li className="text-[11px] text-muted-foreground">+{product.listings.length - 8} بائع</li>
             ) : null}
@@ -96,7 +102,7 @@ export function ProductCard({ product: raw }: { product: Product }) {
           variant="outline"
           title={`افتحي ${store?.name}`}
           onClick={() => {
-            const href = outbound(cheap.url, cheap.storeId, cheap.coupon);
+            const href = listingHref(cheap.storeId, product.name, cheap.url);
             toast.message(`المصدر: ${store?.name}`, {
               description: "هتتحولي لصفحة المنتج عندهم.",
             });

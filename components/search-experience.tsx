@@ -143,8 +143,8 @@ export function SearchExperience({
         ) : null}
         {parsed.intent.length ? (
           <div className="flex flex-wrap gap-1.5">
-            {parsed.intent.map((chip) => (
-              <Badge key={chip} variant="secondary">
+            {parsed.intent.map((chip, i) => (
+              <Badge key={`${chip}-${i}`} variant="secondary">
                 {chip}
               </Badge>
             ))}

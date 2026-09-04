@@ -113,6 +113,8 @@ export type Store = {
   verticals: VerticalId[];
   skuEstimate: number;
   affiliate: boolean;
+  /** false = إقليمي/خارج مصر — مش بيتوسّع في عروض الجهاز */
+  shipsEgypt?: boolean;
 };
 
 export type Listing = {

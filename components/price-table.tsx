@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { SourceCopyright } from "@/components/source-copyright";
 import { getStore } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
-import { hostnameOf } from "@/lib/outbound";
+import { StoreLogo } from "@/components/store-logo";
+import { listingHref } from "@/lib/store-link";
 import type { Listing } from "@/lib/types";
 import type { LiveListing } from "@/lib/live-quotes";
 import { usePartners } from "@/hooks/use-partners";
@@ -17,7 +18,13 @@ function updatedAtOf(l: Listing) {
   return "updatedAt" in l ? (l as LiveListing).updatedAt : undefined;
 }
 
-export function PriceTable({ listings }: { listings: Listing[] }) {
+export function PriceTable({
+  listings,
+  productName,
+}: {
+  listings: Listing[];
+  productName: string;
+}) {
   const { outbound, ruleFor } = usePartners();
   const [sort, setSort] = useState<"price" | "rating" | "reviews" | "discount">("price");
   const sorted = [...listings].sort((a, b) => {
@@ -59,19 +66,26 @@ export function PriceTable({ listings }: { listings: Listing[] }) {
           </tr>
         </thead>
         <tbody>
-          {sorted.map((l) => {
+          {sorted.map((l, i) => {
             const store = getStore(l.storeId);
             const cheapest = l.price === min;
             const rule = ruleFor(l.storeId);
             const coupon = l.coupon || rule?.coupon || "";
-            const host = hostnameOf(l.url);
-            const href = outbound(l.url, l.storeId, l.coupon);
+            const href = listingHref(l.storeId, productName, l.url);
+            const egypt = store?.shipsEgypt !== false;
             return (
-              <tr key={l.sku} className={cheapest ? "bg-emerald-50/80" : "border-t"}>
+              <tr key={`${l.storeId}-${l.sku}-${i}`} className={cheapest ? "bg-emerald-50/80" : "border-t"}>
                 <td className="px-3 py-3">
-                  <div className="font-medium">{store?.name ?? l.storeId}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {host || store?.website} · المنتج عندهم مش عندنا
+                  <div className="flex items-center gap-2">
+                    <StoreLogo name={store?.name ?? l.storeId} website={store?.website} size={24} />
+                    <div>
+                      <div className="font-medium">{store?.name ?? l.storeId}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {egypt
+                          ? `${store?.city ?? "مصر"} · تحويل لبحث المنتج عندهم`
+                          : "مش بائع سوق مصر"}
+                      </div>
+                    </div>
                   </div>
                 </td>
                 <td className="px-3 py-3">
@@ -121,12 +135,12 @@ export function PriceTable({ listings }: { listings: Listing[] }) {
                     variant={cheapest ? "default" : "outline"}
                     disabled={!l.inStock}
                     onClick={() => {
-                      toast.message(`هتحوّلي على ${store?.name ?? host}`, {
+                      toast.message(`هتحوّلي على ${store?.name ?? "المصدر"}`, {
                         description: coupon
-                          ? `الكوبون ${coupon} هيتركب على الرابط. العمولة ترجع لوفّري لو الأفلييت متظبط.`
-                          : "السعر زي ما هو عند المصدر. الأفلييت يتظبط من صفحة الشراكة.",
+                          ? `الكوبون ${coupon} هيتركب على الرابط. بنفتح بحث المنتج عندهم مش صفحة وهمية.`
+                          : "بنفتح بحث الاسم على موقعهم عشان مفيش صفحة منتج ملفّقة.",
                       });
-                      window.open(href, "_blank", "noopener");
+                      window.open(outbound(href, l.storeId, l.coupon), "_blank", "noopener");
                     }}
                   >
                     اشتري من {store?.name ?? "المصدر"}

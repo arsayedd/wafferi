@@ -1,5 +1,6 @@
 import type { CategoryId, Product, VerticalId } from "./types";
 import { stores } from "./network";
+import { storeSearchUrl } from "./store-link";
 
 export const categoryVertical: Record<CategoryId, VerticalId> = {
   washers: "laundry",
@@ -61,7 +62,8 @@ export function expandNetworkListings(products: Product[]): Product[] {
           !existing.has(st.id) &&
           (st.status === "connected" ||
             st.status === "affiliate_ready" ||
-            st.status === "feed_pending"),
+            st.status === "feed_pending") &&
+          st.shipsEgypt !== false,
       )
       .sort((a, b) => Number(b.status === "connected") - Number(a.status === "connected"))
       .slice(0, 22)
@@ -74,8 +76,8 @@ export function expandNetworkListings(products: Product[]): Product[] {
           reviews: 12 + (price % 200),
           inStock: price % 17 !== 0,
           shipping: s.kind === "hypermarket" ? "استلام فرع أو توصيل" : "توصيل خلال 2–5 أيام",
-          url: `${s.website.replace(/\/$/, "")}/p/${p.id}`,
-          sku: `${p.id.slice(0, 8)}-${s.id}`.toUpperCase(),
+          url: storeSearchUrl(s, p.name),
+          sku: `${p.id}-${s.id}`.toUpperCase(),
           affiliateNetwork: s.network,
           oldPrice: price % 5 === 0 ? Math.round(price * 1.12) : undefined,
         };

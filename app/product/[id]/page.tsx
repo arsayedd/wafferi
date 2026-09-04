@@ -177,7 +177,7 @@ export default function ProductPage({
         <h2 className="font-heading text-xl font-semibold">
           العروض مربوطة بمصادرها ({product.listings.length} عرض)
         </h2>
-        <PriceTable listings={product.listings} />
+        <PriceTable listings={product.listings} productName={product.name} />
       </section>
 
       <section className="grid gap-6 md:grid-cols-2">

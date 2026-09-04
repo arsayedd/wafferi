@@ -73,6 +73,7 @@ function s(
     specialty: string;
     commissionNote: string;
     skuEstimate: number;
+    shipsEgypt?: boolean;
   },
 ): Store {
   return {
@@ -111,12 +112,13 @@ export const stores: Store[] = [
     commissionNote: "Amazon Associates مصر عند التفعيل",
     skuEstimate: 90000,
   }),
-  s("cartlow", "كارتلو", "marketplace", "affiliate_network", "affiliate_ready", "arabclicks", ALL_APPLIANCES, {
-    city: "أونلاين",
+  s("cartlow", "كارتلو", "marketplace", "affiliate_network", "outreach", "arabclicks", ALL_APPLIANCES, {
+    city: "مش سوق مصر",
     website: "https://cartlow.com",
-    specialty: "أجهزة مجدّدة بضمان",
-    commissionNote: "أفلييت تجديد / شبكات",
-    skuEstimate: 8000,
+    specialty: "مجدّد إقليمي — مش كتالوج جهاز مصري",
+    commissionNote: "مش معروض كبائع مصر",
+    skuEstimate: 0,
+    shipsEgypt: false,
   }),
   s("btech", "بي تك", "electronics", "affiliate_network", "connected", "arabclicks", ALL_APPLIANCES, {
     city: "القاهرة والجيزة والإسكندرية",
@@ -575,7 +577,9 @@ export const verticalLabels: Record<VerticalId, string> = {
 };
 
 export function catalogStores() {
-  return stores.filter((s) => s.kind !== "district" && s.kind !== "factory");
+  return stores.filter(
+    (s) => s.kind !== "district" && s.kind !== "factory" && s.shipsEgypt !== false,
+  );
 }
 
 export function networkStats() {

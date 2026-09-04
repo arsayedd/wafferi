@@ -18,6 +18,7 @@ import { useWaffari } from "@/hooks/use-waffari";
 import { useLive } from "@/hooks/use-live";
 import { useCatalog } from "@/hooks/use-catalog";
 import { ProductPhoto } from "@/components/product-photo";
+import { StoreLogo } from "@/components/store-logo";
 
 export default function ListClient() {
   const params = useSearchParams();
@@ -348,17 +349,29 @@ export default function ListClient() {
                   </div>
                 </div>
                 {"listings" in product && product.listings?.length ? (
+                  <>
                   <select
                     className="h-9 w-full rounded-lg border border-input bg-background px-2 text-sm"
                     value={item.storeId ?? cheapestListing(product as never).storeId}
                     onChange={(e) => setItemStore(product.id, e.target.value)}
                   >
-                    {(product as { listings: { storeId: string; price: number }[] }).listings.map((l) => (
-                      <option key={l.storeId} value={l.storeId}>
+                    {(product as { listings: { storeId: string; price: number }[] }).listings.map((l, i) => (
+                      <option key={`${l.storeId}-${i}`} value={l.storeId}>
                         {getStore(l.storeId)?.name ?? l.storeId} · {formatPrice(l.price)}
                       </option>
                     ))}
                   </select>
+                  <ul className="flex flex-wrap gap-1">
+                    {(product as { listings: { storeId: string }[] }).listings.slice(0, 12).map((l, i) => {
+                      const st = getStore(l.storeId);
+                      return (
+                        <li key={`${l.storeId}-logo-${i}`}>
+                          <StoreLogo name={st?.name ?? l.storeId} website={st?.website} size={18} />
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  </>
                 ) : null}
                 <Input
                   placeholder="ملاحظة: لون، مقاس المطبخ…"
