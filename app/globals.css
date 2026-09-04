@@ -195,3 +195,90 @@
 .rise-4 {
   animation: rise-in 1s ease-out 0.24s both;
 }
+
+.home-grid-fade {
+  background-image:
+    linear-gradient(to bottom, transparent, var(--background)),
+    radial-gradient(circle at 1px 1px, color-mix(in oklch, var(--foreground) 12%, transparent) 1px, transparent 0);
+  background-size: auto, 28px 28px;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+
+.reveal-on {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.home-card {
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    background-color 0.35s ease;
+}
+
+.home-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px color-mix(in oklch, var(--foreground) 8%, transparent);
+}
+
+.marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(to left, transparent, #000 8%, #000 92%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 2.5rem;
+  animation: marquee-rtl 42s linear infinite;
+}
+
+.marquee-item {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.marquee-item::after {
+  content: " · ";
+  margin-inline-start: 2.5rem;
+  color: var(--primary);
+}
+
+@keyframes marquee-rtl {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb,
+  .orb-slow,
+  .rise,
+  .rise-2,
+  .rise-3,
+  .rise-4,
+  .marquee-track {
+    animation: none !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .home-card:hover {
+    transform: none;
+  }
+}
