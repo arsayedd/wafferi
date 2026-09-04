@@ -6,14 +6,13 @@ import { Bell, Star } from "lucide-react";
 import { toast } from "sonner";
 import { PriceTable } from "@/components/price-table";
 import { ProductPhoto } from "@/components/product-photo";
-import { Sparkline } from "@/components/sparkline";
+import { SourceCopyright } from "@/components/source-copyright";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { getCategory, getProduct, getStore, products } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { productStats } from "@/lib/stats";
-import { quoteHistory } from "@/lib/live-quotes";
 import { useWaffari } from "@/hooks/use-waffari";
 import { useLive } from "@/hooks/use-live";
 import { useCatalog } from "@/hooks/use-catalog";
@@ -28,7 +27,7 @@ export default function ProductPage({
   const { allProducts } = useCatalog();
   const catalog = getProduct(id) ?? allProducts.find((p) => p.id === id);
   const { addItem, items, addAlert, alerts, toggleCompare, compare } = useWaffari();
-  const { liveProduct, now } = useLive();
+  const { liveProduct } = useLive();
   const [target, setTarget] = useState("");
 
   if (!catalog) {
@@ -50,7 +49,6 @@ export default function ProductPage({
   const related = products
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 3);
-  const history = quoteHistory(catalog.listings[0]?.price ?? cheap.price, cheap.sku, 32, now);
 
   return (
     <div className="mx-auto max-w-6xl space-y-10 px-4 py-8">
@@ -83,18 +81,20 @@ export default function ProductPage({
           </div>
           <p className="text-3xl font-semibold text-primary">{formatPrice(cheap.price)}</p>
           <p className="text-sm text-muted-foreground">
-            أوفر سعر من{" "}
+            أوفر سعر مرجعي من{" "}
             <Link href={`/stores/${cheap.storeId}`} className="text-primary hover:underline">
               {getStore(cheap.storeId)?.name ?? cheap.storeId}
             </Link>
-            — وفّري مش البائع، الشراء يتم عند المصدر.
+            — المنتج عندهم، مش عندنا. الفرق عن أغلى عرض في العينة {formatPrice(save)}.
           </p>
-          <div className="flex items-center gap-3">
-            <Sparkline values={history} className="h-11 w-40" />
-            <p className="text-sm text-muted-foreground">
-              أوفر سعر لحظي من {stores} متجر. الفرق عن الأغلى {formatPrice(save)}.
-            </p>
-          </div>
+          <SourceCopyright
+            compact
+            names={[
+              product.brand,
+              getStore(cheap.storeId)?.name,
+              ...product.listings.map((l) => getStore(l.storeId)?.name),
+            ]}
+          />
           <ul className="list-disc space-y-1 pr-5 text-sm">
             {product.highlights.map((h) => (
               <li key={h}>{h}</li>
@@ -145,7 +145,7 @@ export default function ProductPage({
 
       <section className="space-y-3">
         <h2 className="font-heading text-xl font-semibold">
-          مقارنة الأسعار بين المتاجر ({product.listings.length} عرض)
+          العروض مربوطة بمصادرها ({product.listings.length} عرض)
         </h2>
         <PriceTable listings={product.listings} />
       </section>

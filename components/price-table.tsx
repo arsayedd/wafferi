@@ -1,19 +1,15 @@
 "use client";
 
-import { ExternalLink, BadgeCheck, TrendingDown, TrendingUp, Ticket } from "lucide-react";
+import { ExternalLink, BadgeCheck, Ticket } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SourceCopyright } from "@/components/source-copyright";
 import { getStore } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { hostnameOf } from "@/lib/outbound";
 import type { Listing } from "@/lib/types";
-import type { LiveListing } from "@/lib/live-quotes";
 import { usePartners } from "@/hooks/use-partners";
-
-function isLive(l: Listing): l is LiveListing {
-  return "previousPrice" in l;
-}
 
 export function PriceTable({ listings }: { listings: Listing[] }) {
   const { outbound, ruleFor } = usePartners();
@@ -26,9 +22,8 @@ export function PriceTable({ listings }: { listings: Listing[] }) {
         <thead className="bg-muted/60 text-muted-foreground">
           <tr>
             <th className="px-3 py-2 text-start font-medium">المصدر</th>
-            <th className="px-3 py-2 text-start font-medium">السعر</th>
-            <th className="px-3 py-2 text-start font-medium">التغيّر</th>
-            <th className="px-3 py-2 text-start font-medium">كوبون وفّري</th>
+            <th className="px-3 py-2 text-start font-medium">سعر مرجعي</th>
+            <th className="px-3 py-2 text-start font-medium">كوبون</th>
             <th className="px-3 py-2 text-start font-medium">التوصيل</th>
             <th className="px-3 py-2" />
           </tr>
@@ -37,8 +32,6 @@ export function PriceTable({ listings }: { listings: Listing[] }) {
           {sorted.map((l) => {
             const store = getStore(l.storeId);
             const cheapest = l.price === min;
-            const prev = isLive(l) ? l.previousPrice : l.oldPrice;
-            const diff = prev != null ? l.price - prev : 0;
             const rule = ruleFor(l.storeId);
             const coupon = l.coupon || rule?.coupon || "";
             const host = hostnameOf(l.url);
@@ -55,25 +48,9 @@ export function PriceTable({ listings }: { listings: Listing[] }) {
                   <div className="flex items-center gap-2">
                     <span className="font-semibold">{formatPrice(l.price)}</span>
                     {cheapest && (
-                      <Badge className="bg-emerald-700 text-white">الأرخص</Badge>
+                      <Badge className="bg-emerald-700 text-white">الأرخص في العينة</Badge>
                     )}
                   </div>
-                </td>
-                <td className="px-3 py-3">
-                  {diff === 0 ? (
-                    <span className="text-muted-foreground">ثابت</span>
-                  ) : (
-                    <span
-                      className={`inline-flex items-center gap-1 ${diff < 0 ? "text-emerald-700" : "text-amber-800"}`}
-                    >
-                      {diff < 0 ? (
-                        <TrendingDown className="size-3.5" />
-                      ) : (
-                        <TrendingUp className="size-3.5" />
-                      )}
-                      {formatPrice(Math.abs(diff))}
-                    </span>
-                  )}
                 </td>
                 <td className="px-3 py-3">
                   {coupon ? (
@@ -120,8 +97,14 @@ export function PriceTable({ listings }: { listings: Listing[] }) {
       </table>
       <p className="flex items-center gap-1 px-3 py-2 text-xs text-muted-foreground">
         <BadgeCheck className="size-3.5" />
-        وفّري مش البائع. كل عرض مربوط بمصدره، والضغط بيحولك لصفحة المتجر بلينك فيه أفلييت/كوبون لو ظبّطتيهم.
+        وفّري مش البائع. السعر مرجعي مش لايف. الاسم والحقوق للمصدر. الزر بيفتح موقعهم.
       </p>
+      <div className="px-3 pb-3">
+        <SourceCopyright
+          compact
+          names={sorted.map((l) => getStore(l.storeId)?.name).filter(Boolean) as string[]}
+        />
+      </div>
     </div>
   );
 }

@@ -15,7 +15,8 @@ const links = [
   { href: "/needs", label: "الاحتياجات" },
   { href: "/plan", label: "الخطة" },
   { href: "/guide", label: "الدليل" },
-  { href: "/sourcing", label: "المصادر" },
+  { href: "/sourcing", label: "خريطة التوريد" },
+  { href: "/stores", label: "المصادر" },
   { href: "/map", label: "الخريطة" },
   { href: "/places", label: "أماكن" },
   { href: "/search", label: "السوق" },
@@ -136,11 +137,11 @@ export function SiteHeader() {
                   الفئات
                 </Link>
                 <Link
-                  href="/live"
+                  href="/stores"
                   onClick={() => setMenuOpen(false)}
                   className="rounded-lg px-2 py-2 text-sm hover:bg-muted"
                 >
-                  لحظي
+                  المصادر وحقوقهم
                 </Link>
                 <Link
                   href="/matching"
@@ -258,7 +259,7 @@ export function SiteFooter() {
           <p className="mb-2 text-sm font-medium">الشركاء</p>
           <ul className="space-y-1 text-sm text-muted-foreground">
             <li>
-              <Link href="/stores">شبكة المتاجر</Link>
+              <Link href="/stores">المصادر وحقوقهم</Link>
             </li>
             <li>
               <Link href="/brands">الماركات</Link>
@@ -271,8 +272,8 @@ export function SiteFooter() {
         <div>
           <p className="mb-2 text-sm font-medium">تنويه</p>
           <p className="text-sm leading-relaxed text-muted-foreground">
-            الأسعار في النسخة دي تجريبية للتفاعل، مش لايف من المواقع. الربط
-            الحقيقي هيتم عبر برامج الأفلييت الرسمية والشراكات، مش سكرابينج عشوائي.
+            الأسماء والشعارات والصور الرسمية حقوق مصادرها. وفّري دليل مقارنة:
+            كل منتج يتربط بمتجره، والسعر مرجعي مش مخزون حي. الشراء على موقع المصدر.
           </p>
         </div>
       </div>

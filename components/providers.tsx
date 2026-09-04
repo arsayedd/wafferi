@@ -7,7 +7,6 @@ import { PartnersProvider } from "@/hooks/use-partners";
 import { SessionProvider } from "@/hooks/use-session";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "next-themes";
-import { LiveTicker } from "@/components/live-ticker";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -17,7 +16,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <LiveMarketProvider>
             <CatalogOverlayProvider>
               <PartnersProvider>
-                <LiveTicker />
                 {children}
                 <Toaster />
               </PartnersProvider>

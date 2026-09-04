@@ -9,6 +9,13 @@ export default function HowPage() {
         لصفحة المنتج عنده. العمولة أو الكوبون بتوعكِ يتركّبوا على اللينك.
       </p>
       <section className="space-y-2">
+        <h2 className="text-xl font-medium">حقوق المصدر</h2>
+        <p className="text-sm">
+          جوميا ونون وكارفور وباقي الأسماء مش ملك وفّري. بنعرض الاسم عشان نربط
+          المنتج بمصدره، وبنحوّلكِ لصفحتهم. مبنخزّنش مخزونهم الحي ولا بنحدّثه كل ثانية.
+        </p>
+      </section>
+      <section className="space-y-2">
         <h2 className="text-xl font-medium">السحب من المصدر</h2>
         <p className="text-sm">
           السحب اللي بنعمله هو فيد رسمي: CSV/JSON من لوحة الأفلييت أو من التاجر بعد

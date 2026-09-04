@@ -16,10 +16,10 @@ export default function AlertsPage() {
     <div className="mx-auto max-w-3xl space-y-8 px-4 py-10">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-heading text-3xl font-semibold">التنبيهات اللحظية</h1>
+          <h1 className="font-heading text-3xl font-semibold">تنبيهات السعر</h1>
           <p className="text-muted-foreground">
-            نوتيفيكيشن جوه الموقع، وعلى المتصفح لو فعّلتي الإذن. بيشتغل لما سعر في
-            قايمتك ينزل أو يوصل للهدف.
+            الأهداف بتتسجل عندكِ على الجهاز. مفيش بورصة لحظية من المتاجر — التنبيه
+            للمقارنة المرجعية جوّه وفّري، والسعر النهائي عند المصدر.
           </p>
         </div>
         <Button variant={notifyOn ? "secondary" : "default"} onClick={() => enableBrowserNotifications()}>
@@ -36,7 +36,7 @@ export default function AlertsPage() {
         </div>
         {inbox.length === 0 ? (
           <p className="rounded-xl border border-dashed p-6 text-sm text-muted-foreground">
-            لسه مفيش حركة. حطّي منتج في القايمة أو فعّلي هدف سعر، واستنّي التيك الجاي.
+            لسه مفيش رسائل. حطّي هدف سعر على منتج؛ مفيش تيكر حي من المتاجر.
           </p>
         ) : (
           <ul className="space-y-2">
@@ -85,7 +85,7 @@ export default function AlertsPage() {
                       {p.name}
                     </Link>
                     <p className="text-sm text-muted-foreground">
-                      الحالي اللحظي {formatPrice(cheap.price)} · الهدف {formatPrice(a.targetPrice)}
+                      السعر المرجعي {formatPrice(cheap.price)} · الهدف {formatPrice(a.targetPrice)}
                       {hit ? " · وصل للهدف" : ""}
                     </p>
                   </div>

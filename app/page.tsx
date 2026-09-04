@@ -222,7 +222,7 @@ export default function HomePage() {
             {
               icon: ListChecks,
               title: "3. ابنِي الجهاز",
-              text: "قايمة بميزانية لحظية وتنبيه لو السعر نزل. تقدري تبدّلي بمنتج أرخص في نفس الفئة.",
+              text: "قايمة بميزانية مرجعية وتنبيه لو حطيتي هدف. تقدري تبدّلي بمنتج أرخص في نفس الفئة.",
             },
           ].map((s) => (
             <div key={s.title} className="space-y-2">
@@ -236,9 +236,9 @@ export default function HomePage() {
 
       <section className="mx-auto max-w-6xl px-4 py-12">
         <div className="mb-4 flex items-end justify-between gap-3">
-          <h2 className="font-heading text-2xl font-semibold">شبكة المتاجر</h2>
+          <h2 className="font-heading text-2xl font-semibold">المصادر وحقوقهم</h2>
           <Link href="/stores" className="text-sm text-primary hover:underline">
-            كل الشبكة وحالة الربط
+            كل المصادر — الأسماء حقوق أصحابها
           </Link>
         </div>
         <div className="flex flex-wrap gap-2">

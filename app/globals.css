@@ -168,15 +168,6 @@
   }
 }
 
-@keyframes shimmer-line {
-  from {
-    background-position: 100% 0;
-  }
-  to {
-    background-position: 0 0;
-  }
-}
-
 .orb {
   position: absolute;
   border-radius: 9999px;
