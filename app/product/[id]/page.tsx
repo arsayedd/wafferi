@@ -5,14 +5,17 @@ import Link from "next/link";
 import { Bell, Star } from "lucide-react";
 import { toast } from "sonner";
 import { PriceTable } from "@/components/price-table";
-import { ProductArt } from "@/components/product-art";
+import { ProductPhoto } from "@/components/product-photo";
+import { Sparkline } from "@/components/sparkline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { getCategory, getProduct, products } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { productStats } from "@/lib/stats";
+import { quoteHistory } from "@/lib/live-quotes";
 import { useWaffari } from "@/hooks/use-waffari";
+import { useLive } from "@/hooks/use-live";
 import { ProductCard } from "@/components/product-card";
 
 export default function ProductPage({
@@ -21,11 +24,12 @@ export default function ProductPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const product = getProduct(id);
+  const catalog = getProduct(id);
   const { addItem, items, addAlert, alerts, toggleCompare, compare } = useWaffari();
+  const { liveProduct, now } = useLive();
   const [target, setTarget] = useState("");
 
-  if (!product) {
+  if (!catalog) {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
         <h1 className="text-2xl font-semibold">المنتج مش موجود</h1>
@@ -37,17 +41,24 @@ export default function ProductPage({
     );
   }
 
+  const product = liveProduct(catalog);
   const { cheap, save, rating, stores } = productStats(product);
   const cat = getCategory(product.category);
   const inList = items.some((i) => i.productId === product.id);
   const related = products
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 3);
+  const history = quoteHistory(catalog.listings[0]?.price ?? cheap.price, cheap.sku, 32, now);
 
   return (
     <div className="mx-auto max-w-6xl space-y-10 px-4 py-8">
       <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr]">
-        <ProductArt category={product.category} className="rounded-2xl" />
+        <ProductPhoto
+          id={product.id}
+          category={product.category}
+          name={product.name}
+          className="rounded-2xl"
+        />
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground">
             <Link href={`/brands/${encodeURIComponent(product.brand)}`} className="hover:underline">
@@ -69,9 +80,12 @@ export default function ProductPage({
             {product.barcode && <Badge variant="outline">باركود {product.barcode}</Badge>}
           </div>
           <p className="text-3xl font-semibold text-primary">{formatPrice(cheap.price)}</p>
-          <p className="text-sm text-muted-foreground">
-            أوفر سعر دلوقتي. لو اشتريتي من أغلى متجر هتدفعي زيادة {formatPrice(save)}.
-          </p>
+          <div className="flex items-center gap-3">
+            <Sparkline values={history} className="h-11 w-40" />
+            <p className="text-sm text-muted-foreground">
+              أوفر سعر لحظي من {stores} متجر. الفرق عن الأغلى {formatPrice(save)}.
+            </p>
+          </div>
           <ul className="list-disc space-y-1 pr-5 text-sm">
             {product.highlights.map((h) => (
               <li key={h}>{h}</li>
@@ -110,7 +124,7 @@ export default function ProductPage({
                   return;
                 }
                 addAlert(product.id, n);
-                toast.success("التنبيه اتحفظ على الجهاز ده");
+                toast.success("هنجيلكِ نوتيفيكيشن أول ما السعر ينزل للهدف");
               }}
             >
               <Bell />

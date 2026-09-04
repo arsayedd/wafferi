@@ -6,9 +6,11 @@ import { useState } from "react";
 import { Menu, Search, ShoppingBag, Bell, GitCompare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useWaffari } from "@/hooks/use-waffari";
+import { useLive } from "@/hooks/use-live";
 import { SearchBar } from "@/components/search-bar";
 
 const links = [
+  { href: "/live", label: "لحظي" },
   { href: "/search", label: "السوق" },
   { href: "/categories", label: "الفئات" },
   { href: "/deals", label: "أوفر سعر" },
@@ -33,6 +35,8 @@ export function Logo({ className = "" }: { className?: string }) {
 export function SiteHeader() {
   const path = usePathname();
   const { items, alerts, compare } = useWaffari();
+  const { unread } = useLive();
+  const bellCount = unread || alerts.length;
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -67,9 +71,9 @@ export function SiteHeader() {
           <Button variant="ghost" size="icon" nativeButton={false} render={<Link href="/alerts" />}>
             <span className="relative">
               <Bell />
-              {alerts.length > 0 && (
+              {bellCount > 0 && (
                 <span className="absolute -top-1 -left-1 size-4 rounded-full bg-primary text-[10px] leading-4 text-primary-foreground">
-                  {alerts.length}
+                  {bellCount}
                 </span>
               )}
             </span>

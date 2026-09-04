@@ -11,7 +11,8 @@ import { Progress } from "@/components/ui/progress";
 import { cheapestListing, getProduct, templates } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { useWaffari } from "@/hooks/use-waffari";
-import { ProductArt } from "@/components/product-art";
+import { useLive } from "@/hooks/use-live";
+import { ProductPhoto } from "@/components/product-photo";
 
 export default function ListClient() {
   const params = useSearchParams();
@@ -27,6 +28,7 @@ export default function ListClient() {
     setQty,
     clearList,
   } = useWaffari();
+  const { liveProduct } = useLive();
 
   useEffect(() => {
     if (templateId) applyTemplate(templateId);
@@ -36,8 +38,9 @@ export default function ListClient() {
     .map((i) => {
       const p = getProduct(i.productId);
       if (!p) return null;
-      const cheap = cheapestListing(p);
-      return { item: i, product: p, cheap };
+      const live = liveProduct(p);
+      const cheap = cheapestListing(live);
+      return { item: i, product: live, cheap };
     })
     .filter((x) => x !== null);
 
@@ -124,7 +127,12 @@ export default function ListClient() {
               key={product.id}
               className="grid gap-3 rounded-xl bg-card p-3 ring-1 ring-foreground/10 md:grid-cols-[120px_1fr_auto]"
             >
-              <ProductArt category={product.category} className="rounded-lg" />
+              <ProductPhoto
+                id={product.id}
+                category={product.category}
+                name={product.name}
+                className="rounded-lg"
+              />
               <div className="space-y-2">
                 <div className="flex items-start gap-2">
                   <Checkbox

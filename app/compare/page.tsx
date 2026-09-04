@@ -2,14 +2,16 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { getProduct, cheapestListing, getStore } from "@/lib/catalog";
+import { cheapestListing, getStore } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { productStats } from "@/lib/stats";
 import { useWaffari } from "@/hooks/use-waffari";
+import { useLive } from "@/hooks/use-live";
 
 export default function ComparePage() {
   const { compare, toggleCompare, clearCompare } = useWaffari();
-  const cols = compare.map((id) => getProduct(id)).filter((p) => p !== undefined);
+  const { liveById } = useLive();
+  const cols = compare.map((id) => liveById(id)).filter((p) => p !== undefined);
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 px-4 py-10">

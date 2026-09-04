@@ -6,14 +6,17 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { ProductArt } from "@/components/product-art";
+import { ProductPhoto } from "@/components/product-photo";
 import { getStore } from "@/lib/catalog";
 import { formatNumber, formatPrice } from "@/lib/format";
 import { productStats } from "@/lib/stats";
 import type { Product } from "@/lib/types";
 import { useWaffari } from "@/hooks/use-waffari";
+import { useLive } from "@/hooks/use-live";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product: raw }: { product: Product }) {
+  const { liveProduct } = useLive();
+  const product = liveProduct(raw);
   const { cheap, save, rating, stores } = productStats(product);
   const store = getStore(cheap.storeId);
   const { addItem, items, toggleCompare, compare } = useWaffari();
@@ -23,7 +26,7 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Card className="h-full py-0">
       <Link href={`/product/${product.id}`} className="block">
-        <ProductArt category={product.category} />
+        <ProductPhoto id={product.id} category={product.category} name={product.name} />
       </Link>
       <CardContent className="flex flex-1 flex-col gap-2 pt-3">
         <div className="flex items-center justify-between gap-2">
@@ -40,7 +43,7 @@ export function ProductCard({ product }: { product: Product }) {
           <p className="text-lg font-semibold text-primary">{formatPrice(cheap.price)}</p>
           <p className="flex items-center gap-1 text-xs text-muted-foreground">
             <Store className="size-3" />
-            الأرخص عند {store?.name} · {stores} متاجر
+            الأرخص عند {store?.name} · {stores} متاجر · لحظي
           </p>
         </div>
         {save > 0 && (
