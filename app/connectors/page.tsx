@@ -45,13 +45,23 @@ export default function ConnectorsPage() {
           أحياء مصر متجمّعة عندنا، من غير زحف خرائط جوجل.
         </p>
         <p>
-          OpenSearch/Elasticsearch وCrawlee/Playwright وRedis مكانهم في الإنتاج على مليون صنف. هنا الفهرس
-          على الكتالوج + الفيد، والموصّل HTTP أولًا. Playwright آخر حل ومش شغال كزحف.
+          <strong className="text-foreground">ChangeDetection.io:</strong> جدولة بطبقات، تنبيه عند تغيّر السعر/الستوك. الشغل على{" "}
+          <Link href="/intel" className="text-primary underline">
+            /intel
+          </Link>{" "}
+          — مش بنركّب خدمتهم.
         </p>
         <p>
-          <Link href="/intel" className="text-primary underline">
-            معمارية ذكاء السوق
-          </Link>
+          <strong className="text-foreground">Crawlee:</strong> طابور وإعادة محاولة كمفهوم. المكتبة وPlaywright مش
+          في المسار التشغيلي.
+        </p>
+        <p>
+          <strong className="text-foreground">Apify ecommerce-price-monitoring:</strong> Scrape → Product matching
+          → Compare → Alert. الحقول: price / currency / name / sku / availability / url.
+        </p>
+        <p>
+          <strong className="text-foreground">ecommerce-price-tracker:</strong> JSON-LD ثم OG ثم CSS، جدول/كروت،
+          CSV/JSON، تاريخ. من غير proxy rotation ولا infinite scroll ولا زحف كولكشن كامل.
         </p>
       </section>
       <section className="space-y-2 text-sm text-muted-foreground">

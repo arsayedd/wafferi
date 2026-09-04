@@ -1,0 +1,307 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { formatPrice } from "@/lib/format";
+import { clusterSnapshots } from "@/lib/intel/match";
+import { exportSnapshots } from "@/lib/intel/export";
+import { discountPct, tierLabels, type WatchTier } from "@/lib/intel/types";
+import { useIntel } from "@/hooks/use-intel";
+
+export function IntelClient() {
+  const { watches, events, auto, setAuto, addWatch, removeWatch, setTier, runWatch, polling } =
+    useIntel();
+  const [url, setUrl] = useState("");
+  const [tier, setNewTier] = useState<WatchTier>(3);
+  const [view, setView] = useState<"table" | "cards">("table");
+
+  const snapshots = watches.flatMap((w) => w.lastSnapshots ?? []);
+  const sellers = new Set(snapshots.map((s) => s.seller)).size;
+  const inStock = snapshots.filter((s) => s.availability === "in_stock").length;
+  const avg =
+    snapshots.length > 0
+      ? Math.round(snapshots.reduce((s, x) => s + x.price, 0) / snapshots.length)
+      : 0;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayTs = today.getTime();
+  const priceToday = events.filter((e) => e.kind === "price" && e.at >= todayTs).length;
+  const stockToday = events.filter((e) => e.kind === "stock" && e.at >= todayTs).length;
+  const clusters = useMemo(
+    () => clusterSnapshots(snapshots).filter((c) => c.members.length > 1),
+    [snapshots],
+  );
+
+  async function add() {
+    if (!url.trim()) {
+      toast.error("حطي رابط منتج أو سايتماب أو فيد");
+      return;
+    }
+    await addWatch(url.trim(), tier);
+    setUrl("");
+    toast.success("اتضافت للمراقبة");
+  }
+
+  return (
+    <div className="mx-auto max-w-6xl space-y-8 px-4 py-8">
+      <div className="space-y-2">
+        <h1 className="font-heading text-3xl font-semibold">مراقبة أسعار المنافسين</h1>
+        <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
+          نفس مسار Apify: سحب صفحة/فيد → مطابقة المنتج → مقارنة مع آخر قراءة → تنبيه. أفكار
+          ChangeDetection.io للجدولة والتغيير، وواجهة المتتبع (جدول/كروت + تصدير). المحرك عندنا
+          HTTP منظم — مش Crawlee/Playwright، ومش تجاوز حماية الموقع.
+        </p>
+        <p className="font-mono text-xs text-muted-foreground">
+          Scrape → Match → Compare → Alert
+        </p>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric label="روابط مراقبة" value={String(watches.length)} />
+        <Metric label="عروض آخر سحب" value={String(snapshots.length)} />
+        <Metric label="بائعون" value={String(sellers)} />
+        <Metric label="متوفر" value={String(inStock)} />
+        <Metric label="متوسط السعر" value={avg ? formatPrice(avg) : "—"} />
+        <Metric label="تغيّر سعر اليوم" value={String(priceToday)} />
+        <Metric label="تغيّر ستوك اليوم" value={String(stockToday)} />
+        <Metric label="الجدولة" value={auto ? "شغالة" : "واقفة"} />
+      </div>
+
+      <section className="rounded-2xl bg-card p-4 ring-1 ring-foreground/10">
+        <p className="text-sm font-medium">أضيفي مصدر</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          رابط منتج فيه JSON-LD / Shopify / Woo / فيد CSV، أو sitemap.xml (اكتشاف محدود).
+        </p>
+        <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+          <Input
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="https://…"
+            className="flex-1"
+          />
+          <select
+            className="h-9 rounded-lg border border-input bg-background px-2 text-sm"
+            value={tier}
+            onChange={(e) => setNewTier(Number(e.target.value) as WatchTier)}
+          >
+            {( [1, 2, 3, 4] as WatchTier[] ).map((t) => (
+              <option key={t} value={t}>
+                {tierLabels[t]}
+              </option>
+            ))}
+          </select>
+          <Button onClick={() => void add()} disabled={polling}>
+            تشغيل المسار
+          </Button>
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button variant={auto ? "secondary" : "outline"} size="sm" onClick={() => setAuto(!auto)}>
+            {auto ? "إيقاف الجدولة" : "جدولة حسب الطبقة"}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => exportSnapshots(snapshots, "csv")}
+            disabled={!snapshots.length}
+          >
+            CSV
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => exportSnapshots(snapshots, "json")}
+            disabled={!snapshots.length}
+          >
+            JSON
+          </Button>
+          <Button variant={view === "table" ? "secondary" : "outline"} size="sm" onClick={() => setView("table")}>
+            جدول
+          </Button>
+          <Button variant={view === "cards" ? "secondary" : "outline"} size="sm" onClick={() => setView("cards")}>
+            كروت
+          </Button>
+        </div>
+      </section>
+
+      {watches.length === 0 ? (
+        <div className="rounded-xl border border-dashed p-10 text-center text-sm text-muted-foreground">
+          مفيش روابط. ابدئي بـ ٢٠–٥٠ منتج مهم، مش كل متاجر مصر.{" "}
+          <Link href="/ingest" className="text-primary underline">
+            أو اسحبي فيد
+          </Link>
+          .
+        </div>
+      ) : view === "table" ? (
+        <div className="overflow-x-auto rounded-xl ring-1 ring-foreground/10">
+          <table className="w-full min-w-[720px] text-sm">
+            <thead className="bg-muted/60 text-muted-foreground">
+              <tr>
+                <th className="px-3 py-2 text-start">المنتج</th>
+                <th className="px-3 py-2 text-start">بائع</th>
+                <th className="px-3 py-2 text-start">سعر</th>
+                <th className="px-3 py-2 text-start">ستوك</th>
+                <th className="px-3 py-2 text-start">موصّل</th>
+                <th className="px-3 py-2" />
+              </tr>
+            </thead>
+            <tbody>
+              {watches.map((w) => {
+                const s = w.snapshot;
+                return (
+                  <tr key={w.id} className="border-t">
+                    <td className="px-3 py-3">
+                      <p className="font-medium">{s?.name ?? w.url}</p>
+                      <p className="text-xs text-muted-foreground">{tierLabels[w.tier]}</p>
+                      {w.error ? <p className="text-xs text-destructive">{w.error}</p> : null}
+                    </td>
+                    <td className="px-3 py-3">{s?.seller ?? "—"}</td>
+                    <td className="px-3 py-3">
+                      {s ? formatPrice(s.price) : "—"}
+                      {s && discountPct(s) ? (
+                        <Badge variant="secondary" className="ms-1">
+                          {discountPct(s)}٪
+                        </Badge>
+                      ) : null}
+                    </td>
+                    <td className="px-3 py-3">{s?.availability ?? "—"}</td>
+                    <td className="px-3 py-3 font-mono text-xs">{w.waterfall.join(" → ") || "—"}</td>
+                    <td className="px-3 py-3 text-end">
+                      <select
+                        className="mb-1 h-8 rounded border px-1 text-xs"
+                        value={w.tier}
+                        onChange={(e) => setTier(w.id, Number(e.target.value) as WatchTier)}
+                      >
+                        {([1, 2, 3, 4] as WatchTier[]).map((t) => (
+                          <option key={t} value={t}>
+                            T{t}
+                          </option>
+                        ))}
+                      </select>
+                      <Button size="sm" variant="outline" onClick={() => void runWatch(w.id)}>
+                        حدّث
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => removeWatch(w.id)}>
+                        احذف
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {snapshots.map((s, i) => (
+            <article key={`${s.url}-${i}`} className="rounded-xl bg-card p-4 ring-1 ring-foreground/10">
+              <p className="font-medium">{s.name}</p>
+              <p className="text-sm text-muted-foreground">{s.seller}</p>
+              <p className="mt-2 text-lg font-semibold">{formatPrice(s.price)}</p>
+              <p className="text-xs text-muted-foreground">
+                {s.availability} · {s.adapter} · SKU {s.sku ?? "—"}
+              </p>
+            </article>
+          ))}
+        </div>
+      )}
+
+      {watches.some((w) => w.discovery?.length) ? (
+        <section className="space-y-2">
+          <h2 className="font-heading text-xl font-semibold">اكتشاف من السايتماب</h2>
+          <p className="text-sm text-muted-foreground">مش زحف كامل — اختاري روابط تضيفيها كطبقة ٤.</p>
+          <div className="flex flex-wrap gap-2">
+            {watches.flatMap((w) =>
+              (w.discovery ?? []).slice(0, 12).map((u) => (
+                <Button
+                  key={u}
+                  size="sm"
+                  variant="outline"
+                  onClick={() => void addWatch(u, 4)}
+                >
+                  راقبي
+                </Button>
+              )),
+            )}
+          </div>
+        </section>
+      ) : null}
+
+      {clusters.length ? (
+        <section className="space-y-3">
+          <h2 className="font-heading text-xl font-semibold">مطابقة عبر المصادر</h2>
+          {clusters.slice(0, 8).map((c, i) => {
+            const prices = c.members.map((m) => m.price);
+            const low = Math.min(...prices);
+            return (
+              <div key={i} className="rounded-xl bg-card p-4 ring-1 ring-foreground/10">
+                <Badge>تطابق {(c.score * 100).toFixed(0)}٪</Badge>
+                <ul className="mt-2 space-y-1 text-sm">
+                  {c.members.map((m) => (
+                    <li key={m.url + m.seller}>
+                      {m.seller}: {m.name} · {formatPrice(m.price)}
+                      {m.price === low ? " · الأرخص" : ""}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </section>
+      ) : null}
+
+      <section className="space-y-2">
+        <h2 className="font-heading text-xl font-semibold">التنبيهات (تغيير عن آخر قراءة)</h2>
+        {events.length === 0 ? (
+          <p className="text-sm text-muted-foreground">لسه مفيش دلتا. حدّثي رابط مرتين عشان يظهر التغيير.</p>
+        ) : (
+          <ul className="space-y-2 text-sm">
+            {events.slice(0, 20).map((e) => (
+              <li key={e.id} className="rounded-lg bg-muted/50 px-3 py-2">
+                {e.kind === "price" ? "سعر" : e.kind === "stock" ? "ستوك" : "خصم"}: {e.from} ← {e.to}
+                <span className="ms-2 text-xs text-muted-foreground">
+                  {new Date(e.at).toLocaleString("ar-EG")}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="text-sm leading-relaxed text-muted-foreground">
+        <h2 className="text-lg font-medium text-foreground">إيه اللي اتاخد من الـ GitHub وإيه اللي لأ</h2>
+        <ul className="mt-2 list-disc space-y-1 pr-5">
+          <li>
+            ChangeDetection.io: طبقات جدولة، مراقبة جزء من الصفحة عبر الوصفات، تنبيه عند التغيير — من غير
+            محركهم.
+          </li>
+          <li>Crawlee: طوابير/إعادة محاولة كمفهوم. مش مثبتين المكتبة ولا Playwright.</li>
+          <li>Apify ecommerce workflow: Scrape → Match → Compare → Alert بالحقول الواقعية فقط.</li>
+          <li>
+            ecommerce-price-tracker: JSON-LD/OG/CSS، جدول/كروت، CSV/JSON، تاريخ. مش proxy rotation ولا
+            infinite scroll ولا زحف كتالوج.
+          </li>
+        </ul>
+        <p className="mt-3">
+          اللحظة بلحظة لكل مصر مش ممكن من غير API التاجر. الطبقة ١ = ٤٥ ثانية للمنتجات الحرجة اللي
+          إنتي حاطاها.
+        </p>
+        <Link href="/connectors" className="text-primary underline">
+          الموصّلات
+        </Link>
+      </section>
+    </div>
+  );
+}
+
+function Metric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl bg-card p-4 ring-1 ring-foreground/10">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="mt-1 text-xl font-semibold">{value}</p>
+    </div>
+  );
+}

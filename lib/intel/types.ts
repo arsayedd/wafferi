@@ -49,7 +49,11 @@ export type WatchItem = {
   tier: WatchTier;
   lastCheck: number;
   snapshot?: CompetitiveSnapshot;
+  lastSnapshots: CompetitiveSnapshot[];
   history: CompetitiveSnapshot[];
+  waterfall: string[];
+  error?: string;
+  discovery?: string[];
 };
 
 export const TIER_MS: Record<WatchTier, number> = {

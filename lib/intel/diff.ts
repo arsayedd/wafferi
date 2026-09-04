@@ -42,3 +42,14 @@ export function diffSnapshots(
   }
   return out;
 }
+
+function keyOf(s: CompetitiveSnapshot) {
+  return (s.sku || s.gtin || s.url + "|" + s.name).toLowerCase();
+}
+
+/** Compare vs baseline — خطوة 3 في مسار Apify price monitoring. */
+export function diffRuns(prev: CompetitiveSnapshot[], next: CompetitiveSnapshot[]): ChangeEvent[] {
+  const map = new Map(prev.map((s) => [keyOf(s), s]));
+  return next.flatMap((s) => diffSnapshots(map.get(keyOf(s)), s));
+}
+
