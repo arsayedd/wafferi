@@ -16,7 +16,7 @@ import {
 import { searchPlaces } from "@/lib/places-search";
 import { cn } from "@/lib/utils";
 
-const chips = ["حلل", "غسالة", "ذهب", "أثاث", "منظم", "فوط", "مكياج", "فستان"];
+const chips = ["حلل", "غسالة", "ذهب", "أثاث", "بلاستيك", "شنيور", "فستان", "منظم"];
 
 export default function PlacesClient() {
   const params = useSearchParams();

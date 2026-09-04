@@ -76,7 +76,8 @@ export type StoreKind =
   | "district"
   | "bridal"
   | "jewelry"
-  | "beauty_retail";
+  | "beauty_retail"
+  | "factory";
 
 export type ConnectorKind =
   | "affiliate_network"

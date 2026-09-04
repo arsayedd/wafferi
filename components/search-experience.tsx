@@ -84,6 +84,14 @@ export function SearchExperience({
         </p>
         <SearchBar defaultValue={q} category={category || undefined} />
         {q ? (
+          <Link
+            href={`/sourcing?q=${encodeURIComponent(q)}`}
+            className="block rounded-xl bg-secondary/80 px-4 py-3 text-sm ring-1 ring-foreground/10 hover:bg-secondary"
+          >
+            خريطة المصادر لـ «{q}» — أونلاين + جملة + مصنع
+          </Link>
+        ) : null}
+        {q ? (
           <div className="flex flex-wrap gap-1.5">
             {(
               [

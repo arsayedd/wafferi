@@ -456,6 +456,7 @@ export const kindLabels: Record<StoreKind, string> = {
   bridal: "بوتيكات فساتين",
   jewelry: "ذهب وإكسسوار",
   beauty_retail: "تجميل وصيدليات",
+  factory: "مصانع ومناطق صناعية",
 };
 
 export const statusLabels: Record<ConnectionStatus, string> = {

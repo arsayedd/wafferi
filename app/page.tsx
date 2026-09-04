@@ -64,6 +64,9 @@ export default function HomePage() {
               <Button variant="outline" nativeButton={false} render={<Link href="/places" />}>
                 لو هتنزلي
               </Button>
+              <Button variant="outline" nativeButton={false} render={<Link href="/sourcing" />}>
+                مصادر
+              </Button>
             </div>
             <div className="flex flex-wrap gap-2 text-sm">
               {["طقم حلل", "ستارة حمام", "بوكس الطوارئ", "شنطة سفر"].map((s) => (

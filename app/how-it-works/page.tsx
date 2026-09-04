@@ -29,7 +29,8 @@ export default function HowPage() {
         <p className="text-sm">
           الأحياء متجمّعة عندنا: حمام التلات للحلل، عبدالعزيز للأجهزة، الصاغة للذهب،
           دمياط للأثاث. البحث بيرميكِ على الحي المناسب من الداتا دي، من غير Google
-          Search ولا Places API.
+          Search ولا Places API. خريطة المصادر على «المصادر» بتقسّم كل فئة لأونلاين
+          وجملة ومصنع.
         </p>
       </section>
       <section className="space-y-2">

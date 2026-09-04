@@ -31,6 +31,9 @@ export default function MapPage() {
           {stores.length} مصدر في الشبكة · {journeyStages.length} مرحلة في الرحلة
         </p>
         <div className="flex flex-wrap gap-2">
+          <Button nativeButton={false} render={<Link href="/sourcing" />}>
+            خريطة المصادر
+          </Button>
           <Button nativeButton={false} render={<Link href="/places" />}>
             أماكن الأحياء
           </Button>

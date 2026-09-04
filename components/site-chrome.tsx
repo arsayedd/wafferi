@@ -11,11 +11,11 @@ import { SearchBar } from "@/components/search-bar";
 
 const links = [
   { href: "/guide", label: "الدليل" },
+  { href: "/sourcing", label: "المصادر" },
   { href: "/map", label: "الخريطة" },
   { href: "/places", label: "أماكن" },
   { href: "/search", label: "السوق" },
   { href: "/list", label: "القايمة" },
-  { href: "/stores", label: "الشبكة" },
 ];
 
 export function Logo({ className = "" }: { className?: string }) {
@@ -174,6 +174,9 @@ export function SiteFooter() {
         <div>
           <p className="mb-2 text-sm font-medium">اكتشفي</p>
           <ul className="space-y-1 text-sm text-muted-foreground">
+            <li>
+              <Link href="/sourcing">خريطة المصادر</Link>
+            </li>
             <li>
               <Link href="/places">أماكن الأحياء</Link>
             </li>

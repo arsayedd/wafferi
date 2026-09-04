@@ -44,7 +44,7 @@ export default async function StorePage({
       </p>
       {list.length === 0 ? (
         <p className="rounded-xl border border-dashed p-8 text-sm text-muted-foreground">
-          {store.kind === "district" || store.kind === "bridal"
+          {store.kind === "district" || store.kind === "bridal" || store.kind === "factory"
             ? "المصدر ده أساسًا مقارنة على الطبيعة أو بوتيك. مفيش فيد أسعار لسه — ادخلي الخريطة والدليل، ولما التاجر يرفع كاتالوج هتظهر المنتجات هنا."
             : `المتجر في الشبكة، والفيد الرسمي لسه متصل. حالة الربط الحالية: ${statusLabels[store.status]}.`}
         </p>
