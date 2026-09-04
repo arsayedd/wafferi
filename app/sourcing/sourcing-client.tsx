@@ -272,6 +272,10 @@ export default function SourcingClient() {
         <Link className="text-primary underline" href="/map">
           خريطة الشراء
         </Link>
+        . البنود كلها على{" "}
+        <Link className="text-primary underline" href="/needs">
+          الاحتياجات
+        </Link>
         . الأحياء على{" "}
         <Link className="text-primary underline" href="/places">
           أماكن

@@ -56,6 +56,8 @@ export function buildPlan(a: PlanAnswers): {
   if (!a.hasKitchen) cats.add("kitchen");
   if (!a.hasAppliances) cats.add("appliances");
   else skipped.push("الأجهزة الكبيرة — موجودة");
+  cats.add("grocery");
+  cats.add("faith");
   cats.add("tools");
   if (a.tier !== "basic") cats.add("fashion");
   if (a.tier === "premium" || a.tier === "full") {
@@ -68,7 +70,7 @@ export function buildPlan(a: PlanAnswers): {
     {
       label: "بدري (قاعة وفستان)",
       focus: "يوم الفرح والتصوير قبل الزحمة.",
-      ids: ["bridal", "beauty", "gifts"],
+      ids: ["bridal", "beauty", "gifts", "services"],
     },
     {
       label: "الأثاث والأجهزة",
@@ -88,7 +90,7 @@ export function buildPlan(a: PlanAnswers): {
     {
       label: "آخر شهر",
       focus: "رفايع متنسية، تنظيف، عدة البيت، هدايا.",
-      ids: ["housewares", "cleaning", "tools", "gifts"],
+      ids: ["housewares", "cleaning", "tools", "gifts", "grocery", "faith"],
     },
   ];
 

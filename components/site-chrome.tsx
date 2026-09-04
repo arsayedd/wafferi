@@ -10,6 +10,7 @@ import { useLive } from "@/hooks/use-live";
 import { SearchBar } from "@/components/search-bar";
 
 const links = [
+  { href: "/needs", label: "الاحتياجات" },
   { href: "/plan", label: "الخطة" },
   { href: "/guide", label: "الدليل" },
   { href: "/sourcing", label: "المصادر" },

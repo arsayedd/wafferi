@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { buildPlan, type PlanAnswers } from "@/lib/bride-plan";
 import { houseTiers, sourcingCategories } from "@/lib/sourcing";
+import { needsForSources } from "@/lib/need-taxonomy";
 import { cn } from "@/lib/utils";
 
 const defaults: PlanAnswers = {
@@ -24,6 +25,17 @@ export default function PlanClient() {
   const [a, setA] = useState<PlanAnswers>(defaults);
   const [shown, setShown] = useState(false);
   const plan = useMemo(() => buildPlan(a), [a]);
+  const shopping = useMemo(() => {
+    const ids = plan.months.flatMap((m) => m.categoryIds);
+    const seen = new Set<string>();
+    const pick = (pri: "must" | "should") =>
+      needsForSources(ids, pri).filter((it) => {
+        if (seen.has(it.name)) return false;
+        seen.add(it.name);
+        return true;
+      });
+    return { must: pick("must").slice(0, 28), should: pick("should").slice(0, 12) };
+  }, [plan]);
 
   return (
     <div className="mx-auto max-w-3xl space-y-8 px-4 py-8">
@@ -147,9 +159,22 @@ export default function PlanClient() {
             <Link href="/guide" className={cn(buttonVariants())}>
               بنود الدليل
             </Link>
-            <Link href="/sourcing" className={cn(buttonVariants({ variant: "outline" }))}>
-              خريطة المصادر
+            <Link href="/needs" className={cn(buttonVariants({ variant: "outline" }))}>
+              كل الاحتياجات
             </Link>
+          </div>
+          <div className="space-y-2">
+            <h2 className="font-medium">قايمة مشتريات (ضروري)</h2>
+            <ul className="divide-y rounded-xl bg-card text-sm ring-1 ring-foreground/10">
+              {shopping.must.map((it) => (
+                <li key={it.name} className="flex justify-between gap-2 px-4 py-2">
+                  <span>{it.name}</span>
+                  <Link className="text-xs text-primary" href={`/sourcing?cat=${it.source}`}>
+                    منين
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
       ) : null}
