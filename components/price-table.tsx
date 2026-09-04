@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { ExternalLink, BadgeCheck, Ticket } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -18,18 +19,42 @@ function updatedAtOf(l: Listing) {
 
 export function PriceTable({ listings }: { listings: Listing[] }) {
   const { outbound, ruleFor } = usePartners();
-  const sorted = [...listings].sort((a, b) => a.price - b.price);
-  const min = sorted[0]?.price;
+  const [sort, setSort] = useState<"price" | "rating" | "reviews" | "discount">("price");
+  const sorted = [...listings].sort((a, b) => {
+    if (sort === "rating") return b.rating - a.rating;
+    if (sort === "reviews") return b.reviews - a.reviews;
+    if (sort === "discount") {
+      const da = a.oldPrice && a.oldPrice > a.price ? a.oldPrice - a.price : 0;
+      const db = b.oldPrice && b.oldPrice > b.price ? b.oldPrice - b.price : 0;
+      return db - da;
+    }
+    return a.price - b.price;
+  });
+  const min = Math.min(...listings.map((l) => l.price));
 
   return (
     <div className="overflow-x-auto rounded-xl ring-1 ring-foreground/10">
+      <div className="flex flex-wrap items-center justify-between gap-2 bg-muted/40 px-3 py-2">
+        <p className="text-sm font-medium">فين تشتري</p>
+        <select
+          className="h-8 rounded-lg border border-input bg-background px-2 text-xs"
+          value={sort}
+          onChange={(e) => setSort(e.target.value as typeof sort)}
+        >
+          <option value="price">الأرخص</option>
+          <option value="rating">الأعلى تقييمًا</option>
+          <option value="reviews">الأكثر مراجعات</option>
+          <option value="discount">أكبر خصم</option>
+        </select>
+      </div>
       <table className="w-full min-w-[860px] text-sm">
         <thead className="bg-muted/60 text-muted-foreground">
           <tr>
             <th className="px-3 py-2 text-start font-medium">المصدر</th>
-            <th className="px-3 py-2 text-start font-medium">سعر حي</th>
+            <th className="px-3 py-2 text-start font-medium">السعر</th>
+            <th className="px-3 py-2 text-start font-medium">تقييم</th>
+            <th className="px-3 py-2 text-start font-medium">ستوك</th>
             <th className="px-3 py-2 text-start font-medium">كوبون</th>
-            <th className="px-3 py-2 text-start font-medium">التوصيل</th>
             <th className="px-3 py-2" />
           </tr>
         </thead>
@@ -53,14 +78,25 @@ export function PriceTable({ listings }: { listings: Listing[] }) {
                   <div className="flex items-center gap-2">
                     <span className="font-semibold">{formatPrice(l.price)}</span>
                     {cheapest && (
-                      <Badge className="bg-emerald-700 text-white">الأرخص في العينة</Badge>
+                      <Badge className="bg-emerald-700 text-white">أفضل سعر حاليًا</Badge>
                     )}
+                    {l.oldPrice && l.oldPrice > l.price ? (
+                      <span className="text-xs text-muted-foreground line-through">
+                        {formatPrice(l.oldPrice)}
+                      </span>
+                    ) : null}
                     {updatedAtOf(l) ? (
                       <span className="text-xs text-muted-foreground">
                         {new Date(updatedAtOf(l)!).toLocaleTimeString("ar-EG")}
                       </span>
                     ) : null}
                   </div>
+                </td>
+                <td className="px-3 py-3 text-sm">
+                  {l.rating.toFixed(1)} · {l.reviews.toLocaleString("ar-EG")}
+                </td>
+                <td className="px-3 py-3 text-muted-foreground">
+                  {l.inStock ? `✓ ${l.shipping}` : "✕ غير متوفر"}
                 </td>
                 <td className="px-3 py-3">
                   {coupon ? (
@@ -78,9 +114,6 @@ export function PriceTable({ listings }: { listings: Listing[] }) {
                   ) : (
                     <span className="text-xs text-muted-foreground">—</span>
                   )}
-                </td>
-                <td className="px-3 py-3 text-muted-foreground">
-                  {l.inStock ? l.shipping : "غير متوفر حاليًا"}
                 </td>
                 <td className="px-3 py-3 text-end">
                   <Button

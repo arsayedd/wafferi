@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { getCategory, getProduct, getStore, products } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { productStats } from "@/lib/stats";
+import { priceIntel, whyBest } from "@/lib/best-choice";
 import { useWaffari } from "@/hooks/use-waffari";
 import { useLive } from "@/hooks/use-live";
 import { useCatalog } from "@/hooks/use-catalog";
@@ -72,6 +73,32 @@ export default function ProductPage({
             </Link>
           </p>
           <h1 className="font-heading text-3xl font-semibold">{product.name}</h1>
+          {(() => {
+            const intel = priceIntel(product);
+            return (
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="rounded-xl bg-emerald-50 p-3 ring-1 ring-emerald-200">
+                  <p className="text-xs text-muted-foreground">أقل سعر</p>
+                  <p className="text-xl font-semibold">{formatPrice(intel.lowest)}</p>
+                </div>
+                <div className="rounded-xl bg-muted/60 p-3">
+                  <p className="text-xs text-muted-foreground">متوسط السوق</p>
+                  <p className="text-xl font-semibold">{formatPrice(intel.average)}</p>
+                </div>
+                <div className="rounded-xl bg-muted/60 p-3">
+                  <p className="text-xs text-muted-foreground">أعلى سعر</p>
+                  <p className="text-xl font-semibold">{formatPrice(intel.highest)}</p>
+                </div>
+              </div>
+            );
+          })()}
+          <ul className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+            {whyBest(product).map((r) => (
+              <li key={r.label} className="rounded-full bg-muted px-2 py-1">
+                {r.label}
+              </li>
+            ))}
+          </ul>
           <div className="flex flex-wrap items-center gap-3 text-sm">
             <span className="flex items-center gap-1">
               <Star className="size-4 fill-accent text-accent" />

@@ -8,7 +8,14 @@ type ShopifyProduct = {
   vendor?: string;
   product_type?: string;
   handle?: string;
-  variants?: { price?: string; sku?: string; barcode?: string; available?: boolean }[];
+  variants?: {
+    price?: string;
+    compare_at_price?: string | null;
+    sku?: string;
+    barcode?: string;
+    available?: boolean;
+    title?: string;
+  }[];
 };
 
 export function shopifyJsonUrl(page: URL): string | null {
@@ -43,6 +50,7 @@ export function productsFromShopifyJson(json: unknown, pageUrl: string): Product
         brand: p.vendor,
         category: p.product_type,
         price: parsePrice(v?.price),
+        compare_at_price: v?.compare_at_price ?? undefined,
         sku: v?.sku,
         barcode: v?.barcode,
         url,

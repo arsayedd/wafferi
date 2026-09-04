@@ -22,6 +22,8 @@ export function productsFromWoo(json: unknown, pageUrl: string): Product[] {
     const minor = Number(prices.currency_minor_unit ?? 0);
     let price = parsePrice(prices.price ?? p.price);
     if (minor === 2 && price > 0) price = Math.round(price / 100);
+    let regular = parsePrice(prices.regular_price ?? prices.price);
+    if (minor === 2 && regular > 0) regular = Math.round(regular / 100);
     const url = String(p.permalink ?? pageUrl);
     return productFromRow(
       {
@@ -29,6 +31,7 @@ export function productsFromWoo(json: unknown, pageUrl: string): Product[] {
         name: p.name ?? p.title,
         brand: (p.brands as { name?: string }[] | undefined)?.[0]?.name,
         price,
+        regular_price: regular > price ? regular : undefined,
         sku: p.sku,
         url,
         store: storeIdFromUrl(url),

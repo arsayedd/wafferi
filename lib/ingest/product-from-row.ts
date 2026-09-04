@@ -65,6 +65,12 @@ export function productFromRow(
         storeId,
         price,
         sku: String(pick(row, ["sku", "g:id", "id"]) ?? id),
+        oldPrice: (() => {
+          const listed = parsePrice(
+            pick(row, ["compareat", "compare_at_price", "oldprice", "regular_price", "listprice"]),
+          );
+          return listed > price ? listed : undefined;
+        })(),
         rating: Number(pick(row, ["rating"]) ?? 4) || 4,
         reviews: Number(pick(row, ["reviews"]) ?? 1) || 1,
         inStock: String(pick(row, ["instock", "availability", "g:availability"]) ?? "true")

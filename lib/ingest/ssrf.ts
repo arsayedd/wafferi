@@ -31,3 +31,23 @@ export async function fetchPublic(url: string, accept: string) {
   const body = new TextDecoder("utf-8", { fatal: false }).decode(buf);
   return { res, contentType, body, url: parsed };
 }
+
+export async function postPublic(url: string, payload: unknown) {
+  const parsed = assertPublicHttpUrl(url);
+  const res = await fetch(parsed.toString(), {
+    method: "POST",
+    redirect: "follow",
+    signal: AbortSignal.timeout(15000),
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+      "user-agent": "WaffariPriceBot/1.0 (structured product data; comparison)",
+    },
+    body: JSON.stringify(payload),
+  });
+  const contentType = res.headers.get("content-type") ?? "";
+  const buf = await res.arrayBuffer();
+  if (buf.byteLength > 2_000_000) throw new Error("الملف أكبر من المسموح");
+  const body = new TextDecoder("utf-8", { fatal: false }).decode(buf);
+  return { res, contentType, body, url: parsed };
+}

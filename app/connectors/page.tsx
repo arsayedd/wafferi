@@ -45,9 +45,13 @@ export default function ConnectorsPage() {
           أحياء مصر متجمّعة عندنا، من غير زحف خرائط جوجل.
         </p>
         <p>
-          <strong className="text-foreground">Scrapling:</strong> المفيد هو الـ adaptive parser: لو وصفة
-          CSS اتكسرت بندور على علامات سعر معلنة قريبة. مش بنركّب StealthyFetcher ولا حل Cloudflare ولا
-          تقليد بصمة TLS — المكتبة بايثون أصلاً، وده تجاوز حماية مش طبقة مقارنة.
+          OpenSearch/Elasticsearch وCrawlee/Playwright وRedis مكانهم في الإنتاج على مليون صنف. هنا الفهرس
+          على الكتالوج + الفيد، والموصّل HTTP أولًا. Playwright آخر حل ومش شغال كزحف.
+        </p>
+        <p>
+          <Link href="/intel" className="text-primary underline">
+            معمارية ذكاء السوق
+          </Link>
         </p>
       </section>
       <section className="space-y-2 text-sm text-muted-foreground">

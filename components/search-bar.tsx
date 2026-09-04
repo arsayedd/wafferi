@@ -33,9 +33,7 @@ export function SearchBar({
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder={
-          compact
-            ? "أي حاجة في الحياة…"
-            : "دورِي: غسالة، حلل، ذهب… أونلاين أو نودّيكي للحي"
+          compact ? "غسالة ١٠ كيلو أقل من ٣٠ ألف" : "دورِي: غسالة ١٠ كيلو أقل من ٣٠ ألف"
         }
         className={compact ? "h-9 bg-muted/50" : "h-12 bg-background text-base"}
         name="q"

@@ -31,6 +31,7 @@ export async function POST(req: Request) {
       connector: result.connector,
       candidates: result.candidates ?? [],
       needsReview: Boolean(result.needsReview),
+      discovery: result.discovery ?? [],
     });
   } catch (e) {
     return Response.json({ error: (e as Error).message }, { status: 400 });

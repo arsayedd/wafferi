@@ -8,6 +8,8 @@ import { amazonAsinFromUrl, amazonGetItems } from "./amazon-creators";
 import { extractHtmlProduct } from "./extract-html";
 import type { HostRecipe } from "./recipes";
 import type { PriceCandidate } from "./vote";
+import { isSitemapXml, locUrls, productishUrls } from "./sitemap";
+import { looksLikeMagento, productsFromMagentoGraphql } from "./parse-magento";
 
 export type IngestResult = {
   products: Product[];
@@ -15,6 +17,7 @@ export type IngestResult = {
   error?: string;
   candidates?: PriceCandidate[];
   needsReview?: boolean;
+  discovery?: string[];
 };
 
 function looksLikeHtml(body: string, contentType: string) {
@@ -57,7 +60,16 @@ export async function ingestFromUrl(
   );
   if (!res.ok) return { products: [], connector: "http", error: `المصدر رجّع ${res.status}` };
 
-  if (!looksLikeHtml(body, contentType)) {
+  if (!looksLikeHtml(body, contentType) || isSitemapXml(body)) {
+    if (isSitemapXml(body)) {
+      const discovery = productishUrls(locUrls(body));
+      return {
+        products: [],
+        connector: "sitemap",
+        discovery,
+        error: discovery.length ? undefined : "خريطة الموقع من غير روابط منتج واضحة",
+      };
+    }
     if (looksLikeXml(body, contentType)) {
       const products = parseMerchantXml(body, url.toString());
       if (!products.length) return { products: [], connector: "xml", error: "XML من غير عناصر منتج" };
@@ -83,6 +95,11 @@ export async function ingestFromUrl(
       const products = productsFromWoo(json, url.toString());
       if (products.length) return { products, connector: "woocommerce-store-api" };
     }
+  }
+
+  if (looksLikeMagento(body)) {
+    const mage = await productsFromMagentoGraphql(url);
+    if (mage.length) return { products: mage, connector: "magento-graphql" };
   }
 
   const page = extractHtmlProduct(body, url.toString(), extraRecipes);

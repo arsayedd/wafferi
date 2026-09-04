@@ -176,6 +176,15 @@ export type ListItem = {
   qty: number;
   purchased: boolean;
   note: string;
+  /** Chosen seller; empty = always pick cheapest in-stock offer */
+  storeId?: string;
+};
+
+export type BridalSetup = {
+  id: string;
+  name: string;
+  budget: number;
+  items: ListItem[];
 };
 
 export type PriceAlert = {

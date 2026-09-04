@@ -35,6 +35,16 @@ export const connectors = [
     text: "GetItems على amazon.eg بـ ASIN. محتاج توكن Associates في البيئة.",
   },
   {
+    id: "magento-graphql",
+    title: "Magento GraphQL",
+    text: "لو المتجر Magento و /graphql عام، بنقرأ السعر والستوك. من غير لوحة أدمن.",
+  },
+  {
+    id: "sitemap",
+    title: "Sitemap (اكتشاف محدود)",
+    text: "روابط منتج مرشّحة من sitemap.xml — حد أقصى عشرات، مش زحف كتالوج مصر.",
+  },
+  {
     id: "css-recipe",
     title: "وصفة CSS للدومين",
     text: "لو الصفحة معلنة السعر في class معيّن. إنتي بتحددي السيلكتور، مش بنلف على الموقع.",

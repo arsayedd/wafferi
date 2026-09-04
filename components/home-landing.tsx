@@ -12,6 +12,7 @@ import {
   MapPinned,
   Scale,
   Radio,
+  ShoppingBag,
   Sparkles,
   Store,
 } from "lucide-react";
@@ -64,8 +65,14 @@ const modules = [
   {
     href: "/search",
     icon: Scale,
-    title: "المقارنة",
-    text: "نفس المنتج من أكتر من مصدر. السعر يتحدّث من فيد المصدر، والشراء عندهم.",
+    title: "البحث والمقارنة",
+    text: "جملة زي غسالة ١٠ كيلو أقل من ٣٠ ألف. منتج موحّد وكل بائعيه.",
+  },
+  {
+    href: "/list",
+    icon: ShoppingBag,
+    title: "جهاز العروسة",
+    text: "قوائم متعددة، ميزانية، توفير محتمل، وتصدير Excel.",
   },
   {
     href: "/live",
@@ -284,6 +291,7 @@ export function HomeLanding() {
                 "تجمع الاحتياج في مكان واحد على خمس مراحل.",
                 "تورّيك مصدر الشراء: أونلاين أو حي.",
                 "تقارن أسعار حية لنفس المنتج من فيدات الشركاء — زي منصات المقارنة.",
+                "تجمع الجهاز في قوائم، تحسّب التوفير، وتصدّر Excel.",
               ].map((t) => (
                 <li key={t} className="flex gap-3">
                   <span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary" />

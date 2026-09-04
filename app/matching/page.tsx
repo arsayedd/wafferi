@@ -13,8 +13,7 @@ export default function MatchingPage() {
       <div>
         <h1 className="font-heading text-3xl font-semibold">محرك مطابقة المنتجات</h1>
         <p className="mt-2 max-w-2xl text-muted-foreground">
-          نفس الخط اللي اتفقنا عليه: باركود → ماركة+فئة+سعة → تشابه نصي. العروض
-          التجريبية 12 عرض من جوميا ونون وبي تك ورنين.
+          باركود ثم ماركة+فئة+سعة ثم تشابه الاسم. الناتج منتج رئيسي واحد، وكل متجر يبقى عرض تحته.
         </p>
       </div>
 

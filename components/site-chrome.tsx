@@ -22,6 +22,7 @@ const links = [
   { href: "/search", label: "السوق" },
   { href: "/live", label: "أسعار حية" },
   { href: "/list", label: "القايمة" },
+  { href: "/intel", label: "ذكاء السوق" },
 ];
 
 export function Logo({ className = "" }: { className?: string }) {
@@ -250,6 +251,9 @@ export function SiteFooter() {
             </li>
             <li>
               <Link href="/account">حسابي</Link>
+            </li>
+            <li>
+              <Link href="/intel">ذكاء السوق</Link>
             </li>
             <li>
               <Link href="/ingest">فيد وأفلييت</Link>

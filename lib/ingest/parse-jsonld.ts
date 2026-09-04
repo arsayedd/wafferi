@@ -61,6 +61,7 @@ export function productsFromJsonLd(html: string, pageUrl: string): Product[] {
           name: n.name,
           brand,
           price,
+          compare_at_price: parsePrice((offer as { highPrice?: unknown }).highPrice),
           sku: n.sku ?? n.mpn ?? n.productID,
           barcode: n.gtin13 ?? n.gtin ?? n.gtin14 ?? n.isbn,
           url,
