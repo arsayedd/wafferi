@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { productImageFallback, productPhotoSrc, PHOTO_CREDIT } from "@/lib/product-images";
-import { ProductArt } from "@/components/product-art";
+import { uniquePhotoSrc } from "@/lib/unique-photos";
+import { productPhotoSrc, PHOTO_CREDIT } from "@/lib/product-images";
 import type { CategoryId } from "@/lib/types";
 
 export function ProductPhoto({
@@ -20,15 +19,8 @@ export function ProductPhoto({
   model?: string;
   className?: string;
 }) {
-  const [step, setStep] = useState(0);
-  const sources = [
-    productPhotoSrc({ id, category, name, brand, model }),
-    productImageFallback(id, category, name),
-  ];
-
-  if (step >= sources.length) {
-    return <ProductArt category={category} name={name} className={className} />;
-  }
+  const unique = uniquePhotoSrc(id);
+  const src = unique || productPhotoSrc({ id, category, name, brand, model });
 
   return (
     <div
@@ -38,15 +30,16 @@ export function ProductPhoto({
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={sources[step]}
+        src={src}
         alt={`${name}${model ? ` · ${model}` : ""}`}
         className="size-full object-contain"
         referrerPolicy="no-referrer"
-        onError={() => setStep((s) => s + 1)}
       />
-      <span className="pointer-events-none absolute bottom-1 start-1 max-w-[90%] truncate rounded bg-background/80 px-1.5 py-0.5 text-[10px] text-muted-foreground">
-        {PHOTO_CREDIT}
-      </span>
+      {unique ? (
+        <span className="pointer-events-none absolute bottom-1 start-1 max-w-[90%] truncate rounded bg-background/80 px-1.5 py-0.5 text-[10px] text-muted-foreground">
+          {PHOTO_CREDIT}
+        </span>
+      ) : null}
     </div>
   );
 }

@@ -69,7 +69,7 @@ export function productImage(id: string, category: CategoryId, name = "") {
   if (blob.includes("مكواة") || blob.includes("iron")) return "/catalog-photos/iron.jpg";
   const pool = BY_CATEGORY[category];
   if (pool?.length) return pool[seed(id) % pool.length];
-  return "/catalog-photos/small-appliances.jpg";
+  return "";
 }
 
 export function productImageFallback(id: string, category: CategoryId, name = "") {

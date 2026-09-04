@@ -1,5 +1,6 @@
 import { foldArabic, tokenizeQuery } from "./ar-fold";
 import { avgRating, cheapestListing, getCategory, getStore, products } from "./catalog";
+import { UNIQUE_PHOTO_IDS } from "./unique-photos";
 import { bestChoiceScore, offerDiscountPct, totalReviews } from "./best-choice";
 import { SEARCH_STOP } from "./query-parse";
 import type { Product } from "./types";
@@ -136,7 +137,7 @@ export function searchProducts(
   const sort = filters.sort ?? "best";
   let strict = pool.filter((p) => applyFilters(p, filters, true));
   if (!filters.q && !hasStructuredFilters(filters)) {
-    const featured = strict.filter((p) => !p.id.startsWith("br-"));
+    const featured = strict.filter((p) => UNIQUE_PHOTO_IDS.has(p.id));
     if (featured.length) strict = featured;
   }
   if (strict.length || !filters.q) return sortList(strict, sort);
