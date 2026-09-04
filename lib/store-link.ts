@@ -22,7 +22,7 @@ export function storeLogoUrl(website: string) {
 const SEARCH: Record<string, (q: string) => string> = {
   jumia: (q) => `https://www.jumia.com.eg/catalog/?q=${q}`,
   noon: (q) => `https://www.noon.com/egypt-ar/search/?q=${q}`,
-  amazon: (q) => `https://www.amazon.eg/s?k=${q}`,
+  amazon: (q) => `https://www.amazon.eg/-/ar/s?k=${q}`,
   carrefour: (q) => `https://www.carrefouregypt.com/mafegy/ar/search?q=${q}`,
   btech: (q) => `https://btech.com/eg-ar/catalogsearch/result/?q=${q}`,
   twob: (q) => `https://2b.com.eg/ar/catalogsearch/result/?q=${q}`,

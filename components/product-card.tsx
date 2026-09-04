@@ -10,12 +10,12 @@ import { ProductPhoto } from "@/components/product-photo";
 import { StoreLogo } from "@/components/store-logo";
 import { SellerStrip } from "@/components/seller-strip";
 import { getStore } from "@/lib/catalog";
-import { listingHref } from "@/lib/store-link";
 import { formatNumber, formatPrice } from "@/lib/format";
 import { productStats } from "@/lib/stats";
 import type { Product } from "@/lib/types";
 import { useWaffari } from "@/hooks/use-waffari";
 import { useLive } from "@/hooks/use-live";
+import { usePartners } from "@/hooks/use-partners";
 
 export function ProductCard({ product: raw }: { product: Product }) {
   const { liveProduct } = useLive();
@@ -23,6 +23,7 @@ export function ProductCard({ product: raw }: { product: Product }) {
   const { cheap, save, rating, stores } = productStats(product);
   const store = getStore(cheap.storeId);
   const { addItem, items, toggleCompare, compare } = useWaffari();
+  const { outbound } = usePartners();
   const inList = items.some((i) => i.productId === product.id);
   const inCompare = compare.includes(product.id);
 
@@ -85,7 +86,7 @@ export function ProductCard({ product: raw }: { product: Product }) {
           variant="outline"
           title={`افتحي ${store?.name}`}
           onClick={() => {
-            const href = listingHref(cheap.storeId, product.name, cheap.url);
+            const href = outbound(cheap.url, cheap.storeId, cheap.coupon, product.name);
             toast.message(`المصدر: ${store?.name}`, {
               description: "بحث الاسم على موقعهم — مش صفحة منتج ملفّقة.",
             });

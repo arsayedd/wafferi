@@ -140,7 +140,7 @@ export function PriceTable({
                           ? `الكوبون ${coupon} هيتركب على الرابط. بنفتح بحث المنتج عندهم مش صفحة وهمية.`
                           : "بنفتح بحث الاسم على موقعهم عشان مفيش صفحة منتج ملفّقة.",
                       });
-                      window.open(outbound(href, l.storeId, l.coupon), "_blank", "noopener");
+                      window.open(outbound(href, l.storeId, l.coupon, productName), "_blank", "noopener");
                     }}
                   >
                     اشتري من {store?.name ?? "المصدر"}

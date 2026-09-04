@@ -24,7 +24,7 @@ type PartnersState = {
   rules: PartnerRule[];
   upsert: (rule: PartnerRule) => void;
   ruleFor: (storeId: string) => PartnerRule | undefined;
-  outbound: (url: string, storeId: string, listingCoupon?: string) => string;
+  outbound: (url: string, storeId: string, listingCoupon?: string, productName?: string) => string;
 };
 
 const Ctx = createContext<PartnersState | null>(null);
@@ -70,8 +70,15 @@ function PartnersProvider({ children }: { children: React.ReactNode }) {
   );
 
   const outbound = useCallback(
-    (url: string, storeId: string, listingCoupon?: string) =>
-      buildOutboundUrl(url, ruleFor(storeId), listingCoupon),
+    (url: string, storeId: string, listingCoupon?: string, productName?: string) => {
+      const rule = ruleFor(storeId) ?? {
+        storeId,
+        affiliateId: "",
+        coupon: "",
+        extraQuery: "",
+      };
+      return buildOutboundUrl(url, { ...rule, storeId }, listingCoupon, productName);
+    },
     [ruleFor],
   );
 
