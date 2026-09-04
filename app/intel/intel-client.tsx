@@ -33,6 +33,7 @@ export function IntelClient() {
     removeRule,
     myPrice,
     setMyPrice,
+    resetCatalog,
     plan,
   } = useIntel();
   const [url, setUrl] = useState("");
@@ -69,10 +70,8 @@ export function IntelClient() {
       <div className="space-y-2">
         <h1 className="font-heading text-3xl font-semibold">مراقبة أسعار المنافسين</h1>
         <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
-          نفس مسار Apify: سحب صفحة/فيد → مطابقة المنتج → مقارنة مع آخر قراءة → تنبيه.
-          الأرقام اللي تحت من كتالوج وفّري المرجعي لحد ما تضيف فيد مصرّح. مش زحف متاجر مصر.
-        </p>
-        <p className="font-mono text-xs text-muted-foreground">
+          الأرقام دي من كتالوج وفّري المرجعي (غسالة، ثلاجة، بوتاجاز…) عشان اللوحة متبقاش فاضية.
+          مسار الفيد الحقيقي: JSON-LD / Shopify / Woo / CSV مصرّح — HTTP منظم، من غير Playwright.
           Scrape → Match → Compare → Alert
         </p>
       </div>
@@ -89,6 +88,9 @@ export function IntelClient() {
         <Metric label="تغيّر سعر اليوم" value={String(priceToday)} />
         <Metric label="تغيّر ستوك اليوم" value={String(stockToday)} />
         <Metric label="الجدولة" value={auto ? "شغالة" : "واقفة"} />
+        <p className="sm:col-span-2 lg:col-span-4 text-xs text-muted-foreground">
+          تغيّر السعر/الستوك اليوم = فرق بين قراءتين من فيد حي. فجوة البائعين تحت من الكتالوج المرجعي.
+        </p>
       </div>
 
       <section className="grid gap-3 rounded-2xl bg-card p-4 ring-1 ring-foreground/10 md:grid-cols-2">
@@ -196,6 +198,16 @@ export function IntelClient() {
           >
             JSON
           </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              resetCatalog();
+              toast.success("اتحمّل كتالوج الجهاز المرجعي");
+            }}
+          >
+            تحميل عيّنة الكتالوج
+          </Button>
           <Button variant={view === "table" ? "secondary" : "outline"} size="sm" onClick={() => setView("table")}>
             جدول
           </Button>
@@ -207,11 +219,10 @@ export function IntelClient() {
 
       {watches.length === 0 ? (
         <div className="rounded-xl border border-dashed p-10 text-center text-sm text-muted-foreground">
-          مفيش روابط. ابدئي بـ ٢٠–٥٠ منتج مهم، مش كل متاجر مصر.{" "}
-          <Link href="/ingest" className="text-primary underline">
-            أو اسحبي فيد
-          </Link>
-          .
+          <p>مفيش روابط محفوظة. حمّلي عيّنة الكتالوج عشان تتملّي اللوحة.</p>
+          <Button className="mt-4" onClick={() => resetCatalog()}>
+            تحميل عيّنة الكتالوج
+          </Button>
         </div>
       ) : view === "table" ? (
         <div className="overflow-x-auto rounded-xl ring-1 ring-foreground/10">
@@ -228,11 +239,11 @@ export function IntelClient() {
             </thead>
             <tbody>
               {watches.map((w) => {
-                const s = w.snapshot;
+                const s = w.snapshot ?? w.lastSnapshots?.[0];
                 return (
                   <tr key={w.id} className="border-t">
                     <td className="px-3 py-3">
-                      <p className="font-medium">{s?.name ?? w.url}</p>
+                      <p className="font-medium">{(s ?? w.lastSnapshots?.[0])?.name ?? w.url}</p>
                       <p className="text-xs text-muted-foreground">
                         {tierLabels[w.tier]} · فحص متعلّم {Math.round(learnedInterval(w) / 60000)} د
                         {w.platform ? ` · ${w.platform}` : ""}

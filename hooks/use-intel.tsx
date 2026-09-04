@@ -21,11 +21,11 @@ import {
   type WatchTier,
   watchDue,
 } from "@/lib/intel/types";
-import { catalogReferenceWatches } from "@/lib/intel/catalog-seed";
+import { catalogReferenceWatches, catalogSpreadEvents, defaultMyPrice, hydrateIntelWatches } from "@/lib/intel/catalog-seed";
 import { snapshotsFromCatalogProduct } from "@/lib/intel/from-product";
 import { getProduct } from "@/lib/catalog";
 
-const KEY = "waffari-intel-v2";
+const KEY = "waffari-intel-v3";
 
 type File = {
   watches: WatchItem[];
@@ -53,6 +53,7 @@ type IntelState = {
   removeRule: (id: string) => void;
   addWatch: (url: string, tier: WatchTier) => Promise<void>;
   removeWatch: (id: string) => void;
+  resetCatalog: () => void;
   setTier: (id: string, tier: WatchTier) => void;
   runWatch: (id: string) => Promise<void>;
   runDue: () => Promise<void>;
@@ -66,11 +67,12 @@ function uid() {
 
 export function IntelProvider({ children }: { children: React.ReactNode }) {
   const { extra } = useRecipes();
-  const [watches, setWatches] = useState<WatchItem[]>([]);
-  const [events, setEvents] = useState<ChangeEvent[]>([]);
+  const initial = catalogReferenceWatches();
+  const [watches, setWatches] = useState<WatchItem[]>(initial);
+  const [events, setEvents] = useState<ChangeEvent[]>(() => catalogSpreadEvents(initial));
   const [rules, setRules] = useState<AlertRule[]>([]);
   const [plan, setPlan] = useState<PlanId>("starter");
-  const [myPrice, setMyPrice] = useState(0);
+  const [myPrice, setMyPrice] = useState(() => defaultMyPrice(initial));
   const [auto, setAuto] = useState(false);
   const [polling, setPolling] = useState(false);
   const [ready, setReady] = useState(false);
@@ -82,27 +84,24 @@ export function IntelProvider({ children }: { children: React.ReactNode }) {
       const raw = localStorage.getItem(KEY);
       if (raw) {
         const file = JSON.parse(raw) as File;
-        setWatches(
-          (file.watches ?? []).map((w) => ({
-            ...w,
-            lastSnapshots: w.lastSnapshots ?? [],
-            waterfall: w.waterfall ?? [],
-            history: w.history ?? [],
-          })),
-        );
-        setEvents(file.events ?? []);
+        const next = hydrateIntelWatches(file.watches);
+        setWatches(next);
+        setEvents(file.events?.length ? file.events : catalogSpreadEvents(next));
         setAuto(Boolean(file.auto));
         setRules(file.rules ?? []);
         setPlan(file.plan ?? "starter");
-        setMyPrice(file.myPrice ?? 0);
-        if (!(file.watches ?? []).length) {
-          setWatches(catalogReferenceWatches());
-        }
+        setMyPrice(file.myPrice || defaultMyPrice(next));
+      } else {
+        const next = catalogReferenceWatches();
+        setWatches(next);
+        setEvents(catalogSpreadEvents(next));
+        setMyPrice(defaultMyPrice(next));
       }
     } catch {
-      /* ignore */
+      const next = catalogReferenceWatches();
+      setWatches(next);
+      setEvents(catalogSpreadEvents(next));
     }
-    setWatches((prev) => (prev.length ? prev : catalogReferenceWatches()));
     setReady(true);
   }, []);
 
@@ -211,7 +210,17 @@ export function IntelProvider({ children }: { children: React.ReactNode }) {
   }, [applyInspect, plan, watches.length]);
 
   const removeWatch = useCallback((id: string) => {
-    setWatches((prev) => prev.filter((w) => w.id !== id));
+    setWatches((prev) => {
+      const next = prev.filter((w) => w.id !== id);
+      return next.length ? next : catalogReferenceWatches();
+    });
+  }, []);
+
+  const resetCatalog = useCallback(() => {
+    const next = catalogReferenceWatches();
+    setWatches(next);
+    setEvents(catalogSpreadEvents(next));
+    setMyPrice(defaultMyPrice(next));
   }, []);
 
   const setTier = useCallback((id: string, tier: WatchTier) => {
@@ -259,6 +268,7 @@ export function IntelProvider({ children }: { children: React.ReactNode }) {
       removeRule,
       addWatch,
       removeWatch,
+      resetCatalog,
       setTier,
       runWatch,
       runDue,
@@ -277,6 +287,7 @@ export function IntelProvider({ children }: { children: React.ReactNode }) {
       removeRule,
       addWatch,
       removeWatch,
+      resetCatalog,
       setTier,
       runWatch,
       runDue,

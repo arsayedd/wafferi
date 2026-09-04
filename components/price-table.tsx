@@ -145,7 +145,7 @@ export function PriceTable({
       </table>
       <p className="flex items-center gap-1 px-3 py-2 text-xs text-muted-foreground">
         <BadgeCheck className="size-3.5" />
-        وفّري مش البائع. السعر يتحدّث من فيد المصدر. الاسم والحقوق ليهم. الزر بيفتح موقعهم.
+        وفّري مش البائع. الزر بيفتح بحث المنتج على موقع المصدر (جوميا / نون / أمازون / راية / ايكيا / دريم / تريدلاين).
       </p>
       <div className="px-3 pb-3">
         <SourceCopyright
