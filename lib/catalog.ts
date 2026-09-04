@@ -6,6 +6,7 @@ import type {
 } from "./types";
 import { extraProducts } from "./extra-products";
 import { lifeProducts } from "./life-products";
+import { marketCatalog } from "./market-catalog";
 import { brideProducts, commercialBundles } from "./bride-guide";
 import { expandNetworkListings } from "./expand-listings";
 import { listingHref, isEgyptSeller, getNetworkStore, brandShopFits, canShopOut } from "./store-link";
@@ -648,7 +649,7 @@ const seedProducts: Product[] = [
 ];
 
 export const products = [
-  ...expandNetworkListings([...seedProducts, ...extraProducts, ...lifeProducts, ...brideProducts]),
+  ...expandNetworkListings([...seedProducts, ...extraProducts, ...lifeProducts, ...marketCatalog, ...brideProducts]),
 ].map((p) => {
   const seen = new Set<string>();
   const listings = p.listings
