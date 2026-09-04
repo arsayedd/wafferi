@@ -295,6 +295,8 @@ export const marketplaceProfiles = [
   { id: "safqqa", sells: "أدوات، بيت، مطبخ، تخزين" },
   { id: "cupindy", sells: "مطبخ، بيت، تنظيم" },
 ] as const;
+
+export function matchSourcing(q: string): SourcingCategory[] {
   const raw = q.trim();
   if (!raw) return sourcingCategories;
   const hit = sourcingCategories.filter(
