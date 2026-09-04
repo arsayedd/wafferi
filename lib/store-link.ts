@@ -1,6 +1,7 @@
-import type { Product, Store } from "./types";
+import type { Store } from "./types";
 import { foldArabic } from "./ar-fold";
 import { isDeadShopUrl } from "./dead-hosts";
+import { googleShopUrl, safeShopQuery } from "./shop-query";
 import { stores } from "./network";
 
 export function getNetworkStore(id: string) {
@@ -17,44 +18,16 @@ export function storeHostname(website: string) {
 
 export function storeLogoUrl(website: string) {
   const host = storeHostname(website);
-  if (!host) return "";
+  if (!host || host.includes("google.")) return "";
   return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=128`;
 }
 
-/** Search URLs that land on a real catalog page — not invented /p/{sku} and not DNS-dead hosts. */
-const TRUSTED_SEARCH: Record<string, (q: string) => string> = {
+/** Official search pages that usually accept a short encoded query. Everything else → Google. */
+const NATIVE_SEARCH: Record<string, (q: string) => string> = {
   jumia: (q) => `https://www.jumia.com.eg/catalog/?q=${q}`,
   amazon: (q) => `https://www.amazon.eg/s?k=${q}`,
   noon: (q) => `https://www.noon.com/egypt-ar/search?q=${q}`,
-  tradeline: (q) => `https://www.tradelinestores.com/search?q=${q}`,
-  raya: (q) => `https://www.rayashop.com/ar/search?q=${q}`,
   ikea: (q) => `https://www.ikea.com/eg/ar/search/products/?q=${q}`,
-  dream2000: (q) => `https://dream2000.com/search?q=${q}`,
-  raneen: (q) => `https://www.raneen.com/catalogsearch/result/?q=${q}`,
-  "tawhid-nour": (q) => `https://tawheedwnour.com/search?q=${q}`,
-  alreyada: (q) => `https://alreyadastore.com/search?q=${q}`,
-  btech: (q) => `https://btech.com/catalogsearch/result/?q=${q}`,
-  twob: (q) => `https://2b.com.eg/catalogsearch/result/?q=${q}`,
-  extra: (q) => `https://www.extra.com/ar-eg/search?q=${q}`,
-  homzmart: (q) => `https://homzmart.com/en/search?q=${q}`,
-  defacto: (q) => `https://www.defacto.com.eg/search?q=${q}`,
-  max: (q) => `https://www.maxfashion.com/eg/ar/search?q=${q}`,
-  namshi: (q) => `https://www.namshi.com/uae-en/search/?q=${q}`,
-  radioshack: (q) => `https://radioshack.com.eg/catalogsearch/result/?q=${q}`,
-  hyperone: (q) => `https://hyperone.com.eg/search?q=${q}`,
-  elaraby: (q) =>
-    `https://www.google.com.eg/search?q=${encodeURIComponent("site:elarabygroup.com")}%20${q}`,
-  olympic: (q) => `https://www.google.com.eg/search?q=${encodeURIComponent("أوليمبيك")}%20${q}%20مصر`,
-  cara: (q) => `https://www.google.com.eg/search?q=${encodeURIComponent("كارا")}%20${q}%20مصر`,
-  spinneys: (q) => `https://www.spinneys-egypt.com/search?q=${q}`,
-  gourmet: (q) => `https://gourmetegypt.com/catalogsearch/result/?q=${q}`,
-  orange: (q) => `https://www.google.com.eg/search?q=${encodeURIComponent("أورنج مصر")}%20${q}`,
-  "egypt-gamer": (q) => `https://www.google.com.eg/search?q=${encodeURIComponent("Egypt Gamer")}%20${q}`,
-  "egypt-laptop": (q) => `https://www.google.com.eg/search?q=${encodeURIComponent("Egypt Laptop")}%20${q}`,
-  hubfurniture: (q) => `https://www.hubfurniture.com.eg/search?q=${q}`,
-  hm: (q) => `https://www2.hm.com/en_eg/search-results.html?q=${q}`,
-  americaneagle: (q) => `https://www.google.com.eg/search?q=${encodeURIComponent("American Eagle")}%20${q}%20مصر`,
-  "future-electronics": (q) => `https://www.google.com.eg/search?q=${encodeURIComponent("Future Electronics")}%20${q}%20مصر`,
 };
 
 export function canShopOut(storeId: string) {
@@ -67,14 +40,11 @@ export function canShopOut(storeId: string) {
 }
 
 export function storeSearchUrl(store: Store, productName: string) {
-  const q = encodeURIComponent(productName);
-  const trusted = TRUSTED_SEARCH[store.id];
-  if (trusted) return trusted(q);
-  const host = storeHostname(store.website);
-  if (host && !host.includes("google.") && !isDeadShopUrl(store.website)) {
-    return `https://www.google.com.eg/search?q=${encodeURIComponent(`site:${host} ${productName}`)}`;
-  }
-  return `https://www.google.com.eg/search?q=${encodeURIComponent(`${productName} ${store.name} مصر للبيع`)}`;
+  const native = Object.hasOwn(NATIVE_SEARCH, store.id) ? NATIVE_SEARCH[store.id] : undefined;
+  const hint = native ? "" : storeHostname(store.website) || store.id;
+  const q = encodeURIComponent(safeShopQuery(productName, hint));
+  if (native) return native(q);
+  return googleShopUrl(productName, hint);
 }
 
 const BRAND_SHOPS: Record<string, string[]> = {
@@ -105,11 +75,21 @@ export function brandShopFits(store: Store, product: { brand: string; name: stri
 
 export function storeHomeHref(website: string, storeId?: string, storeName?: string) {
   const raw = website || "";
-  if (!raw || isDeadShopUrl(raw)) {
+  if (!raw || isDeadShopUrl(raw) || /olympic\.com\.eg|cara-eg\.com/i.test(raw)) {
     if (storeId === "tradeline" || raw.toLowerCase().includes("tradeline.com.eg")) {
       return "https://www.tradelinestores.com";
     }
-    return `https://www.google.com.eg/search?q=${encodeURIComponent(`${storeName || "متجر"} مصر`)}`;
+    if (storeId === "olympic") return "https://olympicelectric.com";
+    return googleShopUrl(storeName || storeId || "Egypt store", storeId || "");
+  }
+  try {
+    const u = new URL(raw);
+    if (u.hostname.includes("google.")) {
+      const q = (u.searchParams.get("q") || storeName || storeId || "").replace(/\+/g, " ");
+      return googleShopUrl(q, storeId || "");
+    }
+  } catch {
+    return googleShopUrl(storeName || storeId || "Egypt store", storeId || "");
   }
   return raw;
 }
@@ -117,10 +97,10 @@ export function storeHomeHref(website: string, storeId?: string, storeName?: str
 export function listingHref(storeId: string, productName: string, _fallbackUrl?: string) {
   const store = getNetworkStore(storeId);
   if (!store) {
-    return `https://www.google.com.eg/search?q=${encodeURIComponent(`${productName} مصر`)}`;
+    return googleShopUrl(productName);
   }
   if (store.shipsEgypt === false) {
-    return `https://www.google.com.eg/search?q=${encodeURIComponent(`${productName} مصر`)}`;
+    return googleShopUrl(productName);
   }
   return storeSearchUrl(store, productName);
 }

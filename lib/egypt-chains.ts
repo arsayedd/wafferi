@@ -1,4 +1,5 @@
 import type { Store } from "./types";
+import { googleShopUrl } from "./shop-query";
 
 function chain(
   id: string,
@@ -80,20 +81,10 @@ export const egyptChains: Store[] = [
     ["furniture", "textiles", "decor"],
   ),
   chain(
-    "olympic",
-    "أوليمبيك إليكتريك",
-    "electronics",
-    "https://www.olympic.com.eg",
-    "أجهزة بيضاء وكهربائية من تصنيع وتوزيع مصري",
-    "فروع مصر",
-    5000,
-    ["cooling", "laundry", "climate", "cooking", "small_kitchen"],
-  ),
-  chain(
     "cara",
     "كارا",
     "electronics",
-    "https://www.cara-eg.com",
+    googleShopUrl("Cara electronics Egypt"),
     "أجهزة منزلية وفروع أجهزة في المحافظات",
     "فروع",
     3500,

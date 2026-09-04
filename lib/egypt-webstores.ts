@@ -1,5 +1,6 @@
 import type { Store } from "./types";
 import { egyptChains } from "./egypt-chains";
+import { googleShopUrl } from "./shop-query";
 
 function shop(
   id: string,
@@ -40,21 +41,21 @@ export const egyptWebstores: Store[] = [
     "elgammal",
     "الجمال إلكترونيكس",
     "electronics",
-    "https://www.google.com.eg/search?q=elgammalelectronics",
+    googleShopUrl("El Gammal electronics Egypt"),
     "أجهزة كهربي وموبايل",
     [...APPL, "mobile"],
     2500,
   ),
   shop("gamerzlounge", "Gamerz Lounge", "electronics", "https://gamerzlounge.com", "جيمنج وملحقات", ["gaming", "computing"], 2000),
-  shop("herobaby", "Hero Baby Store", "electronics", "https://www.google.com.eg/search?q=herobabystore+egypt", "مستلزمات أطفال", ["baby"], 1500),
+  shop("herobaby", "Hero Baby Store", "electronics", googleShopUrl("Hero Baby Store Egypt"), "مستلزمات أطفال", ["baby"], 1500),
   shop("hubfurniture", "Hub Furniture", "furniture", "https://www.hubfurniture.com.eg", "أثاث ومفروشات", ["furniture", "decor", "textiles"], 8000),
-  shop("deeda", "Deeda", "electronics", "https://www.google.com.eg/search?q=deeda+egypt+store", "إلكترونيات", [...TECH], 1200),
-  shop("elsayaad", "الصياد", "electronics", "https://www.google.com.eg/search?q=elsayaad+electronics+egypt", "أجهزة كهربي", [...APPL], 2000),
-  shop("alaska", "Alaska", "electronics", "https://www.google.com.eg/search?q=alaska+electronics+egypt", "أجهزة", [...APPL], 1500),
-  shop("aucpress", "Aucpress", "electronics", "https://www.google.com.eg/search?q=aucpress+egypt", "إلكترونيات", [...TECH], 800),
-  shop("frillu", "Frillu", "fashion", "https://www.google.com.eg/search?q=frillu+egypt", "موضة", ["fashion_women", "bags"], 900),
-  shop("future-electronics", "Future Electronics", "electronics", "https://www.google.com.eg/search?q=future+electronics+egypt", "إلكترونيات وكمبيوتر", [...TECH, "av"], 3500),
-  shop("circuits", "Circuits", "electronics", "https://www.google.com.eg/search?q=circuits+egypt+store", "إلكترونيات", [...TECH], 1000),
-  shop("le3ab", "le3ab store", "electronics", "https://www.google.com.eg/search?q=le3ab+store+egypt", "ألعاب وجيمنج", ["gaming", "baby"], 1800),
-  shop("americaneagle", "American Eagle", "fashion", "https://www.google.com.eg/search?q=american+eagle+egypt", "لبس", ["fashion_women", "fashion_men", "bags"], 3000),
+  shop("deeda", "Deeda", "electronics", googleShopUrl("Deeda store Egypt"), "إلكترونيات", [...TECH], 1200),
+  shop("elsayaad", "الصياد", "electronics", googleShopUrl("Elsayaad electronics Egypt"), "أجهزة كهربي", [...APPL], 2000),
+  shop("alaska", "Alaska", "electronics", googleShopUrl("Alaska electronics Egypt"), "أجهزة", [...APPL], 1500),
+  shop("aucpress", "Aucpress", "electronics", googleShopUrl("Aucpress Egypt"), "إلكترونيات", [...TECH], 800),
+  shop("frillu", "Frillu", "fashion", googleShopUrl("Frillu Egypt fashion"), "موضة", ["fashion_women", "bags"], 900),
+  shop("future-electronics", "Future Electronics", "electronics", googleShopUrl("Future Electronics Egypt"), "إلكترونيات وكمبيوتر", [...TECH, "av"], 3500),
+  shop("circuits", "Circuits", "electronics", googleShopUrl("Circuits store Egypt"), "إلكترونيات", [...TECH], 1000),
+  shop("le3ab", "le3ab store", "electronics", googleShopUrl("le3ab store Egypt"), "ألعاب وجيمنج", ["gaming", "baby"], 1800),
+  shop("americaneagle", "American Eagle", "fashion", "https://www.ae.com/eg-en/", "لبس", ["fashion_women", "fashion_men", "bags"], 3000),
 ];

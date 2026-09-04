@@ -1,6 +1,6 @@
 /** Hosts that NXDOMAIN or fail DNS (Akamai edgesuite). Never send shoppers here. */
 export const DEAD_SHOP_RE =
-  /tradeline\.com\.eg|carrefouregypt|edgesuite\.net|edgekey\.net|mafretailprod|mafegy/i;
+  /tradeline\.com\.eg|carrefouregypt|edgesuite\.net|edgekey\.net|mafretailprod|mafegy|olympic\.com\.eg|cara-eg\.com/i;
 
 export function isDeadShopUrl(url: string) {
   try {

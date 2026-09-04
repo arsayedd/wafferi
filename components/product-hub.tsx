@@ -7,7 +7,6 @@ import { ProductPhoto } from "@/components/product-photo";
 import {
   pricenaSearchUrl,
   youtubeReviewUrl,
-  youtubeSearchEmbed,
   videoQueries,
   gsmarenaSearchUrl,
   mobizilSearchUrl,
@@ -45,22 +44,20 @@ export function ProductVideos({ product }: { product: Product }) {
     <section id="secVideos" className="scroll-mt-28 space-y-3">
       <h2 className="font-heading text-xl font-semibold">فيديوهات المراجعة والمقارنة</h2>
       <p className="text-sm text-muted-foreground">
-        مش بنرفع فيديوهات برايسينا. دي نتائج بحث يوتيوب على اسم الموديل — مراجعة، مقارنة، وكاميرا.
+        مش بنرفع فيديوهات. روابط بحث يوتيوب على الموديل (من غير تضمين — التضمين بيترفض على شبكات كتير).
       </p>
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-3">
         {clips.map((c) => (
-          <figure key={c.id} className="space-y-2">
-            <div className="aspect-video overflow-hidden rounded-xl bg-black ring-1 ring-foreground/10">
-              <iframe
-                title={c.title}
-                src={youtubeSearchEmbed(c.q)}
-                className="size-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-            <figcaption className="text-sm font-medium">{c.title}</figcaption>
-          </figure>
+          <a
+            key={c.id}
+            href={youtubeReviewUrl(product, c.extra)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-xl bg-card p-4 ring-1 ring-foreground/10 hover:bg-secondary"
+          >
+            <p className="text-sm font-medium">{c.title}</p>
+            <p className="mt-1 text-xs text-muted-foreground">youtube.com/results</p>
+          </a>
         ))}
       </div>
       <div className="flex flex-wrap gap-2 pt-1">

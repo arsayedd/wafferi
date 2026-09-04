@@ -27,6 +27,8 @@ export function forceShopOut(url: string, storeId?: string, productName?: string
     }
     const fallback = listingHref(id || "jumia", name);
     if (isDeadShopUrl(url) || DEAD_SHOP_RE.test(u.hostname)) return fallback;
+    if (u.hostname.includes("google.com.eg") || /[^\x00-\x7F]/.test(u.search)) return fallback;
+    if (/catalogsearch|site:/i.test(u.pathname + u.search)) return fallback;
     if (isFakeProductPath(url) || /\/p\/[a-z0-9_-]+/i.test(u.pathname)) return fallback;
     if (u.hostname.includes("carrefour")) return fallback;
     if (u.hostname.includes("tradeline.com.eg")) return fallback;
