@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { buttonVariants } from "@/components/ui/button";
@@ -18,6 +18,10 @@ export function SearchBar({
   const router = useRouter();
   const [q, setQ] = useState(defaultValue);
 
+  useEffect(() => {
+    setQ(defaultValue);
+  }, [defaultValue]);
+
   function go(e: React.FormEvent) {
     e.preventDefault();
     const params = new URLSearchParams();
@@ -33,10 +37,11 @@ export function SearchBar({
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder={
-          compact ? "غسالة ١٠ كيلو أقل من ٣٠ ألف" : "دورِي: غسالة ١٠ كيلو أقل من ٣٠ ألف"
+          compact ? "غسالة، ثلاجة، فستان، أي فئة…" : "دورِي بأي منتج أو فئة: غسالة ١٠ كيلو، ثلاجة، فستان فرح"
         }
         className={compact ? "h-9 bg-muted/50" : "h-12 bg-background text-base"}
         name="q"
+        autoComplete="off"
       />
       <button
         type="submit"

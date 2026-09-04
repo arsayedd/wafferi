@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { brands, categories, cheapestListing, getStore } from "@/lib/catalog";
 import { catalogStores, networkStats } from "@/lib/network";
 import { searchProducts, type SortKey } from "@/lib/search";
-import { parseShopperQuery } from "@/lib/query-parse";
+import { parseShopperQuery, POPULAR_SEARCHES } from "@/lib/query-parse";
 import { pickBestChoice, priceIntel, whyBest } from "@/lib/best-choice";
 import { matchAreas } from "@/lib/egypt-areas";
 import { formatPrice } from "@/lib/format";
@@ -34,8 +34,8 @@ export function SearchExperience({
   const pathname = usePathname();
   const q = params.get("q") ?? "";
   const parsed = useMemo(() => parseShopperQuery(q), [q]);
-  const category = params.get("category") ?? initialCategory ?? parsed.category ?? "";
-  const brand = params.get("brand") ?? parsed.brand ?? "";
+  const category = initialCategory || params.get("category") || parsed.category || "";
+  const brand = params.get("brand") || parsed.brand || "";
   const store = params.get("store") ?? "";
   const sort = (params.get("sort") as SortKey) || (q ? "best" : "price");
   const min = params.get("min") ? Number(params.get("min")) : undefined;
@@ -126,7 +126,21 @@ export function SearchExperience({
           شبكة الكتالوج: {net.catalog} متجر إيكومرس + أحياء على الخريطة · {net.ready} جاهز للعروض
           الموسَّعة · ابحثي زي «غسالة ١٠ كيلو أقل من ٣٠ ألف وتقييمها فوق ٤.٥»
         </p>
-        <SearchBar defaultValue={q} category={category || undefined} />
+        <SearchBar defaultValue={q} category={initialCategory} />
+        {!q ? (
+          <div className="flex flex-wrap gap-1.5">
+            {POPULAR_SEARCHES.map((s) => (
+              <button
+                key={s}
+                type="button"
+                className="rounded-full bg-muted px-3 py-1 text-xs hover:bg-secondary"
+                onClick={() => router.push(`/search?q=${encodeURIComponent(s)}`)}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        ) : null}
         {parsed.intent.length ? (
           <div className="flex flex-wrap gap-1.5">
             {parsed.intent.map((chip) => (
@@ -442,10 +456,24 @@ export function SearchExperience({
 
           {empty && q ? (
             <div className="rounded-xl border border-dashed p-10 text-center">
-              <p className="font-medium">مفيش نتايج</p>
-              <p className="mt-1 text-sm text-muted-foreground">وسّعي الكلمة أو امسحي الفلاتر.</p>
+              <p className="font-medium">مفيش نتايج للكلمة دي</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                جرّبي فئة جاهزة أو امسحي الفلاتر. البحث بيطابق الاسم والماركة والفئة حتى لو الكتابة ناقصة.
+              </p>
+              <div className="mt-4 flex flex-wrap justify-center gap-1.5">
+                {POPULAR_SEARCHES.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    className="rounded-full bg-muted px-3 py-1 text-xs"
+                    onClick={() => router.push(`/search?q=${encodeURIComponent(s)}`)}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
               <Button className="mt-4" variant="outline" onClick={() => router.push("/search")}>
-                مسح الفلاتر
+                مسح الفلاتر وعرض السوق
               </Button>
             </div>
           ) : null}

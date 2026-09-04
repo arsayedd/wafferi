@@ -1,6 +1,7 @@
-import { arabicIncludes, foldArabic } from "./ar-fold";
-import { avgRating, cheapestListing, getStore, products } from "./catalog";
+import { foldArabic, tokenizeQuery } from "./ar-fold";
+import { avgRating, cheapestListing, getCategory, getStore, products } from "./catalog";
 import { bestChoiceScore, offerDiscountPct, totalReviews } from "./best-choice";
+import { SEARCH_STOP } from "./query-parse";
 import type { Product } from "./types";
 
 export type SortKey = "price" | "savings" | "rating" | "stores" | "best" | "discount" | "reviews";
@@ -28,11 +29,12 @@ function haystack(p: Product) {
     p.model,
     p.capacity,
     p.barcode,
+    p.category,
+    getCategory(p.category)?.name ?? "",
+    ...(p.highlights ?? []),
     ...p.listings.map((l) => getStore(l.storeId)?.name ?? l.storeId),
     ...p.specs.map((s) => `${s.label} ${s.value}`),
-  ]
-    .join(" ")
-    .toLowerCase();
+  ].join(" ");
 }
 
 function deliveryHit(p: Product, kind: SearchFilters["delivery"]) {
@@ -51,39 +53,52 @@ function capacityHit(p: Product, cap?: string) {
   return blob.includes(foldArabic(n));
 }
 
-export function searchProducts(
-  filters: SearchFilters,
-  pool: Product[] = products,
-): Product[] {
-  const q = (filters.q ?? "").trim();
-  let list = pool.filter((p) => {
-    if (q) {
-      const blob = haystack(p);
-      const hit =
-        arabicIncludes(blob, q) ||
-        arabicIncludes(p.name, q) ||
-        q.split(/\s+/).every((w) => w && (arabicIncludes(blob, w) || blob.includes(w.toLowerCase())));
-      if (!hit) return false;
-    }
-    if (filters.category && p.category !== filters.category) return false;
-    if (filters.brand && foldArabic(p.brand) !== foldArabic(filters.brand) && p.brand !== filters.brand) {
-      return false;
-    }
-    if (filters.store && !p.listings.some((l) => l.storeId === filters.store)) return false;
-    const cheap = cheapestListing(p).price;
-    if (filters.min != null && cheap < filters.min) return false;
-    if (filters.max != null && cheap > filters.max) return false;
-    if (filters.inStock && !p.listings.some((l) => l.inStock)) return false;
-    if (filters.minRating != null && avgRating(p) < filters.minRating) return false;
-    if (filters.minReviews != null && totalReviews(p) < filters.minReviews) return false;
-    if (filters.minDiscount != null && offerDiscountPct(p) < filters.minDiscount) return false;
-    if (!capacityHit(p, filters.capacity)) return false;
-    if (!deliveryHit(p, filters.delivery)) return false;
-    return true;
+function tokenHit(hay: string, token: string) {
+  if (!token) return true;
+  if (SEARCH_STOP.has(token) || /^\d+$/.test(token)) return true;
+  if (hay.includes(token)) return true;
+  const stem = token.slice(0, Math.min(token.length, 5));
+  if (stem.length >= 4 && hay.includes(stem)) return true;
+  return hay.split(" ").some((w) => {
+    if (w.length < 3 || token.length < 3) return false;
+    return w.startsWith(token.slice(0, 4)) || token.startsWith(w.slice(0, 4));
   });
+}
 
-  const sort = filters.sort ?? "price";
-  list = [...list].sort((a, b) => {
+function textHit(p: Product, q?: string) {
+  if (!q?.trim()) return true;
+  const hay = foldArabic(haystack(p));
+  const foldedQ = foldArabic(q);
+  if (hay.includes(foldedQ)) return true;
+  const tokens = tokenizeQuery(q).filter((w) => w.length > 1 && !SEARCH_STOP.has(w) && !/^\d+$/.test(w));
+  if (!tokens.length) return true;
+  const hits = tokens.filter((t) => tokenHit(hay, t));
+  if (hits.length === tokens.length) return true;
+  if (tokens.length >= 2 && hits.length >= Math.ceil(tokens.length * 0.6)) return true;
+  return false;
+}
+
+function applyFilters(p: Product, filters: SearchFilters, withText: boolean) {
+  if (withText && !textHit(p, filters.q)) return false;
+  if (filters.category && p.category !== filters.category) return false;
+  if (filters.brand && foldArabic(p.brand) !== foldArabic(filters.brand) && p.brand !== filters.brand) {
+    return false;
+  }
+  if (filters.store && !p.listings.some((l) => l.storeId === filters.store)) return false;
+  const cheap = cheapestListing(p).price;
+  if (filters.min != null && Number.isFinite(filters.min) && cheap < filters.min) return false;
+  if (filters.max != null && Number.isFinite(filters.max) && cheap > filters.max) return false;
+  if (filters.inStock && !p.listings.some((l) => l.inStock)) return false;
+  if (filters.minRating != null && avgRating(p) < filters.minRating) return false;
+  if (filters.minReviews != null && totalReviews(p) < filters.minReviews) return false;
+  if (filters.minDiscount != null && offerDiscountPct(p) < filters.minDiscount) return false;
+  if (!capacityHit(p, filters.capacity)) return false;
+  if (!deliveryHit(p, filters.delivery)) return false;
+  return true;
+}
+
+function sortList(list: Product[], sort: SortKey) {
+  return [...list].sort((a, b) => {
     if (sort === "best") return bestChoiceScore(b) - bestChoiceScore(a);
     if (sort === "discount") return offerDiscountPct(b) - offerDiscountPct(a);
     if (sort === "reviews") return totalReviews(b) - totalReviews(a);
@@ -96,5 +111,39 @@ export function searchProducts(
     const sb = Math.max(...b.listings.map((l) => l.price)) - cb;
     return sb - sa;
   });
-  return list;
+}
+
+function hasStructuredFilters(filters: SearchFilters) {
+  return Boolean(
+    filters.category ||
+      filters.brand ||
+      filters.store ||
+      filters.min != null ||
+      filters.max != null ||
+      filters.inStock ||
+      filters.minRating != null ||
+      filters.minReviews != null ||
+      filters.minDiscount != null ||
+      filters.capacity ||
+      filters.delivery,
+  );
+}
+
+export function searchProducts(
+  filters: SearchFilters,
+  pool: Product[] = products,
+): Product[] {
+  const sort = filters.sort ?? "price";
+  const strict = pool.filter((p) => applyFilters(p, filters, true));
+  if (strict.length || !filters.q) return sortList(strict, sort);
+
+  if (hasStructuredFilters(filters)) {
+    const byFacets = pool.filter((p) => applyFilters(p, { ...filters, q: undefined }, false));
+    if (byFacets.length) return sortList(byFacets, sort);
+  }
+
+  const loose = pool.filter((p) =>
+    applyFilters(p, { q: filters.q, category: filters.category, brand: filters.brand, sort }, true),
+  );
+  return sortList(loose, sort);
 }
