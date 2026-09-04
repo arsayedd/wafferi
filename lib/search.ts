@@ -28,9 +28,12 @@ function haystack(p: Product) {
     .toLowerCase();
 }
 
-export function searchProducts(filters: SearchFilters): Product[] {
+export function searchProducts(
+  filters: SearchFilters,
+  pool: Product[] = products,
+): Product[] {
   const q = (filters.q ?? "").trim().toLowerCase();
-  let list = products.filter((p) => {
+  let list = pool.filter((p) => {
     if (q && !haystack(p).includes(q) && !p.name.includes(filters.q ?? "")) {
       const words = q.split(/\s+/);
       if (!words.every((w) => haystack(p).includes(w))) return false;

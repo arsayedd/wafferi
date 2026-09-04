@@ -16,6 +16,7 @@ const links = [
   { href: "/deals", label: "أوفر سعر" },
   { href: "/list", label: "قايمة الجهاز" },
   { href: "/stores", label: "الشبكة" },
+  { href: "/ingest", label: "فيد" },
   { href: "/how-it-works", label: "إزاي بنشتغل" },
 ];
 
@@ -177,7 +178,7 @@ export function SiteFooter() {
               <Link href="/list">قايمة الجهاز</Link>
             </li>
             <li>
-              <Link href="/matching">محرك المطابقة</Link>
+              <Link href="/ingest">استيراد فيد تاجر</Link>
             </li>
           </ul>
         </div>

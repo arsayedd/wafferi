@@ -16,6 +16,7 @@ import { productStats } from "@/lib/stats";
 import { quoteHistory } from "@/lib/live-quotes";
 import { useWaffari } from "@/hooks/use-waffari";
 import { useLive } from "@/hooks/use-live";
+import { useCatalog } from "@/hooks/use-catalog";
 import { ProductCard } from "@/components/product-card";
 
 export default function ProductPage({
@@ -24,7 +25,8 @@ export default function ProductPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const catalog = getProduct(id);
+  const { allProducts } = useCatalog();
+  const catalog = getProduct(id) ?? allProducts.find((p) => p.id === id);
   const { addItem, items, addAlert, alerts, toggleCompare, compare } = useWaffari();
   const { liveProduct, now } = useLive();
   const [target, setTarget] = useState("");

@@ -8,12 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { brands, categories, stores } from "@/lib/catalog";
 import { searchProducts, type SortKey } from "@/lib/search";
+import { useCatalog } from "@/hooks/use-catalog";
 
 export function SearchExperience({
   initialCategory,
 }: {
   initialCategory?: string;
 }) {
+  const { allProducts } = useCatalog();
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -40,16 +42,19 @@ export function SearchExperience({
 
   const results = useMemo(
     () =>
-      searchProducts({
-        q,
-        category: category || undefined,
-        brand: brand || undefined,
-        store: store || undefined,
-        min,
-        max,
-        sort,
-      }),
-    [q, category, brand, store, min, max, sort],
+      searchProducts(
+        {
+          q,
+          category: category || undefined,
+          brand: brand || undefined,
+          store: store || undefined,
+          min,
+          max,
+          sort,
+        },
+        allProducts,
+      ),
+    [q, category, brand, store, min, max, sort, allProducts],
   );
 
   const uniqueBrands = [...new Set(brands.map((b) => b.name))];
