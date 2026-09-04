@@ -34,4 +34,9 @@ export const connectors = [
     title: "Amazon Creators API",
     text: "GetItems على amazon.eg بـ ASIN. محتاج توكن Associates في البيئة.",
   },
+  {
+    id: "css-recipe",
+    title: "وصفة CSS للدومين",
+    text: "لو الصفحة معلنة السعر في class معيّن. إنتي بتحددي السيلكتور، مش بنلف على الموقع.",
+  },
 ] as const;

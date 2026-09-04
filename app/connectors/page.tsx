@@ -22,6 +22,29 @@ export default function ConnectorsPage() {
           </li>
         ))}
       </ul>
+      <section className="space-y-3 text-sm leading-relaxed text-muted-foreground">
+        <h2 className="text-lg font-medium text-foreground">إيه اللي خدناه من المشاريع المرجعية</h2>
+        <p>
+          <strong className="text-foreground">PriceBuddy:</strong> وصفة لكل دومين (schema.org / CSS /
+          regex). اتحفظت في صفحة السحب، مش محرك Laravel.
+        </p>
+        <p>
+          <strong className="text-foreground">PriceGhost:</strong> أكتر من طريقة تقرأ السعر، ولو اختلفوا
+          تختاري إنتي. من غير Puppeteer stealth.
+        </p>
+        <p>
+          <strong className="text-foreground">Price Tracking Scraper:</strong> جدولة + تاريخ سعر. عندنا
+          تيك على `/live` وتحديث كل دقيقة للروابط المحفوظة.
+        </p>
+        <p>
+          <strong className="text-foreground">WebCrawlerForInflation:</strong> أدنى/أعلى ونسبة التغيّر من
+          التيكات. مش Spark ولا Common Crawl.
+        </p>
+        <p>
+          <strong className="text-foreground">Google Maps Scrapper:</strong> مش مستخدم. أماكن وفّري
+          أحياء مصر متجمّعة عندنا، من غير زحف خرائط جوجل.
+        </p>
+      </section>
       <section className="space-y-2 text-sm text-muted-foreground">
         <h2 className="text-lg font-medium text-foreground">جوميا ونون</h2>
         <p>

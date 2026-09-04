@@ -11,6 +11,8 @@ import { stores } from "@/lib/catalog";
 import { useCatalog } from "@/hooks/use-catalog";
 import { useLive } from "@/hooks/use-live";
 import { usePartners } from "@/hooks/use-partners";
+import { useRecipes } from "@/hooks/use-recipes";
+import type { PriceCandidate } from "@/lib/ingest/vote";
 import type { PartnerRule } from "@/lib/outbound";
 import type { Product } from "@/lib/types";
 
@@ -24,6 +26,13 @@ export default function IngestPage() {
   const [note, setNote] = useState("");
   const [pulling, setPulling] = useState(false);
   const [addId, setAddId] = useState("btech");
+  const { extra, upsert: upsertRecipe, remove } = useRecipes();
+  const [pending, setPending] = useState<{
+    products: Product[];
+    candidates: PriceCandidate[];
+  } | null>(null);
+  const [recipeHost, setRecipeHost] = useState("btech.com");
+  const [recipeCss, setRecipeCss] = useState(".price");
 
   function applyProducts(products: Product[], msg: string) {
     applyFeed(products);
@@ -50,11 +59,16 @@ export default function IngestPage() {
       const res = await fetch("/api/pull-feed", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ url: feedUrl.trim() }),
+        body: JSON.stringify({ url: feedUrl.trim(), recipes: extra }),
       });
       const data = await res.json();
       if (!res.ok || data.error) {
         toast.error(data.error ?? "فشل السحب");
+        return;
+      }
+      if (data.needsReview && Array.isArray(data.candidates) && data.candidates.length) {
+        setPending({ products: data.products, candidates: data.candidates });
+        toast.message("لقينا أكتر من سعر — اختاري الصح");
         return;
       }
       applyProducts(
@@ -145,6 +159,68 @@ export default function IngestPage() {
           <Button variant="outline" onClick={runAmazon} disabled={pulling}>
             أمازون API
           </Button>
+        </div>
+        {pending ? (
+          <div className="space-y-2 rounded-xl bg-muted/50 p-3 text-sm">
+            <p className="font-medium">ترشيحات السعر — اختاري اللي هنتتبعه</p>
+            <div className="flex flex-wrap gap-2">
+              {pending.candidates.map((c, i) => (
+                <Button
+                  key={`${c.method}-${c.price}-${i}`}
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    const products = pending.products.map((p) => ({
+                      ...p,
+                      listings: p.listings.map((l) => ({ ...l, price: c.price })),
+                    }));
+                    applyProducts(products, `اتحدد ${c.price} ج من ${c.method}`);
+                    setPending(null);
+                  }}
+                >
+                  {c.price} ج · {c.method}
+                </Button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+        <div className="space-y-2 rounded-xl border border-dashed p-3">
+          <p className="text-sm font-medium">وصفة دومين (CSS) — لو JSON-LD مش كفاية</p>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Input value={recipeHost} onChange={(e) => setRecipeHost(e.target.value)} placeholder="btech.com" />
+            <Input
+              value={recipeCss}
+              onChange={(e) => setRecipeCss(e.target.value)}
+              placeholder=".price أو meta[property=&quot;product:price:amount&quot;]|content"
+            />
+            <Button
+              variant="outline"
+              onClick={() => {
+                upsertRecipe({
+                  host: recipeHost.replace(/^www\./, ""),
+                  price: { type: "css", value: recipeCss },
+                  title: { type: "schema_org" },
+                });
+                toast.success("الوصفة اتحفظت على الجهاز");
+              }}
+            >
+              احفظي
+            </Button>
+          </div>
+          {extra.length ? (
+            <ul className="text-xs text-muted-foreground">
+              {extra.map((r) => (
+                <li key={r.host} className="flex justify-between gap-2">
+                  <span>
+                    {r.host} → {r.price?.value ?? r.price?.type}
+                  </span>
+                  <button type="button" className="underline" onClick={() => remove(r.host)}>
+                    حذف
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
         <label className="block text-sm">
           أو الصقِي CSV / JSON

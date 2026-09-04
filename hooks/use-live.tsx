@@ -177,10 +177,16 @@ export function LiveMarketProvider({ children }: { children: React.ReactNode }) 
     let count = 0;
     try {
       for (const url of feedUrls) {
+        let recipes: unknown[] = [];
+        try {
+          recipes = JSON.parse(localStorage.getItem("waffari-host-recipes-v1") ?? "[]");
+        } catch {
+          recipes = [];
+        }
         const res = await fetch("/api/pull-feed", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ url }),
+          body: JSON.stringify({ url, recipes }),
         });
         const data = await res.json();
         if (!res.ok || data.error || !Array.isArray(data.products)) continue;

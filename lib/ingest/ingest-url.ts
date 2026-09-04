@@ -2,15 +2,19 @@ import type { Product } from "../types";
 import { fetchPublic } from "./ssrf";
 import { parseProductFeed } from "../parse-feed";
 import { parseMerchantXml } from "./parse-xml";
-import { productsFromJsonLd, productsFromOpenGraph } from "./parse-jsonld";
 import { looksLikeShopify, productsFromShopifyJson, shopifyJsonUrl } from "./parse-shopify";
 import { looksLikeWordpress, productsFromWoo, wooStoreApiUrl } from "./parse-woo";
 import { amazonAsinFromUrl, amazonGetItems } from "./amazon-creators";
+import { extractHtmlProduct } from "./extract-html";
+import type { HostRecipe } from "./recipes";
+import type { PriceCandidate } from "./vote";
 
 export type IngestResult = {
   products: Product[];
   connector: string;
   error?: string;
+  candidates?: PriceCandidate[];
+  needsReview?: boolean;
 };
 
 function looksLikeHtml(body: string, contentType: string) {
@@ -37,7 +41,10 @@ async function fetchJson(url: string): Promise<unknown | null> {
   }
 }
 
-export async function ingestFromUrl(rawUrl: string): Promise<IngestResult> {
+export async function ingestFromUrl(
+  rawUrl: string,
+  extraRecipes: HostRecipe[] = [],
+): Promise<IngestResult> {
   const amazonAsin = amazonAsinFromUrl(rawUrl);
   if (amazonAsin && process.env.AMAZON_CREATORS_ACCESS_TOKEN) {
     const amz = await amazonGetItems([amazonAsin]);
@@ -78,11 +85,15 @@ export async function ingestFromUrl(rawUrl: string): Promise<IngestResult> {
     }
   }
 
-  const ld = productsFromJsonLd(body, url.toString());
-  if (ld.length) return { products: ld, connector: "json-ld" };
-
-  const og = productsFromOpenGraph(body, url.toString());
-  if (og.length) return { products: og, connector: "open-graph" };
+  const page = extractHtmlProduct(body, url.toString(), extraRecipes);
+  if (page.products.length) {
+    return {
+      products: page.products,
+      connector: page.connector,
+      candidates: page.candidates,
+      needsReview: page.needsReview,
+    };
+  }
 
   if (amazonAsin) {
     const amz = await amazonGetItems([amazonAsin]);

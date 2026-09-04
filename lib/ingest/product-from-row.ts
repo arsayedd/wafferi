@@ -1,5 +1,6 @@
 import type { CategoryId, Product } from "../types";
 import { categories } from "../catalog";
+import { parseMoney } from "./money";
 import { storeIdFromUrl } from "./host-store";
 
 const fallbackCategory: CategoryId = "accessories";
@@ -21,12 +22,7 @@ export function slug(s: string) {
 }
 
 export function parsePrice(raw: unknown): number {
-  if (typeof raw === "number" && Number.isFinite(raw)) return Math.round(raw);
-  const s = String(raw ?? "").replace(/,/g, "");
-  const m = s.match(/(\d+(?:\.\d+)?)/);
-  if (!m) return 0;
-  const n = Number(m[1]);
-  return Number.isFinite(n) ? Math.round(n) : 0;
+  return parseMoney(raw);
 }
 
 export function pick(row: Record<string, unknown>, keys: string[]): unknown {

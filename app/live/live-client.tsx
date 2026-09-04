@@ -158,7 +158,7 @@ export function LiveBoard() {
             <tr>
               <th className="px-3 py-2 text-start font-medium">المنتج</th>
               <th className="px-3 py-2 text-start font-medium">أرخص سعر حي</th>
-              <th className="px-3 py-2 text-start font-medium">المسار</th>
+              <th className="px-3 py-2 text-start font-medium">المدى</th>
               <th className="px-3 py-2 text-start font-medium">آخر تحديث</th>
             </tr>
           </thead>
@@ -192,6 +192,16 @@ export function LiveBoard() {
                   </td>
                   <td className="px-3 py-3">
                     <Sparkline values={hist} className="h-8 w-28" />
+                    {hist.length > 1 ? (
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        أدنى {formatPrice(Math.min(...hist))} · أعلى {formatPrice(Math.max(...hist))}
+                        {" · "}
+                        {hist[0]
+                          ? Math.round(((hist[hist.length - 1] - hist[0]) / hist[0]) * 100)
+                          : 0}
+                        ٪
+                      </div>
+                    ) : null}
                   </td>
                   <td className="px-3 py-3 text-muted-foreground">{ago(updated, now)}</td>
                 </tr>
