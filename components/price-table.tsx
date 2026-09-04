@@ -10,6 +10,7 @@ import { getStore } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { StoreLogo } from "@/components/store-logo";
 import { listingHref } from "@/lib/store-link";
+import { isDeadShopUrl } from "@/lib/dead-hosts";
 import type { Listing } from "@/lib/types";
 import type { LiveListing } from "@/lib/live-quotes";
 import { usePartners } from "@/hooks/use-partners";
@@ -136,11 +137,14 @@ export function PriceTable({
                     variant={cheapest ? "default" : "outline"}
                     disabled={!l.inStock}
                     onClick={() => {
-                      const dest = outbound(href, l.storeId, l.coupon, productName);
+                      let dest = outbound(href, l.storeId, l.coupon, productName);
+                      if (isDeadShopUrl(dest)) dest = listingHref(l.storeId, productName);
                       toast.message(`هتحوّلي على ${store?.name ?? "المصدر"}`, {
                         description:
                           l.storeId === "carrefour"
                             ? "موقع كارفور أونلاين فيه عطل DNS وصفحات /p/ عندنا وهمية. بنفتح بحث جوجل باسم المنتج + كارفور مصر."
+                            : l.storeId === "tradeline"
+                              ? "tradeline.com.eg مش موجود في الـ DNS. بنفتح بحث المنتج على tradelinestores.com."
                             : coupon
                               ? `الكوبون ${coupon} هيتركب على الرابط. بنفتح بحث المنتج مش صفحة وهمية.`
                               : "بنفتح بحث الاسم على مصدر موثوق — مش صفحة منتج ملفّقة.",

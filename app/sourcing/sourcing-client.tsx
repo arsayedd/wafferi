@@ -18,6 +18,7 @@ import { namedSuppliers } from "@/lib/named-suppliers";
 import { egyptAreas } from "@/lib/egypt-areas";
 import { stores } from "@/lib/catalog";
 import { StoreLogo } from "@/components/store-logo";
+import { storeHomeHref } from "@/lib/store-link";
 import { kindLabels } from "@/lib/network";
 
 function storeName(id: string) {
@@ -249,7 +250,7 @@ export default function SourcingClient() {
                   </a>
                 ) : null}
                 {s.website ? (
-                  <a className="text-primary underline" href={s.website} target="_blank" rel="noreferrer">
+                  <a className="text-primary underline" href={storeHomeHref(s.website)} target="_blank" rel="noreferrer">
                     الموقع
                   </a>
                 ) : null}

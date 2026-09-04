@@ -87,12 +87,15 @@ export function ProductCard({ product: raw }: { product: Product }) {
           variant="outline"
           title={`افتحي ${store?.name}`}
           onClick={() => {
-            const href = outbound(
+            let href = outbound(
               listingHref(cheap.storeId, product.name),
               cheap.storeId,
               cheap.coupon,
               product.name,
             );
+            if (href.includes("tradeline.com.eg") || href.includes("carrefouregypt.com")) {
+              href = listingHref(cheap.storeId, product.name);
+            }
             toast.message(`المصدر: ${store?.name}`, {
               description: "بحث الاسم على موقعهم — مش صفحة منتج ملفّقة.",
             });

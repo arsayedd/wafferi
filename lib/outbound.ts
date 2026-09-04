@@ -1,4 +1,5 @@
 import { isFakeProductPath, listingHref } from "./store-link";
+import { DEAD_SHOP_RE, isDeadShopUrl } from "./dead-hosts";
 
 export type PartnerRule = {
   storeId: string;
@@ -6,9 +7,6 @@ export type PartnerRule = {
   coupon: string;
   extraQuery: string;
 };
-
-const DEAD_SHOP =
-  /carrefouregypt|tradeline\.com\.eg|edgesuite\.net|edgekey\.net|mafretailprod|mafegy/i;
 
 function isJumiaHost(hostname: string) {
   return hostname.includes("jumia.");
@@ -18,19 +16,24 @@ function isGoogleHost(hostname: string) {
   return hostname.includes("google.");
 }
 
-/** Never send shoppers to invented /p/{sku} pages or Carrefour’s broken Akamai host. */
+function isTradelineStores(hostname: string) {
+  return hostname.replace(/^www\./, "") === "tradelinestores.com";
+}
+
+/** Never send shoppers to invented /p/{sku} pages or DNS-dead merchant hosts. */
 export function forceShopOut(url: string, storeId?: string, productName?: string) {
   const name = productName?.trim() || "منتج جهاز";
   let id = storeId?.trim() || "";
   try {
     const u = new URL(url);
-    if (!id && (DEAD_SHOP.test(u.hostname) || u.hostname.includes("carrefour"))) {
+    if (!id && (isDeadShopUrl(url) || u.hostname.includes("carrefour") || u.hostname.includes("tradeline"))) {
       id = u.hostname.includes("tradeline") ? "tradeline" : "carrefour";
     }
     const fallback = listingHref(id || "jumia", name);
-    if (DEAD_SHOP.test(u.hostname) || DEAD_SHOP.test(u.pathname)) return fallback;
+    if (isDeadShopUrl(url) || DEAD_SHOP_RE.test(u.hostname)) return fallback;
     if (isFakeProductPath(url) || /\/p\/[a-z0-9_-]+/i.test(u.pathname)) return fallback;
     if (u.hostname.includes("carrefour")) return fallback;
+    if (u.hostname.includes("tradeline.com.eg")) return fallback;
     return u.toString();
   } catch {
     return listingHref(id || "jumia", name);
@@ -61,10 +64,10 @@ export function buildOutboundUrl(
   } catch {
     return listingHref(rule?.storeId ?? "jumia", productName || "منتج جهاز");
   }
-  if (DEAD_SHOP.test(u.hostname) || isFakeProductPath(u.toString())) {
-    return listingHref(rule?.storeId ?? "carrefour", productName || "كارفور مصر");
+  if (isDeadShopUrl(u.toString()) || isFakeProductPath(u.toString())) {
+    return listingHref(rule?.storeId ?? "jumia", productName || "منتج جهاز");
   }
-  if (isGoogleHost(u.hostname)) return u.toString();
+  if (isGoogleHost(u.hostname) || isTradelineStores(u.hostname)) return u.toString();
   if (!isJumiaHost(u.hostname)) {
     return listingHref(rule?.storeId ?? "", productName || "منتج جهاز");
   }

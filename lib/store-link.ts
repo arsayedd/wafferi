@@ -1,5 +1,6 @@
 import type { Product, Store } from "./types";
 import { foldArabic } from "./ar-fold";
+import { isDeadShopUrl } from "./dead-hosts";
 import { stores } from "./network";
 
 export function getNetworkStore(id: string) {
@@ -20,9 +21,10 @@ export function storeLogoUrl(website: string) {
   return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=128`;
 }
 
-/** Direct search only on hosts that are not Akamai-origin DNS traps. Carrefour Egypt fails with edgesuite DNS. */
+/** Direct search only on hosts that resolve and are not fake /p/{sku} pages. */
 const TRUSTED_SEARCH: Record<string, (q: string) => string> = {
   jumia: (q) => `https://www.jumia.com.eg/catalog/?q=${q}`,
+  tradeline: (q) => `https://www.tradelinestores.com/search?q=${q}`,
 };
 
 const BRAND_SHOPS: Record<string, string[]> = {
@@ -53,8 +55,20 @@ export function brandShopFits(store: Store, product: { brand: string; name: stri
 
 export function storeSearchUrl(store: Store, productName: string) {
   const q = encodeURIComponent(productName);
-  if (store.id === "jumia") return TRUSTED_SEARCH.jumia(q);
+  const trusted = TRUSTED_SEARCH[store.id];
+  if (trusted) return trusted(q);
   return `https://www.google.com/search?q=${encodeURIComponent(`${productName} ${store.name} مصر للبيع`)}`;
+}
+
+export function storeHomeHref(website: string, storeId?: string, storeName?: string) {
+  const raw = website || "";
+  if (!raw || isDeadShopUrl(raw)) {
+    if (storeId === "tradeline" || raw.toLowerCase().includes("tradeline.com.eg")) {
+      return "https://www.tradelinestores.com";
+    }
+    return `https://www.google.com/search?q=${encodeURIComponent(`${storeName || "متجر"} مصر`)}`;
+  }
+  return raw;
 }
 
 export function listingHref(storeId: string, productName: string, _fallbackUrl?: string) {
