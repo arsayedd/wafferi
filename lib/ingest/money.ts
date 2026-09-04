@@ -12,8 +12,10 @@ export function parseMoney(raw: unknown): number {
   const compact = text.replace(/\s+/g, " ");
   const m =
     compact.match(
-      /(?:EGP|LE|ج\.?\s*م\.?|جنيه)?\s*([\d]{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})?|\d+)(?:\s*(?:EGP|LE|ج\.?\s*م\.?|جنيه))?/i,
-    ) ?? compact.match(/(\d+(?:[.,]\d+)?)/);
+      /(?:EGP|LE|ج\.?\s*م\.?|جنيه)\s*(\d[\d.,]*)/i,
+    ) ??
+    compact.match(/(\d[\d.,]*)\s*(?:EGP|LE|ج\.?\s*م\.?|جنيه)/i) ??
+    compact.match(/(\d+(?:[.,]\d+)?)/);
   if (!m) return 0;
   let n = m[1].replace(/\s/g, "");
   if (/,\d{2}$/.test(n) && !/\.\d{2}$/.test(n)) n = n.replace(/\./g, "").replace(",", ".");

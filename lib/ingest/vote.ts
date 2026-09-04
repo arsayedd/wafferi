@@ -37,8 +37,7 @@ export function votePrices(candidates: PriceCandidate[]): {
   });
   const top = groups[0];
   const winner = [...top].sort((a, b) => b.confidence - a.confidence)[0];
-  const needsReview = groups.length > 1 && top.length < Math.ceil(valid.length / 2);
-  return { winner, needsReview };
+  return { winner, needsReview: groups.length > 1 };
 }
 
 export function candidateFromText(
