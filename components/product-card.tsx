@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Star, Store, TrendingDown } from "lucide-react";
+import { Star, Store, TrendingDown, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { productStats } from "@/lib/stats";
 import type { Product } from "@/lib/types";
 import { useWaffari } from "@/hooks/use-waffari";
 import { useLive } from "@/hooks/use-live";
+import { usePartners } from "@/hooks/use-partners";
 
 export function ProductCard({ product: raw }: { product: Product }) {
   const { liveProduct } = useLive();
@@ -20,6 +21,7 @@ export function ProductCard({ product: raw }: { product: Product }) {
   const { cheap, save, rating, stores } = productStats(product);
   const store = getStore(cheap.storeId);
   const { addItem, items, toggleCompare, compare } = useWaffari();
+  const { outbound } = usePartners();
   const inList = items.some((i) => i.productId === product.id);
   const inCompare = compare.includes(product.id);
 
@@ -43,7 +45,7 @@ export function ProductCard({ product: raw }: { product: Product }) {
           <p className="text-lg font-semibold text-primary">{formatPrice(cheap.price)}</p>
           <p className="flex items-center gap-1 text-xs text-muted-foreground">
             <Store className="size-3" />
-            الأرخص عند {store?.name} · {stores} متاجر · لحظي
+            المصدر الأرخص: {store?.name} · {stores} عروض
           </p>
         </div>
         {save > 0 && (
@@ -72,6 +74,20 @@ export function ProductCard({ product: raw }: { product: Product }) {
           onClick={() => toggleCompare(product.id)}
         >
           قارني
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          title={`افتحي ${store?.name}`}
+          onClick={() => {
+            const href = outbound(cheap.url, cheap.storeId, cheap.coupon);
+            toast.message(`المصدر: ${store?.name}`, {
+              description: "هتتحولي لصفحة المنتج عندهم.",
+            });
+            window.open(href, "_blank", "noopener");
+          }}
+        >
+          <ExternalLink />
         </Button>
       </CardFooter>
     </Card>

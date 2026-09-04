@@ -1,3 +1,5 @@
+import { buildOutboundUrl } from "./outbound";
+
 const egp = new Intl.NumberFormat("ar-EG", {
   style: "currency",
   currency: "EGP",
@@ -13,8 +15,5 @@ export function formatNumber(value: number) {
 }
 
 export function affiliateHref(url: string) {
-  const u = new URL(url);
-  u.searchParams.set("utm_source", "waffari");
-  u.searchParams.set("aff_id", "demo");
-  return u.toString();
+  return buildOutboundUrl(url);
 }

@@ -92,16 +92,17 @@ function fromRow(row: Record<string, unknown>, i: number): Product {
         reviews: Number(row.reviews ?? 1),
         inStock: String(row.instock ?? "true") !== "false",
         shipping: String(row.shipping ?? "حسب المتجر"),
-        url: String(row.url ?? "https://example.com"),
+        url: String(row.url ?? row.link ?? row["الرابط"] ?? "https://example.com"),
         affiliateNetwork: "direct",
+        coupon: String(row.coupon ?? row.voucher ?? "") || undefined,
       },
     ],
     reviewHighlights: [],
   };
 }
 
-export const sampleFeedCsv = `name,brand,price,store,category,rating,url
-فستان سهرة وردي,محلي,3200,namshi,bridal-wear,4.4,https://www.namshi.com
-بيجاما رجالي قطن,كوتونيل,540,cottonil,pajamas,4.5,https://cottonil.com
-طقم فوط مطبخ,ايكيا,180,ikea,accessories,4.6,https://www.ikea.com/eg/ar
+export const sampleFeedCsv = `name,brand,price,store,category,rating,url,coupon
+فستان سهرة وردي,محلي,3200,namshi,bridal-wear,4.4,https://www.namshi.com,BRIDE10
+بيجاما رجالي قطن,كوتونيل,540,cottonil,pajamas,4.5,https://cottonil.com,
+طقم فوط مطبخ,ايكيا,180,ikea,accessories,4.6,https://www.ikea.com/eg/ar,HOME5
 `;

@@ -125,6 +125,7 @@ export type Listing = {
   url: string;
   sku: string;
   affiliateNetwork: AffiliateNetwork;
+  coupon?: string;
 };
 
 export type Product = {

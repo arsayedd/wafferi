@@ -10,7 +10,7 @@ import { Sparkline } from "@/components/sparkline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { getCategory, getProduct, products } from "@/lib/catalog";
+import { getCategory, getProduct, getStore, products } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { productStats } from "@/lib/stats";
 import { quoteHistory } from "@/lib/live-quotes";
@@ -82,6 +82,13 @@ export default function ProductPage({
             {product.barcode && <Badge variant="outline">باركود {product.barcode}</Badge>}
           </div>
           <p className="text-3xl font-semibold text-primary">{formatPrice(cheap.price)}</p>
+          <p className="text-sm text-muted-foreground">
+            أوفر سعر من{" "}
+            <Link href={`/stores/${cheap.storeId}`} className="text-primary hover:underline">
+              {getStore(cheap.storeId)?.name ?? cheap.storeId}
+            </Link>
+            — وفّري مش البائع، الشراء يتم عند المصدر.
+          </p>
           <div className="flex items-center gap-3">
             <Sparkline values={history} className="h-11 w-40" />
             <p className="text-sm text-muted-foreground">

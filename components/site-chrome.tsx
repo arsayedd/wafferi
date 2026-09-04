@@ -190,7 +190,7 @@ export function SiteFooter() {
               <Link href="/list">قايمة الجهاز</Link>
             </li>
             <li>
-              <Link href="/ingest">استيراد فيد تاجر</Link>
+              <Link href="/ingest">فيد وأفلييت</Link>
             </li>
           </ul>
         </div>
