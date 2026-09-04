@@ -30,10 +30,22 @@ export default async function StorePage({
         {store.name}
       </h1>
       <p className="max-w-2xl text-muted-foreground">
-        {store.specialty}. الموقع الرسمي:{" "}
-        <a className="underline" href={storeHomeHref(store.website, store.id, store.name)} target="_blank" rel="noreferrer">
-          {storeHomeHref(store.website, store.id, store.name)}
-        </a>
+        {store.specialty}
+        {storeHomeHref(store.website, store.id, store.name) ? (
+          <>
+            . الموقع الرسمي:{" "}
+            <a
+              className="underline"
+              href={storeHomeHref(store.website, store.id, store.name)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {storeHomeHref(store.website, store.id, store.name)}
+            </a>
+          </>
+        ) : (
+          "."
+        )}
         {store.id === "tradeline" ? (
           <span className="mt-2 block text-sm text-muted-foreground">
             tradeline.com.eg مش مسجّل في الـ DNS. الخروج على tradelinestores.com.
