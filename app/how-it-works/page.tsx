@@ -5,9 +5,25 @@ export default function HowPage() {
     <article className="mx-auto max-w-3xl space-y-8 px-4 py-10 leading-relaxed">
       <h1 className="font-heading text-3xl font-semibold">إزاي وفّري بتشتغل</h1>
       <p className="text-muted-foreground">
-        وفّري مش متجر. إحنا طبقة مقارنة وأفلييت فوق متاجر مصر، مخصوصة لجهاز العروسة:
-        أجهزة، أثاث، مفروشات، وأدوات بيت.
+        وفّري مش متجر. طبقة مقارنة وأفلييت فوق أي إيكوميرس في مصر بيبيع جهاز للحياة
+        اليومية: غسيل، تبريد، تكييف، طبخ، تنظيف، مياه، شاشات، عناية شخصية، وأثاث البيت.
       </p>
+      <section className="space-y-2">
+        <h2 className="text-xl font-medium">إزاي بنوصل بكل المواقع</h2>
+        <p className="text-sm">
+          مفيش زر واحد بيربط «كل الإنترنت». الشبكة بتتبني متجر متجر، وكل واحد ليه موصل:
+        </p>
+        <ol className="list-decimal space-y-2 pr-5 text-sm">
+          <li>أفلييت مباشر: جوميا ونون وأمازون — أسرع عمولة وأوضح فيد.</li>
+          <li>شبكات زي ArabClicks وAdmitad — بتلم سلاسل أجهزة وهايبر تحت عقد واحد.</li>
+          <li>فيد رسمي / بوابة علامة: العربي، فريش، كريازي، سامسونج، إل جي، ايكيا.</li>
+          <li>شراكة لياد للمحلات اللي مالهاش برنامج (رنين، النخيلي، هايبر وان).</li>
+        </ol>
+        <p className="text-sm text-muted-foreground">
+          السكرابينج مش عمود فقري: مخالف لشروط كتير من المواقع وسهل ينكسر. نستخدمه فقط لو
+          فيد رسمي مش متاح وبعد مراجعة قانونية.
+        </p>
+      </section>
       <section className="space-y-2">
         <h2 className="text-xl font-medium">مصادر البيانات</h2>
         <ol className="list-decimal space-y-2 pr-5 text-sm">

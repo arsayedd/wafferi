@@ -19,7 +19,7 @@ const links = [
   { href: "/categories", label: "الفئات" },
   { href: "/deals", label: "أوفر سعر" },
   { href: "/list", label: "قايمة الجهاز" },
-  { href: "/stores", label: "المتاجر" },
+  { href: "/stores", label: "الشبكة" },
   { href: "/how-it-works", label: "إزاي بنشتغل" },
 ];
 
@@ -160,7 +160,7 @@ export function SiteFooter() {
           <p className="mb-2 text-sm font-medium">الشركاء</p>
           <ul className="space-y-1 text-sm text-muted-foreground">
             <li>
-              <Link href="/stores">المتاجر المتصلة</Link>
+              <Link href="/stores">شبكة المتاجر</Link>
             </li>
             <li>
               <Link href="/brands">الماركات</Link>

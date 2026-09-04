@@ -121,7 +121,9 @@ export default function ProductPage({
       </div>
 
       <section className="space-y-3">
-        <h2 className="font-heading text-xl font-semibold">مقارنة الأسعار بين المتاجر</h2>
+        <h2 className="font-heading text-xl font-semibold">
+          مقارنة الأسعار بين المتاجر ({product.listings.length} عرض)
+        </h2>
         <PriceTable listings={product.listings} />
       </section>
 

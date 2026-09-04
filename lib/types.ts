@@ -1,41 +1,84 @@
 export type CategoryId =
   | "washers"
   | "fridges"
+  | "freezers"
   | "acs"
+  | "fans"
   | "stoves"
   | "dishwashers"
   | "vacuums"
   | "heaters"
+  | "water"
   | "tvs"
+  | "audio"
   | "small-appliances"
+  | "personal-care"
   | "bedroom"
   | "living"
   | "kitchen-tools"
   | "textiles"
   | "decor";
 
-export type StoreId =
-  | "jumia"
-  | "noon"
-  | "btech"
-  | "twob"
-  | "raneen"
-  | "homzmart"
-  | "ikea"
-  | "carrefour"
-  | "amazon"
-  | "bfurn"
-  | "raya"
-  | "elaraby";
+export type VerticalId =
+  | "laundry"
+  | "cooling"
+  | "climate"
+  | "cooking"
+  | "cleaning"
+  | "water_heat"
+  | "av"
+  | "small_kitchen"
+  | "personal_care"
+  | "furniture"
+  | "textiles"
+  | "decor";
+
+export type StoreKind =
+  | "marketplace"
+  | "electronics"
+  | "hypermarket"
+  | "brand"
+  | "furniture"
+  | "local";
+
+export type ConnectorKind =
+  | "affiliate_network"
+  | "direct_affiliate"
+  | "official_feed"
+  | "brand_portal"
+  | "partnership";
+
+export type ConnectionStatus =
+  | "connected"
+  | "affiliate_ready"
+  | "feed_pending"
+  | "outreach";
 
 export type AffiliateNetwork =
   | "jumia"
   | "noon"
   | "arabclicks"
+  | "admitad"
   | "direct";
 
+export type Store = {
+  id: string;
+  name: string;
+  city: string;
+  website: string;
+  specialty: string;
+  kind: StoreKind;
+  connector: ConnectorKind;
+  status: ConnectionStatus;
+  network: AffiliateNetwork;
+  commissionNote: string;
+  verticals: VerticalId[];
+  skuEstimate: number;
+  affiliate: boolean;
+};
+
 export type Listing = {
-  storeId: StoreId;
+  storeId: string;
   price: number;
   oldPrice?: number;
   rating: number;
@@ -71,16 +114,7 @@ export type Category = {
   name: string;
   description: string;
   room: "kitchen" | "bedroom" | "living" | "general";
-};
-
-export type Store = {
-  id: StoreId;
-  name: string;
-  city: string;
-  specialty: string;
-  affiliate: boolean;
-  network: AffiliateNetwork;
-  commissionNote: string;
+  vertical: VerticalId;
 };
 
 export type Brand = {

@@ -1,0 +1,378 @@
+import type {
+  AffiliateNetwork,
+  ConnectionStatus,
+  ConnectorKind,
+  Store,
+  StoreKind,
+  VerticalId,
+} from "./types";
+
+const ALL_APPLIANCES: VerticalId[] = [
+  "laundry",
+  "cooling",
+  "climate",
+  "cooking",
+  "cleaning",
+  "water_heat",
+  "av",
+  "small_kitchen",
+  "personal_care",
+];
+
+const BIG_HOME: VerticalId[] = [...ALL_APPLIANCES, "furniture", "textiles", "decor"];
+const FURNITURE: VerticalId[] = ["furniture", "textiles", "decor", "small_kitchen"];
+const AV: VerticalId[] = ["av", "small_kitchen", "climate"];
+
+function s(
+  id: string,
+  name: string,
+  kind: StoreKind,
+  connector: ConnectorKind,
+  status: ConnectionStatus,
+  network: AffiliateNetwork,
+  verticals: VerticalId[],
+  extra: {
+    city: string;
+    website: string;
+    specialty: string;
+    commissionNote: string;
+    skuEstimate: number;
+  },
+): Store {
+  return {
+    id,
+    name,
+    kind,
+    connector,
+    status,
+    network,
+    verticals,
+    affiliate:
+      connector === "affiliate_network" || connector === "direct_affiliate",
+    ...extra,
+  };
+}
+
+export const stores: Store[] = [
+  s("jumia", "جوميا", "marketplace", "direct_affiliate", "connected", "jumia", BIG_HOME, {
+    city: "كل المحافظات",
+    website: "https://www.jumia.com.eg",
+    specialty: "ماركتبليس: أجهزة، إلكترونيات، بيت",
+    commissionNote: "برنامج جوميا أفلييت المباشر",
+    skuEstimate: 180000,
+  }),
+  s("noon", "نون", "marketplace", "direct_affiliate", "connected", "noon", BIG_HOME, {
+    city: "كل المحافظات",
+    website: "https://www.noon.com/egypt-ar",
+    specialty: "ماركتبليس + نون دقائق لأجهزة صغيرة",
+    commissionNote: "affiliates.noon.com / ArabClicks",
+    skuEstimate: 140000,
+  }),
+  s("amazon", "أمازون مصر", "marketplace", "direct_affiliate", "connected", "direct", BIG_HOME, {
+    city: "أونلاين",
+    website: "https://www.amazon.eg",
+    specialty: "تشكيلة واسعة وتقييمات عالمية",
+    commissionNote: "Amazon Associates مصر عند التفعيل",
+    skuEstimate: 90000,
+  }),
+  s("cartlow", "كارتلو", "marketplace", "affiliate_network", "affiliate_ready", "arabclicks", ALL_APPLIANCES, {
+    city: "أونلاين",
+    website: "https://cartlow.com",
+    specialty: "أجهزة مجدّدة بضمان",
+    commissionNote: "أفلييت تجديد / شبكات",
+    skuEstimate: 8000,
+  }),
+  s("btech", "بي تك", "electronics", "affiliate_network", "connected", "arabclicks", ALL_APPLIANCES, {
+    city: "القاهرة والجيزة والإسكندرية",
+    website: "https://btech.com",
+    specialty: "أجهزة كهربائية وخدمات تركيب",
+    commissionNote: "ArabClicks / شراكة سلسلة",
+    skuEstimate: 12000,
+  }),
+  s("twob", "2B", "electronics", "affiliate_network", "connected", "arabclicks", ALL_APPLIANCES, {
+    city: "القاهرة",
+    website: "https://2b.com.eg",
+    specialty: "إلكترونيات وأجهزة منزلية",
+    commissionNote: "شبكات أفلييت أو عقد مباشر",
+    skuEstimate: 9000,
+  }),
+  s("raya", "راية شوب", "electronics", "affiliate_network", "connected", "arabclicks", ALL_APPLIANCES, {
+    city: "فروع راية",
+    website: "https://rayashop.com",
+    specialty: "أجهزة وإلكترونيات استهلاكية",
+    commissionNote: "عبر الشبكات",
+    skuEstimate: 7000,
+  }),
+  s("raneen", "رنين", "electronics", "partnership", "connected", "direct", ALL_APPLIANCES, {
+    city: "فروع متعددة",
+    website: "https://raneen.com",
+    specialty: "أجهزة وأدوات منزل بأسعار تنافسية",
+    commissionNote: "شراكة مباشرة / عمولة لياد",
+    skuEstimate: 6000,
+  }),
+  s("tradeline", "تريدلاين", "electronics", "affiliate_network", "affiliate_ready", "arabclicks", [...ALL_APPLIANCES, "av"], {
+    city: "القاهرة",
+    website: "https://tradeline.com.eg",
+    specialty: "موبايلات وأجهزة منزلية",
+    commissionNote: "ArabClicks / Admitad",
+    skuEstimate: 5000,
+  }),
+  s("compume", "كمبيو مي", "electronics", "affiliate_network", "affiliate_ready", "admitad", AV, {
+    city: "القاهرة",
+    website: "https://compume.com",
+    specialty: "كمبيوتر وشاشات وصوتيات",
+    commissionNote: "Admitad",
+    skuEstimate: 4000,
+  }),
+  s("contact", "كونتاكت", "electronics", "partnership", "feed_pending", "direct", ALL_APPLIANCES, {
+    city: "فروع",
+    website: "https://contact.com.eg",
+    specialty: "تقسيط أجهزة وإلكترونيات",
+    commissionNote: "فيد أسعار + لياد تقسيط",
+    skuEstimate: 3500,
+  }),
+  s("itouch", "آي تاتش", "electronics", "affiliate_network", "affiliate_ready", "arabclicks", AV, {
+    city: "أونلاين",
+    website: "https://itouch.store",
+    specialty: "أبل وإلكترونيات",
+    commissionNote: "شبكات أفلييت",
+    skuEstimate: 2000,
+  }),
+  s("elnekhely", "النخيلي", "electronics", "partnership", "outreach", "direct", ALL_APPLIANCES, {
+    city: "القاهرة",
+    website: "https://elnekhely.com",
+    specialty: "أجهزة منزلية بالتقسيط",
+    commissionNote: "شراكة سلسلة محلية",
+    skuEstimate: 2500,
+  }),
+  s("olympic", "أوليمبيك إلكتريك", "electronics", "official_feed", "feed_pending", "direct", ALL_APPLIANCES, {
+    city: "مصنع + فروع",
+    website: "https://olympicelectric.com",
+    specialty: "فريش / يونيون إير / تصنيع محلي",
+    commissionNote: "فيد رسمي من المجموعة",
+    skuEstimate: 3000,
+  }),
+  s("hardwarehub", "هاردوير هب", "electronics", "partnership", "outreach", "direct", AV, {
+    city: "أونلاين",
+    website: "https://hardwarehub-eg.com",
+    specialty: "مكونات كمبيوتر وشاشات",
+    commissionNote: "شراكة محتوى تقني",
+    skuEstimate: 1500,
+  }),
+  s("carrefour", "كارفور", "hypermarket", "affiliate_network", "connected", "arabclicks", [...ALL_APPLIANCES, "textiles"], {
+    city: "فروع هايبر",
+    website: "https://www.carrefouregypt.com",
+    specialty: "أجهزة صغيرة وأدوات مطبخ وأجهزة كبيرة",
+    commissionNote: "عبر الشبكات",
+    skuEstimate: 8000,
+  }),
+  s("hyperone", "هايبر وان", "hypermarket", "partnership", "affiliate_ready", "direct", ALL_APPLIANCES, {
+    city: "الشيخ زايد / تجمّعات",
+    website: "https://hyperone.com.eg",
+    specialty: "هايبر ماركت بأجهزة منزلية",
+    commissionNote: "شراكة تجارية / فيد عروض",
+    skuEstimate: 4000,
+  }),
+  s("spinneys", "سبينيس", "hypermarket", "affiliate_network", "feed_pending", "arabclicks", ["small_kitchen", "personal_care", "cleaning"], {
+    city: "القاهرة",
+    website: "https://spinneys-egypt.com",
+    specialty: "أجهزة مطبخ صغيرة وعناية",
+    commissionNote: "شبكات عند التفعيل",
+    skuEstimate: 1200,
+  }),
+  s("seoudi", "سعودي", "hypermarket", "partnership", "outreach", "direct", ["small_kitchen", "cleaning", "cooking"], {
+    city: "القاهرة",
+    website: "https://seoudi.com",
+    specialty: "سوبرماركت وأجهزة صغيرة",
+    commissionNote: "لياد محلي",
+    skuEstimate: 900,
+  }),
+  s("metro", "مترو ماركت", "hypermarket", "partnership", "outreach", "direct", ["small_kitchen", "cleaning"], {
+    city: "فروع",
+    website: "https://metro-markets.com",
+    specialty: "بقالة وأجهزة صغيرة",
+    commissionNote: "شراكة سلسلة",
+    skuEstimate: 700,
+  }),
+  s("elaraby", "العربي جروب", "brand", "brand_portal", "connected", "direct", ALL_APPLIANCES, {
+    city: "مصنع + فروع",
+    website: "https://www.elarabygroup.com",
+    specialty: "توشيبا العربي وخدمات ما بعد البيع",
+    commissionNote: "بوابة علامة محلية",
+    skuEstimate: 2500,
+  }),
+  s("fresh", "فريش الرسمي", "brand", "official_feed", "feed_pending", "direct", ALL_APPLIANCES, {
+    city: "مصر",
+    website: "https://fresh.com.eg",
+    specialty: "أجهزة فريش المصنّعة محليًا",
+    commissionNote: "فيد رسمي من المصنع",
+    skuEstimate: 1800,
+  }),
+  s("unionaire", "يونيون إير الرسمي", "brand", "official_feed", "feed_pending", "direct", ["climate", "cooling", "cooking", "laundry"], {
+    city: "مصر",
+    website: "https://unionaire.com",
+    specialty: "تكييف وأجهزة بيضاء",
+    commissionNote: "فيد وكلاء",
+    skuEstimate: 1600,
+  }),
+  s("kiriazi", "كريازي", "brand", "official_feed", "feed_pending", "direct", ["cooling", "laundry", "cooking", "climate"], {
+    city: "مصر",
+    website: "https://kiriazi.com",
+    specialty: "ثلاجات وغسالات وبوتاجازات",
+    commissionNote: "فيد رسمي / وكلاء",
+    skuEstimate: 1400,
+  }),
+  s("samsung", "سامسونج شوب", "brand", "brand_portal", "affiliate_ready", "direct", ["av", "laundry", "cooling", "climate", "small_kitchen"], {
+    city: "أونلاين + فروع",
+    website: "https://www.samsung.com/eg",
+    specialty: "أجهزة سامسونج الرسمية",
+    commissionNote: "بوابة علامة / أفلييت إقليمي",
+    skuEstimate: 2200,
+  }),
+  s("lgshop", "إل جي شوب", "brand", "brand_portal", "affiliate_ready", "direct", ["av", "laundry", "cooling", "climate", "small_kitchen"], {
+    city: "أونلاين",
+    website: "https://www.lg.com/eg",
+    specialty: "غسالات وشاشات وتكييف إل جي",
+    commissionNote: "بوابة علامة",
+    skuEstimate: 2000,
+  }),
+  s("boschshop", "بوش هوم", "brand", "brand_portal", "feed_pending", "direct", ["cooking", "cleaning", "laundry", "small_kitchen"], {
+    city: "وكلاء مصر",
+    website: "https://www.bosch-home.com",
+    specialty: "أجهزة بوش المدمجة والمستقلة",
+    commissionNote: "فيد وكيل حصري",
+    skuEstimate: 800,
+  }),
+  s("bekoshop", "بيكو مصر", "brand", "official_feed", "feed_pending", "direct", ["laundry", "cooling", "cooking", "climate"], {
+    city: "وكلاء",
+    website: "https://www.beko.com/eg-ar",
+    specialty: "أجهزة بيكو البيضاء",
+    commissionNote: "فيد رسمي",
+    skuEstimate: 900,
+  }),
+  s("homzmart", "هومزمارت", "furniture", "affiliate_network", "connected", "arabclicks", FURNITURE, {
+    city: "أونلاين + شووروم",
+    website: "https://homzmart.com",
+    specialty: "أثاث ومفروشات وأدوات بيت",
+    commissionNote: "أفلييت أثاث",
+    skuEstimate: 20000,
+  }),
+  s("ikea", "ايكيا مصر", "furniture", "official_feed", "feed_pending", "direct", FURNITURE, {
+    city: "التجمع / مول مصر",
+    website: "https://www.ikea.com/eg/ar",
+    specialty: "أثاث ومطابخ جاهزة",
+    commissionNote: "كاتالوج رسمي",
+    skuEstimate: 9000,
+  }),
+  s("bfurn", "بي فيرن", "furniture", "partnership", "connected", "direct", ["furniture", "decor"], {
+    city: "القاهرة",
+    website: "https://bfurn.com",
+    specialty: "غرف نوم وصالونات محلية",
+    commissionNote: "لياد للمتجر المحلي",
+    skuEstimate: 600,
+  }),
+  s("homecentre", "هوم سنتر", "furniture", "affiliate_network", "affiliate_ready", "arabclicks", FURNITURE, {
+    city: "مولات",
+    website: "https://homecentre.com",
+    specialty: "أثاث وإكسسوار منزل",
+    commissionNote: "شبكات إقليمية",
+    skuEstimate: 5000,
+  }),
+  s("panemirates", "بان إميريتس", "furniture", "partnership", "outreach", "direct", ["furniture", "decor"], {
+    city: "مولات القاهرة",
+    website: "https://panemirates.com",
+    specialty: "صالونات وغرف نوم",
+    commissionNote: "شراكة شووروم",
+    skuEstimate: 2000,
+  }),
+  s("ace", "ايس هاردوير", "local", "partnership", "outreach", "direct", ["cleaning", "climate", "small_kitchen", "decor"], {
+    city: "فروع",
+    website: "https://acehardware.com.eg",
+    specialty: "عدد وأجهزة صغيرة ومراوح",
+    commissionNote: "شراكة سلسلة",
+    skuEstimate: 3000,
+  }),
+  s("whitewhale", "وايت ويل", "local", "official_feed", "feed_pending", "direct", ["cooling", "laundry", "climate", "cooking"], {
+    city: "وكلاء مصر",
+    website: "https://whitewhale-eg.com",
+    specialty: "أجهزة بيضاء بسعر اقتصادي",
+    commissionNote: "فيد وكلاء",
+    skuEstimate: 1100,
+  }),
+  s("tornado", "تورنيدو", "brand", "official_feed", "feed_pending", "direct", ["climate", "small_kitchen", "cleaning", "laundry"], {
+    city: "مصر",
+    website: "https://tornado-eg.com",
+    specialty: "مراوح وأجهزة صغيرة",
+    commissionNote: "فيد رسمي",
+    skuEstimate: 1000,
+  }),
+  s("universal", "يونيفرسال جروب", "local", "partnership", "outreach", "direct", ALL_APPLIANCES, {
+    city: "فروع",
+    website: "https://universalgroup.com.eg",
+    specialty: "توزيع أجهزة منزلية",
+    commissionNote: "شراكة موزّع",
+    skuEstimate: 2200,
+  }),
+  s("kazyon", "كازيون", "hypermarket", "partnership", "outreach", "direct", ["small_kitchen", "cleaning"], {
+    city: "فروع تخفيض",
+    website: "https://kazyon.com",
+    specialty: "أجهزة صغيرة رخيصة",
+    commissionNote: "لياد عروض أسبوعية",
+    skuEstimate: 400,
+  }),
+  s("breadfast", "بريد فاست مارت", "local", "affiliate_network", "outreach", "direct", ["small_kitchen"], {
+    city: "توصيل سريع",
+    website: "https://breadfast.com",
+    specialty: "أجهزة مطبخ صغيرة للتوصيل السريع",
+    commissionNote: "شراكة تطبيق",
+    skuEstimate: 200,
+  }),
+];
+
+export const kindLabels: Record<StoreKind, string> = {
+  marketplace: "ماركتبليس",
+  electronics: "سلاسل أجهزة",
+  hypermarket: "هايبر وسوبرماركت",
+  brand: "متجر علامة",
+  furniture: "أثاث وبيت",
+  local: "محلي وموزّعين",
+};
+
+export const statusLabels: Record<ConnectionStatus, string> = {
+  connected: "متصل في الـ MVP",
+  affiliate_ready: "أفلييت جاهز للربط",
+  feed_pending: "في انتظار فيد رسمي",
+  outreach: "تواصل تجاري",
+};
+
+export const connectorLabels: Record<ConnectorKind, string> = {
+  affiliate_network: "شبكة أفلييت",
+  direct_affiliate: "أفلييت مباشر",
+  official_feed: "فيد كاتالوج رسمي",
+  brand_portal: "بوابة العلامة",
+  partnership: "شراكة / لياد",
+};
+
+export const verticalLabels: Record<VerticalId, string> = {
+  laundry: "غسيل",
+  cooling: "تبريد",
+  climate: "تكييف ومراوح",
+  cooking: "طبخ",
+  cleaning: "تنظيف",
+  water_heat: "سخانات ومياه",
+  av: "شاشات وصوت",
+  small_kitchen: "أجهزة مطبخ صغيرة",
+  personal_care: "عناية شخصية",
+  furniture: "أثاث",
+  textiles: "مفروشات",
+  decor: "ديكور",
+};
+
+export function networkStats() {
+  return {
+    total: stores.length,
+    connected: stores.filter((x) => x.status === "connected").length,
+    affiliate: stores.filter((x) => x.affiliate).length,
+    skuCoverage: stores.reduce((n, x) => n + x.skuEstimate, 0),
+  };
+}

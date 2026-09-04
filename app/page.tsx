@@ -25,19 +25,18 @@ export default function HomePage() {
           <div className="space-y-6">
             <p className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">
               <Sparkles className="size-4" />
-              مقارنة أسعار متخصصة لجهاز العروسة في مصر
+              مقارنة أسعار لكل أجهزة البيت عبر متاجر مصر
             </p>
             <h1 className="font-heading text-4xl leading-tight font-semibold md:text-5xl">
-              جهازكِ كامل… من أرخص متجر، من غير ما تلفّي عشرين موقع.
+              أي جهاز في الحياة… من أرخص متجر إيكوميرس في مصر.
             </h1>
             <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
-              وفّري بتجمع عروض جوميا ونون وبي تك و2B ورنين وهومزمارت وايكيا
-              وغيرهم في كارت منتج واحد. تشوفي الأرخص، التقييم، والتوصيل، وتبني
-              قايمة جهاز بميزانية تتحدث لحظيًا.
+              وفّري بتربط ماركتبليس وسلاسل أجهزة وهايبر ومتاجر العلامات: من الغسالة
+              والتكييف لحد المروحة والسشوار والقلاية. نفس المنتج كارت واحد، والأرخص ظاهر.
             </p>
             <SearchBar />
             <div className="flex flex-wrap gap-2 text-sm">
-              {["غسالة 8 كيلو", "ثلاجة توشيبا", "ركنة", "غرفة نوم"].map((s) => (
+              {["غسالة 8 كيلو", "قلاية هوائية", "مروحة", "سشوار"].map((s) => (
                 <Link
                   key={s}
                   href={`/search?q=${encodeURIComponent(s)}`}
@@ -56,7 +55,7 @@ export default function HomePage() {
                   <strong className="block text-2xl text-primary">
                     {stores.length}
                   </strong>
-                  متجر مصري
+                  متجر في الشبكة
                 </li>
                 <li>
                   <strong className="block text-2xl text-primary">
@@ -78,8 +77,8 @@ export default function HomePage() {
                 </li>
               </ul>
               <p className="text-xs leading-relaxed text-muted-foreground">
-                البيانات تجريبية قابلة للتفاعل بالكامل. الربط الحي هييجي من
-                برامج الأفلييت (جوميا، نون، ArabClicks) ثم الشراكات المباشرة.
+                البيانات تجريبية للتفاعل. الشبكة فيها ماركتبليس وسلاسل وهايبر وعلامات،
+                والربط الحي بيمشي أفلييت ثم فيد رسمي — من غير سكرابينج كعمود فقري.
               </p>
             </CardContent>
           </Card>
@@ -97,7 +96,7 @@ export default function HomePage() {
             <ArrowLeft />
           </Button>
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
           {categories.map((c) => (
             <Link
               key={c.id}
@@ -174,18 +173,24 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-12">
-        <h2 className="mb-4 font-heading text-2xl font-semibold">المتاجر المتصلة في الـ MVP</h2>
+        <div className="mb-4 flex items-end justify-between gap-3">
+          <h2 className="font-heading text-2xl font-semibold">شبكة المتاجر</h2>
+          <Link href="/stores" className="text-sm text-primary hover:underline">
+            كل الشبكة وحالة الربط
+          </Link>
+        </div>
         <div className="flex flex-wrap gap-2">
-          {stores.map((s) => (
-            <Link
-              key={s.id}
-              href={`/stores/${s.id}`}
-              className="rounded-full bg-card px-3 py-1.5 text-sm ring-1 ring-foreground/10 hover:bg-muted"
-            >
-              {s.name}
-              {s.affiliate ? "" : " · شراكة مباشرة"}
-            </Link>
-          ))}
+          {stores
+            .filter((s) => s.status === "connected" || s.status === "affiliate_ready")
+            .map((s) => (
+              <Link
+                key={s.id}
+                href={`/stores/${s.id}`}
+                className="rounded-full bg-card px-3 py-1.5 text-sm ring-1 ring-foreground/10 hover:bg-muted"
+              >
+                {s.name}
+              </Link>
+            ))}
         </div>
       </section>
     </div>

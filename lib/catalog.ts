@@ -3,135 +3,33 @@ import type {
   Category,
   ChecklistTemplate,
   Product,
-  Store,
 } from "./types";
+import { extraProducts } from "./extra-products";
+import { expandNetworkListings } from "./expand-listings";
+import { stores } from "./network";
 
-export const stores: Store[] = [
-  {
-    id: "jumia",
-    name: "جوميا",
-    city: "كل المحافظات",
-    specialty: "إلكترونيات وأجهزة منزلية",
-    affiliate: true,
-    network: "jumia",
-    commissionNote: "برنامج جوميا أفلييت المباشر",
-  },
-  {
-    id: "noon",
-    name: "نون",
-    city: "كل المحافظات",
-    specialty: "أجهزة، مفروشات، وتوصيل سريع",
-    affiliate: true,
-    network: "noon",
-    commissionNote: "affiliates.noon.com / ArabClicks",
-  },
-  {
-    id: "btech",
-    name: "بي تك",
-    city: "القاهرة والجيزة",
-    specialty: "أجهزة كهربائية وخدمات تركيب",
-    affiliate: true,
-    network: "arabclicks",
-    commissionNote: "عبر ArabClicks عند التوفر",
-  },
-  {
-    id: "twob",
-    name: "2B",
-    city: "القاهرة",
-    specialty: "إلكترونيات وأجهزة منزلية",
-    affiliate: true,
-    network: "arabclicks",
-    commissionNote: "عبر الشبكات أو شراكة مباشرة",
-  },
-  {
-    id: "raneen",
-    name: "رنين",
-    city: "فروع متعددة",
-    specialty: "أجهزة وأدوات منزل بأسعار تنافسية",
-    affiliate: false,
-    network: "direct",
-    commissionNote: "شراكة مباشرة / عمولة لياد",
-  },
-  {
-    id: "homzmart",
-    name: "هومزمارت",
-    city: "أونلاين + شووروم",
-    specialty: "أثاث ومفروشات",
-    affiliate: true,
-    network: "arabclicks",
-    commissionNote: "أفلييت أثاث",
-  },
-  {
-    id: "ikea",
-    name: "ايكيا مصر",
-    city: "التجمع / مول مصر",
-    specialty: "أثاث ومطابخ جاهزة",
-    affiliate: false,
-    network: "direct",
-    commissionNote: "كاتالوج رسمي لاحقًا",
-  },
-  {
-    id: "carrefour",
-    name: "كارفور",
-    city: "فروع هايبر",
-    specialty: "أجهزة صغيرة وأدوات مطبخ",
-    affiliate: true,
-    network: "arabclicks",
-    commissionNote: "عبر الشبكات",
-  },
-  {
-    id: "amazon",
-    name: "أمازون مصر",
-    city: "أونلاين",
-    specialty: "تشكيلة واسعة وتقييمات",
-    affiliate: true,
-    network: "direct",
-    commissionNote: "Associates عند التفعيل",
-  },
-  {
-    id: "bfurn",
-    name: "بي فيرن",
-    city: "القاهرة",
-    specialty: "غرف نوم وصالونات محلية",
-    affiliate: false,
-    network: "direct",
-    commissionNote: "لياد للمتجر المحلي",
-  },
-  {
-    id: "raya",
-    name: "راية شوب",
-    city: "فروع",
-    specialty: "أجهزة وإلكترونيات",
-    affiliate: true,
-    network: "arabclicks",
-    commissionNote: "عبر الشبكات",
-  },
-  {
-    id: "elaraby",
-    name: "العربي جروب",
-    city: "مصنع + فروع",
-    specialty: "توشيبا العربي وخدمات ما بعد البيع",
-    affiliate: false,
-    network: "direct",
-    commissionNote: "شراكة علامة محلية",
-  },
-];
+export { stores } from "./network";
 
 export const categories: Category[] = [
-  { id: "washers", name: "غسالات", description: "أوتوماتيك حسب السعة والعيلة", room: "kitchen" },
-  { id: "fridges", name: "ثلاجات", description: "نوفروست بمقاسات القدم", room: "kitchen" },
-  { id: "acs", name: "مكيفات", description: "تبريد وإنفرتر حسب الحصان", room: "general" },
-  { id: "stoves", name: "بوتاجازات", description: "غاز وكهرباء بأسطح استانلس", room: "kitchen" },
-  { id: "dishwashers", name: "غسالات أطباق", description: "توفير مية ووقت في المطبخ", room: "kitchen" },
-  { id: "vacuums", name: "مكانس", description: "كيس وبدون كيس وقدرة شفط", room: "general" },
-  { id: "heaters", name: "سخانات", description: "غاز وكهرباء حسب عدد الأفراد", room: "kitchen" },
-  { id: "tvs", name: "شاشات", description: "للصالون وغرفة النوم", room: "living" },
-  { id: "small-appliances", name: "أجهزة صغيرة", description: "خلاطات، ميكروويف، مكواة", room: "kitchen" },
-  { id: "bedroom", name: "غرف نوم", description: "سرير، دولاب، تسريحة", room: "bedroom" },
-  { id: "living", name: "صالون وسفرة", description: "كنب، ترابيزات، كراسي", room: "living" },
-  { id: "kitchen-tools", name: "أدوات مطبخ", description: "طقم حلل، سكاكين، أواني", room: "kitchen" },
-  { id: "textiles", name: "مفروشات", description: "لحاف، مناشف، ستائر", room: "bedroom" },
-  { id: "decor", name: "ديكور وإضاءة", description: "نجف، مرايا، إكسسوار البيت", room: "living" },
+  { id: "washers", name: "غسالات", description: "أوتوماتيك حسب السعة والعيلة", room: "kitchen", vertical: "laundry" },
+  { id: "fridges", name: "ثلاجات", description: "نوفروست بمقاسات القدم", room: "kitchen", vertical: "cooling" },
+  { id: "freezers", name: "ديب فريزر", description: "حفظ اللحمة والخضار للعيلة", room: "kitchen", vertical: "cooling" },
+  { id: "acs", name: "مكيفات", description: "تبريد وإنفرتر حسب الحصان", room: "general", vertical: "climate" },
+  { id: "fans", name: "مراوح", description: "عمود وحائط وسقف", room: "general", vertical: "climate" },
+  { id: "stoves", name: "بوتاجازات", description: "غاز وكهرباء بأسطح استانلس", room: "kitchen", vertical: "cooking" },
+  { id: "dishwashers", name: "غسالات أطباق", description: "توفير مية ووقت في المطبخ", room: "kitchen", vertical: "cooking" },
+  { id: "vacuums", name: "مكانس", description: "عادية وروبوت", room: "general", vertical: "cleaning" },
+  { id: "heaters", name: "سخانات", description: "غاز وكهرباء حسب عدد الأفراد", room: "kitchen", vertical: "water_heat" },
+  { id: "water", name: "مياه وفلاتر", description: "مبردات وفلاتر شرب", room: "kitchen", vertical: "water_heat" },
+  { id: "tvs", name: "شاشات", description: "للصالون وغرفة النوم", room: "living", vertical: "av" },
+  { id: "audio", name: "صوتيات", description: "ساوند بار وسماعات", room: "living", vertical: "av" },
+  { id: "small-appliances", name: "أجهزة صغيرة", description: "خلاطات، قلايات، كتل، ميكروويف", room: "kitchen", vertical: "small_kitchen" },
+  { id: "personal-care", name: "عناية شخصية", description: "سشوار، مكواة شعر، أجهزة يومية", room: "general", vertical: "personal_care" },
+  { id: "bedroom", name: "غرف نوم", description: "سرير، دولاب، تسريحة", room: "bedroom", vertical: "furniture" },
+  { id: "living", name: "صالون وسفرة", description: "كنب، ترابيزات، كراسي", room: "living", vertical: "furniture" },
+  { id: "kitchen-tools", name: "أدوات مطبخ", description: "طقم حلل، سكاكين، أواني", room: "kitchen", vertical: "small_kitchen" },
+  { id: "textiles", name: "مفروشات", description: "لحاف، مناشف، ستائر", room: "bedroom", vertical: "textiles" },
+  { id: "decor", name: "ديكور وإضاءة", description: "نجف، مرايا، إكسسوار البيت", room: "living", vertical: "decor" },
 ];
 
 export const brands: Brand[] = [
@@ -150,10 +48,14 @@ export const brands: Brand[] = [
   { id: "beko", name: "بيكو", origin: "تركيا" },
   { id: "gree", name: "جري", origin: "الصين" },
   { id: "ikea", name: "ايكيا", origin: "السويد" },
+  { id: "philips", name: "فيليبس", origin: "هولندا" },
+  { id: "xiaomi", name: "Xiaomi", origin: "الصين" },
+  { id: "remington", name: "ريمنجتون", origin: "أمريكا" },
+  { id: "tornado", name: "تورنيدو", origin: "مصر" },
 ];
 
 function listing(
-  storeId: Store["id"],
+  storeId: string,
   price: number,
   sku: string,
   opts: {
@@ -175,12 +77,12 @@ function listing(
     inStock: opts.inStock ?? true,
     shipping: opts.shipping ?? "توصيل خلال 2–5 أيام",
     url: opts.url ?? `https://www.example.com/${storeId}/${sku}`,
-    affiliateNetwork: store.network,
+    affiliateNetwork: store?.network ?? "direct",
     oldPrice: opts.oldPrice,
   };
 }
 
-export const products: Product[] = [
+const seedProducts: Product[] = [
   {
     id: "lg-washer-8",
     name: "غسالة إل جي فول أوتوماتيك 8 كيلو",
@@ -719,6 +621,8 @@ export const products: Product[] = [
   },
 ];
 
+export const products = expandNetworkListings([...seedProducts, ...extraProducts]);
+
 export const templates: ChecklistTemplate[] = [
   {
     id: "kitchen-core",
@@ -770,6 +674,20 @@ export const templates: ChecklistTemplate[] = [
     description: "مكيف أوضة + مكيف صالة",
     suggestedBudget: 45000,
     productIds: ["sharp-ac-15", "carrier-ac-225"],
+  },
+  {
+    id: "daily-life",
+    name: "أجهزة البيت اليومية",
+    description: "قلاية، كتل، مروحة، مبرد مياه، سشوار، روبوت",
+    suggestedBudget: 28000,
+    productIds: [
+      "philips-airfryer",
+      "kettle-kenwood",
+      "tornado-fan-18",
+      "water-dispenser-fresh",
+      "remington-dryer",
+      "robot-vacuum-tuya",
+    ],
   },
 ];
 
