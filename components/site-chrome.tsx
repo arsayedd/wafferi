@@ -124,11 +124,18 @@ export function SiteHeader() {
                   </Link>
                 ))}
                 <Link
-                  href="/brands"
+                  href="/categories"
                   onClick={() => setMenuOpen(false)}
                   className="rounded-lg px-2 py-2 text-sm hover:bg-muted"
                 >
-                  الماركات
+                  الفئات
+                </Link>
+                <Link
+                  href="/live"
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-lg px-2 py-2 text-sm hover:bg-muted"
+                >
+                  لحظي
                 </Link>
                 <Link
                   href="/matching"
