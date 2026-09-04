@@ -14,11 +14,12 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { brands, categories, cheapestListing, getStore } from "@/lib/catalog";
 import { catalogStores, networkStats } from "@/lib/network";
-import { searchProducts, type SortKey } from "@/lib/search";
+import { searchProductsPage, SEARCH_PAGE_SIZE, type SortKey } from "@/lib/search";
 import { parseShopperQuery, POPULAR_SEARCHES } from "@/lib/query-parse";
 import { pickBestChoice, priceIntel, whyBest } from "@/lib/best-choice";
 import { matchAreas } from "@/lib/egypt-areas";
-import { formatPrice } from "@/lib/format";
+import { formatNumber, formatPrice } from "@/lib/format";
+import { VIRTUAL_SKU_COUNT } from "@/lib/virtual-catalog";
 import { useCatalog } from "@/hooks/use-catalog";
 import { useWaffari } from "@/hooks/use-waffari";
 import { toast } from "sonner";
@@ -49,6 +50,7 @@ export function SearchExperience({
   const inStock = params.get("stock") === "1" || Boolean(parsed.inStock);
   const delivery = (params.get("delivery") as "same_day" | "next_day" | "free" | "") || "";
   const tab = (params.get("tab") as Tab) || "all";
+  const page = Math.max(1, Number(params.get("page") || "1") || 1);
 
   const [minDraft, setMinDraft] = useState(min?.toString() ?? "");
   const [maxDraft, setMaxDraft] = useState(max?.toString() ?? "");
@@ -57,13 +59,14 @@ export function SearchExperience({
     const next = new URLSearchParams(params.toString());
     if (value) next.set(key, value);
     else next.delete(key);
+    if (key !== "page") next.delete("page");
     if (initialCategory && key !== "category") next.set("category", initialCategory);
     router.push(`${pathname}?${next.toString()}`);
   }
 
   const results = useMemo(
     () =>
-      searchProducts(
+      searchProductsPage(
         {
           q: parsed.q ?? (parsed.category ? undefined : q.trim() || undefined),
           category: category || undefined,
@@ -80,6 +83,8 @@ export function SearchExperience({
           delivery: delivery || undefined,
         },
         allProducts,
+        page,
+        SEARCH_PAGE_SIZE,
       ),
     [
       q,
@@ -98,10 +103,11 @@ export function SearchExperience({
       minDiscount,
       delivery,
       allProducts,
+      page,
     ],
   );
 
-  const best = useMemo(() => pickBestChoice(results.slice(0, 24)), [results]);
+  const best = useMemo(() => pickBestChoice(results.items.slice(0, 24)), [results]);
   const areas = useMemo(() => (q.trim() ? matchAreas(q) : []), [q]);
   const net = networkStats();
   const storeOptions = useMemo(
@@ -114,7 +120,7 @@ export function SearchExperience({
   const uniqueBrands = [...new Set(brands.map((b) => b.name))];
   const showWaffari = tab !== "go";
   const showGo = tab !== "waffari" && Boolean(q.trim());
-  const empty = (!showWaffari || results.length === 0) && (!showGo || areas.length === 0);
+  const empty = (!showWaffari || results.total === 0) && (!showGo || areas.length === 0);
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8">
@@ -124,8 +130,8 @@ export function SearchExperience({
         </h1>
         <p className="text-muted-foreground">
           {q
-            ? "أي كتابة — حتى لو فيها غلط إملائي. النتيجة منتج واحد وكل بائعيه."
-            : `الكتالوج: ${allProducts.length} صنف مرجعي من أجهزة وبيت ولبس — بحث «ثلاجة» يطلّع كل الثلاجات في الدليل مش عينتين.`}
+            ? "أي كتابة — حتى لو فيها غلط إملائي. النتيجة منتج واحد وكل بائعيه، مع صفحات للكتالوج المرجعي الكبير."
+            : `الدليل المنسّق ${formatNumber(allProducts.length)} صنف + كتالوج تركيبي ${formatNumber(VIRTUAL_SKU_COUNT)} تركيبة لسوق مصر (ماركة × مقاس × نوع × لون). مش سحب لحظي لملايين الـ SKU من كل رف.`}
         </p>
         <p className="text-xs text-muted-foreground">
           شبكة الكتالوج: {net.catalog} متجر إيكومرس + أحياء على الخريطة · {net.ready} جاهز للعروض
@@ -168,7 +174,7 @@ export function SearchExperience({
             {(
               [
                 ["all", `الكل`],
-                ["waffari", `أونلاين (${results.length})`],
+                ["waffari", `أونلاين (${formatNumber(results.total)})`],
                 ["go", `تنزلي (${areas.length})`],
               ] as const
             ).map(([id, label]) => (
@@ -435,9 +441,9 @@ export function SearchExperience({
                 <div>
                   <h2 className="font-heading text-xl font-semibold">منتجات موحّدة</h2>
                   <p className="text-sm text-muted-foreground">
-                    {results.length === 0
+                    {results.total === 0
                       ? "مفيش منتج مطابق."
-                      : `${results.length} منتج رئيسي — كل كارت يجمع البائعين`}
+                      : `${formatNumber(results.total)} نتيجة — ${formatNumber(results.curated)} من الدليل المنسّق و${formatNumber(results.virtual)} تركيبة مرجعية. صفحة ${formatNumber(results.page)} من ${formatNumber(results.pages)}`}
                   </p>
                 </div>
                 <select
@@ -454,9 +460,9 @@ export function SearchExperience({
                   <option value="stores">الأكثر تغطية</option>
                 </select>
               </div>
-              {results.length > 0 ? (
+              {results.items.length > 0 ? (
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                  {results.map((p) => (
+                  {results.items.map((p) => (
                     <ProductCard key={p.id} product={p} />
                   ))}
                 </div>
@@ -465,6 +471,29 @@ export function SearchExperience({
                   جرّبي جملة أوضح، أو امسحي الفلاتر.
                 </div>
               )}
+              {results.pages > 1 ? (
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                  <Button
+                    variant="outline"
+                    disabled={results.page <= 1}
+                    onClick={() => setParam("page", String(results.page - 1))}
+                  >
+                    السابق
+                  </Button>
+                  <p className="text-sm text-muted-foreground">
+                    {formatNumber((results.page - 1) * SEARCH_PAGE_SIZE + 1)}–
+                    {formatNumber(Math.min(results.page * SEARCH_PAGE_SIZE, results.total))} من{" "}
+                    {formatNumber(results.total)}
+                  </p>
+                  <Button
+                    variant="outline"
+                    disabled={results.page >= results.pages}
+                    onClick={() => setParam("page", String(results.page + 1))}
+                  >
+                    التالي
+                  </Button>
+                </div>
+              ) : null}
             </section>
           ) : null}
 

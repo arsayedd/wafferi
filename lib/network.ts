@@ -225,12 +225,12 @@ export const stores: Store[] = [
     commissionNote: "شراكة سلسلة",
     skuEstimate: 700,
   }),
-  s("elaraby", "العربي جروب", "brand", "brand_portal", "connected", "direct", ALL_APPLIANCES, {
-    city: "مصنع + فروع",
+  s("elaraby", "العربي جروب", "electronics", "partnership", "connected", "direct", ALL_APPLIANCES, {
+    city: "فروع مصر + أونلاين",
     website: "https://www.elarabygroup.com",
-    specialty: "توشيبا العربي وخدمات ما بعد البيع",
-    commissionNote: "بوابة علامة محلية",
-    skuEstimate: 2500,
+    specialty: "توشيبا العربي وأجهزة بيضاء: ثلاجات، غسالات، تكييف، بوتاجاز — فروع وخدمة بعد البيع",
+    commissionNote: "توجيه لبحث مجموعة العربي — الأسعار المرجعية مش مخزون مسحوب",
+    skuEstimate: 8000,
   }),
   s("fresh", "فريش الرسمي", "brand", "official_feed", "feed_pending", "direct", ALL_APPLIANCES, {
     city: "مصر",

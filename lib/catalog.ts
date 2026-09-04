@@ -4,6 +4,7 @@ import type {
   ChecklistTemplate,
   Product,
 } from "./types";
+import { hydrateVirtual } from "./virtual-catalog";
 import { extraProducts } from "./extra-products";
 import { lifeProducts } from "./life-products";
 import { marketCatalog } from "./market-catalog";
@@ -768,7 +769,7 @@ export const templates: ChecklistTemplate[] = [
 ];
 
 export function getProduct(id: string) {
-  return productById.get(id);
+  return productById.get(id) ?? hydrateVirtual(id);
 }
 
 export function getStore(id: string) {

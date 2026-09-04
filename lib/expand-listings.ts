@@ -59,7 +59,7 @@ function jitter(seed: string, base: number) {
   return Math.max(50, Math.round((base * (1 + pct)) / 10) * 10);
 }
 
-const PIN = ["jumia", "noon", "raneen", "tawhid-nour", "alreyada", "amazon", "btech", "twob", "extra"];
+const PIN = ["jumia", "noon", "raneen", "elaraby", "tawhid-nour", "alreyada", "amazon", "btech", "twob", "extra"];
 
 export function expandNetworkListings(products: Product[]): Product[] {
   return products.map((p) => {

@@ -3,6 +3,9 @@ import { avgRating, cheapestListing, getCategory, getStore, products } from "./c
 import { bestChoiceScore, offerDiscountPct, totalReviews } from "./best-choice";
 import { SEARCH_STOP } from "./query-parse";
 import type { Product } from "./types";
+import { VIRTUAL_STORES, virtualSearch } from "./virtual-catalog";
+
+export const SEARCH_PAGE_SIZE = 36;
 
 export type SortKey = "price" | "savings" | "rating" | "stores" | "best" | "discount" | "reviews";
 
@@ -160,4 +163,57 @@ export function searchProducts(
     applyFilters(p, { q: filters.q, category: filters.category, brand: filters.brand, sort }, true),
   );
   return sortList(loose, sort);
+}
+
+function virtualAllowed(filters: SearchFilters) {
+  if (filters.min != null || filters.max != null) return false;
+  if (filters.inStock || filters.delivery) return false;
+  if (filters.minRating != null || filters.minReviews != null || filters.minDiscount != null) return false;
+  if (filters.store && !VIRTUAL_STORES.includes(filters.store as (typeof VIRTUAL_STORES)[number])) return false;
+  return true;
+}
+
+export function searchProductsPage(
+  filters: SearchFilters,
+  pool: Product[] = products,
+  page = 1,
+  pageSize = SEARCH_PAGE_SIZE,
+): { items: Product[]; total: number; curated: number; virtual: number; page: number; pages: number } {
+  const curated = searchProducts(filters, pool);
+  const virt =
+    virtualAllowed(filters)
+      ? virtualSearch(
+          {
+            category: filters.category,
+            brand: filters.brand,
+            q: filters.q,
+            capacity: filters.capacity,
+          },
+          0,
+          0,
+        )
+      : { items: [] as Product[], total: 0 };
+  const total = curated.length + virt.total;
+  const pages = Math.max(1, Math.ceil(total / pageSize) || 1);
+  const safePage = Math.min(Math.max(1, page), pages);
+  const offset = (safePage - 1) * pageSize;
+  const items: Product[] = [];
+  if (offset < curated.length) {
+    items.push(...curated.slice(offset, offset + pageSize));
+  }
+  if (items.length < pageSize && virt.total) {
+    const vOff = Math.max(0, offset - curated.length);
+    const more = virtualSearch(
+      {
+        category: filters.category,
+        brand: filters.brand,
+        q: filters.q,
+        capacity: filters.capacity,
+      },
+      vOff,
+      pageSize - items.length,
+    );
+    items.push(...more.items);
+  }
+  return { items, total, curated: curated.length, virtual: virt.total, page: safePage, pages };
 }

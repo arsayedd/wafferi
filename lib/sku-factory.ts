@@ -19,6 +19,7 @@ const NET: Record<string, AffiliateNetwork> = {
   raneen: "direct",
   "tawhid-nour": "direct",
   alreyada: "direct",
+  elaraby: "direct",
 };
 
 function storesFor(cat: CategoryId): [string, string, string] {
@@ -36,7 +37,17 @@ function storesFor(cat: CategoryId): [string, string, string] {
     return ["jumia", "tawhid-nour", "ikea"];
   if (cat === "emergency") return ["jumia", "amazon", "raneen"];
   if (cat === "travel") return ["jumia", "noon", "amazon"];
-  if (cat === "stoves" || cat === "dishwashers") return ["jumia", "alreyada", "raneen"];
+  if (cat === "stoves" || cat === "dishwashers") return ["jumia", "alreyada", "elaraby"];
+  if (
+    cat === "fridges" ||
+    cat === "washers" ||
+    cat === "acs" ||
+    cat === "freezers" ||
+    cat === "heaters" ||
+    cat === "small-appliances" ||
+    cat === "tvs"
+  )
+    return ["jumia", "elaraby", "raneen"];
   return ["jumia", "noon", "raneen"];
 }
 
@@ -78,7 +89,8 @@ export function makeSku(
         row.storeId === "raneen" ||
         row.storeId === "tawhid-nour" ||
         row.storeId === "ikea" ||
-        row.storeId === "alreyada"
+        row.storeId === "alreyada" ||
+        row.storeId === "elaraby"
           ? "استلام فرع أو توصيل"
           : "توصيل خلال 2–5 أيام",
       url: listingHref(row.storeId, name),
