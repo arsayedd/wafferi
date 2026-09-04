@@ -65,7 +65,7 @@ export function SearchExperience({
     () =>
       searchProducts(
         {
-          q: parsed.q,
+          q: parsed.q ?? (parsed.category ? undefined : q.trim() || undefined),
           category: category || undefined,
           brand: brand || undefined,
           store: store || undefined,
@@ -82,7 +82,9 @@ export function SearchExperience({
         allProducts,
       ),
     [
+      q,
       parsed.q,
+      parsed.category,
       parsed.capacity,
       category,
       brand,
@@ -118,12 +120,12 @@ export function SearchExperience({
     <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8">
       <div className="space-y-3">
         <h1 className="font-heading text-3xl font-semibold">
-          {q ? `نتائج «${q}»` : "ابحثي في سوق مصر"}
+          {q ? `نتائج «${q}»` : "كل منتجات الجهاز"}
         </h1>
         <p className="text-muted-foreground">
-          أي منتج أو فئة: أسعار، تقييمات، خصم، توفر، توصيل. النتيجة منتج واحد وكل بائعيه — جوميا ونون
-          وأمازون وبي تك وكارفور والسلاسل الجاهزة للربط. مش زحف لحظي لكل دومين مصري؛ الأسعار المرجعية
-          تتحدث من فيد مصرّح أو مراقبة مرخّصة.
+          {q
+            ? "أي كتابة — حتى لو فيها غلط إملائي. النتيجة منتج واحد وكل بائعيه."
+            : `الكتالوج كامل: ${allProducts.length} منتج. ابحثي أو فلترة من الجانب.`}
         </p>
         <p className="text-xs text-muted-foreground">
           شبكة الكتالوج: {net.catalog} متجر إيكومرس + أحياء على الخريطة · {net.ready} جاهز للعروض

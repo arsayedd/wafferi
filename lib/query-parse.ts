@@ -1,11 +1,11 @@
-import { foldArabic, tokenizeQuery } from "./ar-fold";
+import { foldArabic, tokenizeQuery, similarArabic } from "./ar-fold";
 import { brands, categories } from "./catalog";
 import type { CategoryId } from "./types";
 import type { SearchFilters, SortKey } from "./search";
 
 const CATEGORY_ALIASES: { id: CategoryId; words: string[] }[] = [
   { id: "washers", words: ["غساله", "غسالة", "غسالات", "washer", "washing machine"] },
-  { id: "fridges", words: ["ثلاجه", "ثلاجة", "تلاجة", "ثلاجات", "fridge", "refrigerator"] },
+  { id: "fridges", words: ["ثلاجه", "ثلاجة", "تلاجة", "ثلاجات", "تلاجات", "تلاجه", "fridge", "refrigerator"] },
   { id: "freezers", words: ["ديب فريزر", "فريزر", "freezer"] },
   { id: "acs", words: ["تكييف", "مكيف", "تكييفات", "مكيفات", "سبليت", "air conditioner", "aircon"] },
   { id: "fans", words: ["مروحه", "مروحة", "مراوح", "fan"] },
@@ -115,7 +115,11 @@ export const SEARCH_STOP = new Set(
     "أي",
     "حاجة",
     "حاجه",
-    "منتج",
+    "منتجات",
+    "السوق",
+    "سوق",
+    "كتالوج",
+    "الجهاز",
     "كل",
     "كلها",
     "the",
@@ -163,6 +167,17 @@ function parseCapacity(folded: string): string | undefined {
 function parseDiscount(folded: string): number | undefined {
   const m = folded.match(/(?:خصم|discount)\s*(\d{1,2})\s*%?/);
   return m ? toNumber(m[1]) : undefined;
+}
+
+function aliasMatchesQuery(alias: string, folded: string, tokens: string[]) {
+  const f = foldArabic(alias);
+  if (!f) return false;
+  const parts = f.split(" ").filter(Boolean);
+  if (parts.length > 1) {
+    return parts.every((part) => tokens.some((t) => similarArabic(t, part)) || folded.includes(part));
+  }
+  if (f.length < 4) return tokens.includes(f);
+  return tokens.some((t) => similarArabic(t, f)) || folded.includes(f);
 }
 
 function categoryHints() {
@@ -231,18 +246,20 @@ export function parseShopperQuery(raw: string): ParsedQuery {
   }
 
   const hints = categoryHints();
-  let categoryHit: { id: CategoryId; len: number } | undefined;
+  const tokens = tokenizeQuery(folded);
+  let categoryHit: { id: CategoryId; len: number; word: string } | undefined;
   for (const alias of hints) {
     for (const w of alias.words) {
       const f = foldArabic(w);
-      if (f && folded.includes(f) && (!categoryHit || f.length > categoryHit.len)) {
-        categoryHit = { id: alias.id, len: f.length };
+      if (!f || !aliasMatchesQuery(w, folded, tokens)) continue;
+      if (!categoryHit || f.length > categoryHit.len) {
+        categoryHit = { id: alias.id, len: f.length, word: f };
       }
     }
   }
   if (categoryHit) {
     filters.category = categoryHit.id;
-    intent.push(categories.find((c) => c.id === categoryHit.id)?.name ?? categoryHit.id);
+    intent.push(categories.find((c) => c.id === categoryHit!.id)?.name ?? categoryHit.id);
   }
 
   for (const [alias, name] of Object.entries(BRAND_ALIASES)) {
@@ -271,6 +288,14 @@ export function parseShopperQuery(raw: string): ParsedQuery {
 
   const leftover = tokenizeQuery(leftoverText)
     .filter((w) => w.length > 1 && !SEARCH_STOP.has(w) && !/^\d+$/.test(w))
+    .filter((w) => {
+      if (!categoryHit) return true;
+      const words = hints.find((h) => h.id === categoryHit.id)?.words ?? [categoryHit.word];
+      return !words.some((alias) => {
+        const parts = foldArabic(alias).split(" ").filter(Boolean);
+        return similarArabic(w, alias) || parts.some((part) => similarArabic(w, part));
+      });
+    })
     .join(" ");
   filters.leftover = leftover;
   filters.q = leftover || undefined;

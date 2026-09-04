@@ -1,6 +1,5 @@
-import { foldArabic, tokenizeQuery } from "./ar-fold";
+import { foldArabic, tokenizeQuery, similarArabic, softenArabic } from "./ar-fold";
 import { avgRating, cheapestListing, getCategory, getStore, products } from "./catalog";
-import { UNIQUE_PHOTO_IDS } from "./unique-photos";
 import { bestChoiceScore, offerDiscountPct, totalReviews } from "./best-choice";
 import { SEARCH_STOP } from "./query-parse";
 import type { Product } from "./types";
@@ -57,20 +56,22 @@ function capacityHit(p: Product, cap?: string) {
 function tokenHit(hay: string, token: string) {
   if (!token) return true;
   if (SEARCH_STOP.has(token) || /^\d+$/.test(token)) return true;
-  if (hay.includes(token)) return true;
+  const softHay = softenArabic(hay);
+  const softTok = softenArabic(token);
+  if (hay.includes(token) || softHay.includes(softTok)) return true;
   const stem = token.slice(0, Math.min(token.length, 5));
-  if (stem.length >= 4 && hay.includes(stem)) return true;
-  return hay.split(" ").some((w) => {
-    if (w.length < 3 || token.length < 3) return false;
-    return w.startsWith(token.slice(0, 4)) || token.startsWith(w.slice(0, 4));
-  });
+  if (stem.length >= 4 && (hay.includes(stem) || softHay.includes(softenArabic(stem)))) return true;
+  return hay.split(" ").some((w) => similarArabic(w, token));
 }
 
 function textHit(p: Product, q?: string) {
   if (!q?.trim()) return true;
   const hay = foldArabic(haystack(p));
   const foldedQ = foldArabic(q);
-  if (hay.includes(foldedQ)) return true;
+  if (hay.includes(foldedQ) || softenArabic(hay).includes(softenArabic(q))) return true;
+  if (similarArabic(p.name, q) || similarArabic(p.category, q) || similarArabic(getCategory(p.category)?.name ?? "", q)) {
+    return true;
+  }
   const tokens = tokenizeQuery(q).filter((w) => w.length > 1 && !SEARCH_STOP.has(w) && !/^\d+$/.test(w));
   if (!tokens.length) return true;
   const hits = tokens.filter((t) => tokenHit(hay, t));
@@ -86,9 +87,21 @@ function applyFilters(p: Product, filters: SearchFilters, withText: boolean) {
     return false;
   }
   if (filters.store && !p.listings.some((l) => l.storeId === filters.store)) return false;
-  const cheap = cheapestListing(p).price;
-  if (filters.min != null && Number.isFinite(filters.min) && cheap < filters.min) return false;
-  if (filters.max != null && Number.isFinite(filters.max) && cheap > filters.max) return false;
+  const cheap = cheapestListing(p);
+  if (!cheap) {
+    if (
+      filters.min != null ||
+      filters.max != null ||
+      filters.inStock ||
+      filters.minDiscount != null ||
+      filters.delivery
+    )
+      return false;
+    return true;
+  }
+  const cheapPrice = cheap.price;
+  if (filters.min != null && Number.isFinite(filters.min) && cheapPrice < filters.min) return false;
+  if (filters.max != null && Number.isFinite(filters.max) && cheapPrice > filters.max) return false;
   if (filters.inStock && !p.listings.some((l) => l.inStock)) return false;
   if (filters.minRating != null && avgRating(p) < filters.minRating) return false;
   if (filters.minReviews != null && totalReviews(p) < filters.minReviews) return false;
@@ -103,8 +116,8 @@ function sortList(list: Product[], sort: SortKey) {
     if (sort === "best") return bestChoiceScore(b) - bestChoiceScore(a);
     if (sort === "discount") return offerDiscountPct(b) - offerDiscountPct(a);
     if (sort === "reviews") return totalReviews(b) - totalReviews(a);
-    const ca = cheapestListing(a).price;
-    const cb = cheapestListing(b).price;
+    const ca = cheapestListing(a)?.price ?? Number.POSITIVE_INFINITY;
+    const cb = cheapestListing(b)?.price ?? Number.POSITIVE_INFINITY;
     if (sort === "price") return ca - cb;
     if (sort === "rating") return avgRating(b) - avgRating(a);
     if (sort === "stores") return b.listings.length - a.listings.length;
@@ -135,11 +148,7 @@ export function searchProducts(
   pool: Product[] = products,
 ): Product[] {
   const sort = filters.sort ?? "best";
-  let strict = pool.filter((p) => applyFilters(p, filters, true));
-  if (!filters.q && !hasStructuredFilters(filters)) {
-    const featured = strict.filter((p) => UNIQUE_PHOTO_IDS.has(p.id));
-    if (featured.length) strict = featured;
-  }
+  const strict = pool.filter((p) => applyFilters(p, filters, true));
   if (strict.length || !filters.q) return sortList(strict, sort);
 
   if (hasStructuredFilters(filters)) {
