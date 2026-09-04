@@ -41,7 +41,8 @@ export function canShopOut(storeId: string) {
 
 export function storeSearchUrl(store: Store, productName: string) {
   const native = Object.hasOwn(NATIVE_SEARCH, store.id) ? NATIVE_SEARCH[store.id] : undefined;
-  const hint = native ? "" : storeHostname(store.website) || store.id;
+  const host = storeHostname(store.website);
+  const hint = native ? "" : !host || host.includes("google.") ? store.id : host;
   const q = encodeURIComponent(safeShopQuery(productName, hint));
   if (native) return native(q);
   return googleShopUrl(productName, hint);
