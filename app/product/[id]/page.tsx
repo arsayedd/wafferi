@@ -20,6 +20,9 @@ import { priceIntel, whyBest } from "@/lib/best-choice";
 import { useWaffari } from "@/hooks/use-waffari";
 import { useLive } from "@/hooks/use-live";
 import { useCatalog } from "@/hooks/use-catalog";
+import { ShopLink } from "@/components/shop-link";
+import { SpecSheet } from "@/components/spec-sheet";
+import { SpecCompare } from "@/components/spec-compare";
 import { ProductCard } from "@/components/product-card";
 import { similarVirtual, youtubeReviewUrl, gsmarenaSearchUrl, mobizilSearchUrl } from "@/lib/product-research";
 
@@ -117,16 +120,18 @@ export default function ProductPage({
           <p className="text-3xl font-semibold text-primary">{formatPrice(cheap.price)}</p>
           <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
             أوفر سعر حي من{" "}
-            <span className="inline-flex items-center gap-1">
+            <ShopLink
+              storeId={cheap.storeId}
+              productName={product.name}
+              className="inline-flex items-center gap-1 text-primary hover:underline"
+            >
               <StoreLogo
                 name={getStore(cheap.storeId)?.name ?? ""}
                 website={getStore(cheap.storeId)?.website}
                 size={18}
               />
-              <Link href={`/stores/${cheap.storeId}`} className="text-primary hover:underline">
-                {getStore(cheap.storeId)?.name ?? cheap.storeId}
-              </Link>
-            </span>
+              {getStore(cheap.storeId)?.name ?? cheap.storeId}
+            </ShopLink>
             — المنتج عندهم، مش عندنا. الفرق عن أغلى عرض {formatPrice(save)}.
           </p>
           <SellerStrip product={product} />
@@ -194,33 +199,24 @@ export default function ProductPage({
         <PriceTable listings={product.listings} productName={product.name} />
       </section>
 
-      <section className="grid gap-6 md:grid-cols-2">
-        <div>
-          <h2 className="mb-3 font-heading text-xl font-semibold">المواصفات</h2>
-          <dl className="divide-y rounded-xl ring-1 ring-foreground/10">
-            {product.specs.map((s) => (
-              <div key={s.label} className="flex justify-between px-4 py-2 text-sm">
-                <dt className="text-muted-foreground">{s.label}</dt>
-                <dd>{s.value}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-        <div>
-          <h2 className="mb-3 font-heading text-xl font-semibold">آراء من المتاجر</h2>
-          <div className="space-y-3">
-            {product.reviewHighlights.map((r) => (
-              <blockquote key={r.author} className="rounded-xl bg-card p-4 ring-1 ring-foreground/10">
-                <p className="text-sm leading-relaxed">«{r.text}»</p>
-                <footer className="mt-2 text-xs text-muted-foreground">
-                  {r.author} · {r.source} · {r.rating}/5
-                </footer>
-              </blockquote>
-            ))}
-            {product.reviewHighlights.length === 0 && (
-              <p className="text-sm text-muted-foreground">لسه مفيش مقتطفات تقييم للمنتج ده.</p>
-            )}
-          </div>
+      <SpecSheet product={product} />
+
+      <SpecCompare products={[product, ...related.slice(0, 2)]} />
+
+      <section>
+        <h2 className="mb-3 font-heading text-xl font-semibold">آراء من المتاجر</h2>
+        <div className="space-y-3">
+          {product.reviewHighlights.map((r) => (
+            <blockquote key={r.author} className="rounded-xl bg-card p-4 ring-1 ring-foreground/10">
+              <p className="text-sm leading-relaxed">«{r.text}»</p>
+              <footer className="mt-2 text-xs text-muted-foreground">
+                {r.author} · {r.source} · {r.rating}/5
+              </footer>
+            </blockquote>
+          ))}
+          {product.reviewHighlights.length === 0 && (
+            <p className="text-sm text-muted-foreground">لسه مفيش مقتطفات تقييم للمنتج ده.</p>
+          )}
         </div>
       </section>
 

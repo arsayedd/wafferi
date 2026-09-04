@@ -9,6 +9,7 @@ import { getStore } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { StoreLogo } from "@/components/store-logo";
 import { ShopOutButton } from "@/components/shop-out-button";
+import { ShopLink } from "@/components/shop-link";
 import { canShopOut } from "@/lib/store-link";
 import type { Listing } from "@/lib/types";
 import type { LiveListing } from "@/lib/live-quotes";
@@ -78,15 +79,19 @@ export function PriceTable({
             return (
               <tr key={`${l.storeId}-${l.sku}-${i}`} className={cheapest ? "bg-emerald-50/80" : "border-t"}>
                 <td className="px-3 py-3">
-                  <div className="flex items-center gap-2">
+                  <ShopLink
+                    storeId={l.storeId}
+                    productName={productName}
+                    className="flex items-center gap-2 hover:underline"
+                  >
                     <StoreLogo name={store?.name ?? l.storeId} website={store?.website} size={24} />
                     <div>
                       <div className="font-medium">{store?.name ?? l.storeId}</div>
                       <div className="text-xs text-muted-foreground">
-                        {store?.city ?? "مصر"} · متجر في مصر
+                        {store?.city ?? "مصر"} · اضغطي اللوجو يفتح المتجر
                       </div>
                     </div>
-                  </div>
+                  </ShopLink>
                 </td>
                 <td className="px-3 py-3">
                   <div className="flex items-center gap-2">

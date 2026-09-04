@@ -4,12 +4,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ProductPhoto } from "@/components/product-photo";
 import { SellerStrip } from "@/components/seller-strip";
+import { ShopLink } from "@/components/shop-link";
 import { StoreLogo } from "@/components/store-logo";
 import { cheapestListing, getStore } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { productStats } from "@/lib/stats";
 import { useWaffari } from "@/hooks/use-waffari";
 import { useLive } from "@/hooks/use-live";
+import { SpecCompare } from "@/components/spec-compare";
 
 export default function ComparePage() {
   const { compare, toggleCompare, clearCompare } = useWaffari();
@@ -75,13 +77,19 @@ export default function ComparePage() {
                   return (
                     <td key={p.id} className="p-2 font-semibold text-primary">
                       {formatPrice(c.price)}
-                      <div className="flex items-center gap-1 text-xs font-normal text-muted-foreground">
-                        <StoreLogo
-                          name={getStore(c.storeId)?.name ?? ""}
-                          website={getStore(c.storeId)?.website}
-                          size={14}
-                        />
-                        عند {getStore(c.storeId)?.name}
+                      <div className="text-xs font-normal text-muted-foreground">
+                        <ShopLink
+                          storeId={c.storeId}
+                          productName={p.name}
+                          className="inline-flex items-center gap-1 hover:underline"
+                        >
+                          <StoreLogo
+                            name={getStore(c.storeId)?.name ?? ""}
+                            website={getStore(c.storeId)?.website}
+                            size={14}
+                          />
+                          عند {getStore(c.storeId)?.name}
+                        </ShopLink>
                       </div>
                     </td>
                   );
@@ -121,6 +129,7 @@ export default function ComparePage() {
               </tr>
             </tbody>
           </table>
+          {cols.length >= 2 ? <div className="mt-8"><SpecCompare products={cols} /></div> : null}
         </div>
       )}
     </div>

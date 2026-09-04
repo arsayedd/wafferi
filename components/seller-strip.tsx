@@ -3,6 +3,7 @@
 import { getStore } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { StoreLogo } from "@/components/store-logo";
+import { ShopLink } from "@/components/shop-link";
 import { canShopOut } from "@/lib/store-link";
 import type { Product } from "@/lib/types";
 
@@ -27,13 +28,17 @@ export function SellerStrip({
         const st = getStore(l.storeId);
         return (
           <li key={`${l.storeId}-${l.sku}-${i}`}>
-            <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[11px]">
+            <ShopLink
+              storeId={l.storeId}
+              productName={product.name}
+              className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[11px] hover:bg-secondary"
+            >
               <StoreLogo name={st?.name ?? l.storeId} website={st?.website} size={16} />
               <span>
                 {st?.name ?? l.storeId} {formatPrice(l.price)}
                 {!l.inStock ? " ✕" : ""}
               </span>
-            </span>
+            </ShopLink>
           </li>
         );
       })}

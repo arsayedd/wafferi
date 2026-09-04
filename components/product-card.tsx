@@ -9,6 +9,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { ProductPhoto } from "@/components/product-photo";
 import { StoreLogo } from "@/components/store-logo";
 import { SellerStrip } from "@/components/seller-strip";
+import { ShopLink } from "@/components/shop-link";
 import { ShopOutButton } from "@/components/shop-out-button";
 import { getStore } from "@/lib/catalog";
 import { formatNumber, formatPrice } from "@/lib/format";
@@ -45,8 +46,14 @@ export function ProductCard({ product: raw }: { product: Product }) {
         <div>
           <p className="text-lg font-semibold text-primary">{formatPrice(cheap.price)}</p>
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <StoreLogo name={store?.name ?? ""} website={store?.website} size={16} />
-            الأرخص: {store?.name}
+            <ShopLink
+              storeId={cheap.storeId}
+              productName={product.name}
+              className="inline-flex items-center gap-1 hover:underline"
+            >
+              <StoreLogo name={store?.name ?? ""} website={store?.website} size={16} />
+              الأرخص: {store?.name}
+            </ShopLink>
             {stores > 1 ? ` · ${stores} مكان` : ""}
           </p>
           <div className="mt-2">

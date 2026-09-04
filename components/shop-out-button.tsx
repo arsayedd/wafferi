@@ -57,9 +57,15 @@ export function ShopOutButton({
 
   if (!inStock) {
     return (
-      <Button size="sm" variant="outline" disabled>
-        غير متوفر
-      </Button>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        title={href}
+        className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+      >
+        {compact ? <ExternalLink /> : `شوفي البحث عند ${name}`}
+      </a>
     );
   }
 

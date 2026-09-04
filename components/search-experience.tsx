@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { BadgePercent, MapPin, Sparkles } from "lucide-react";
 import { ProductPhoto } from "@/components/product-photo";
 import { SellerStrip } from "@/components/seller-strip";
+import { ShopLink } from "@/components/shop-link";
 import { StoreLogo } from "@/components/store-logo";
 import { SearchBar } from "@/components/search-bar";
 import { ProductCard } from "@/components/product-card";
@@ -460,10 +461,14 @@ export function SearchExperience({
                       <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                         {formatPrice(intel.lowest)} · تقييم {intel.rating.toFixed(1)} ·{" "}
                         {intel.reviews.toLocaleString("ar-EG")} مراجعة · {intel.stores} متاجر · الأرخص:{" "}
-                        <span className="inline-flex items-center gap-1">
+                        <ShopLink
+                          storeId={intel.cheapestStoreId}
+                          productName={best.name}
+                          className="inline-flex items-center gap-1 hover:underline"
+                        >
                           <StoreLogo name={store?.name ?? ""} website={store?.website} size={16} />
                           {store?.name}
-                        </span>
+                        </ShopLink>
                       </p>
                     );
                   })()}
