@@ -11,17 +11,15 @@ export default function HowPage() {
       <section className="space-y-2">
         <h2 className="text-xl font-medium">أسعار حية زي Pricena</h2>
         <p className="text-sm">
-          التحديث اللحظي بييجي من فيد CSV/JSON يتسحب كل دقيقة لما تفعّليه، مع مطابقة
-          المنتج بين المتاجر. صفحة «أسعار حية» بتعرض أرخص سعر ووقت آخر تيك. سحب صفحات
-          HTML للمتاجر مرفوض — نفس اللي منصات المقارنة الجادة بتعمله مع التجار.
+          فيد CSV/JSON/XML، Shopify JSON، WooCommerce Store API، JSON-LD/Open Graph من
+          صفحة المنتج، وAmazon Creators API لو المفاتيح موجودة. التفاصيل في «الموصّلات».
+          مش بنعدّي حماية المتجر ولا بنزحف الكتالوج كامل.
         </p>
       </section>
       <section className="space-y-2">
         <h2 className="text-xl font-medium">السحب من المصدر</h2>
         <p className="text-sm">
-          السحب اللي بنعمله هو فيد رسمي: CSV/JSON من لوحة الأفلييت أو من التاجر بعد
-          التصريح. صفحة «فيد وأفلييت» تقدر تسحب الرابط أو تلصق الملف. لو الرابط صفحة
-          HTML لمتجر، بنرفضه — مش هنزحف على جوميا ونون كصفحات.
+          السحب من فيد أو API أو بيانات منظمة على صفحة المنتج. التفاصيل في صفحة الموصّلات.
         </p>
       </section>
       <section className="space-y-2">

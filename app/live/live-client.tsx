@@ -71,9 +71,8 @@ export function LiveBoard() {
           </p>
           <h1 className="mt-2 font-heading text-3xl font-semibold">تحديث السعر من فيد المصدر</h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">
-            منصات زي Pricena مش بتسرق صفحات جوميا ونون كل ثانية. بتاخد فيد CSV/JSON من
-            التاجر أو شبكة الأفلييت، تطابق نفس المنتج (باركود/موديل)، وتعرض أرخص سعر مع
-            وقت آخر تيک. وفّري بتعمل نفس الطبقة. سحب HTML لصفحة منتج مرفوض.
+            منصات زي Pricena بتشتغل على فيدات وAPIs وبيانات منظمة. حطي رابط فيد أو منتج
+            على صفحة السحب — الموصّل بيتحدد لوحده (CSV، XML، Shopify، Woo، JSON-LD، أمازون).
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
             آخر تيك: {ago(lastFeedAt, now)}
@@ -143,6 +142,9 @@ export function LiveBoard() {
         )}
         <Button variant="secondary" nativeButton={false} render={<Link href="/ingest" />}>
           فتح صفحة الفيد
+        </Button>
+        <Button variant="ghost" nativeButton={false} render={<Link href="/connectors" />}>
+          كل الموصّلات
         </Button>
       </section>
 

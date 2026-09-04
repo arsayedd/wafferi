@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { parseProductFeed, sampleFeedCsv } from "@/lib/parse-feed";
+import { connectors } from "@/lib/ingest/connectors";
 import { stores } from "@/lib/catalog";
 import { useCatalog } from "@/hooks/use-catalog";
 import { useLive } from "@/hooks/use-live";
@@ -19,6 +20,7 @@ export default function IngestPage() {
   const { rules, upsert, outbound } = usePartners();
   const [raw, setRaw] = useState(sampleFeedCsv);
   const [feedUrl, setFeedUrl] = useState("");
+  const [asin, setAsin] = useState("");
   const [note, setNote] = useState("");
   const [pulling, setPulling] = useState(false);
   const [addId, setAddId] = useState("btech");
@@ -55,10 +57,42 @@ export default function IngestPage() {
         toast.error(data.error ?? "فشل السحب");
         return;
       }
-      applyProducts(data.products, `اتسحب ${data.count} صنف من رابط الفيد.`);
+      applyProducts(
+        data.products,
+        `اتسحب ${data.count} صنف عبر ${data.connector ?? "موصّل"}.`,
+      );
       addFeedUrl(feedUrl.trim());
     } catch {
       toast.error("السحب فشل");
+    } finally {
+      setPulling(false);
+    }
+  }
+
+  async function runAmazon() {
+    const trimmed = asin.trim();
+    if (!trimmed) {
+      toast.error("حطي ASIN أو رابط أمازون");
+      return;
+    }
+    const payload = trimmed.startsWith("http")
+      ? { url: trimmed }
+      : { asins: trimmed.split(/[,\s]+/).filter(Boolean) };
+    setPulling(true);
+    try {
+      const res = await fetch("/api/amazon-items", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        toast.error(data.error ?? "أمازون رفض الطلب");
+        return;
+      }
+      applyProducts(data.products, `أمازون Creators: ${data.count} صنف`);
+    } catch {
+      toast.error("طلب أمازون فشل");
     } finally {
       setPulling(false);
     }
@@ -69,26 +103,47 @@ export default function IngestPage() {
       <div>
         <h1 className="font-heading text-3xl font-semibold">السحب، المصدر، والأفلييت</h1>
         <p className="mt-2 text-muted-foreground">
-          بنسحب فيد التاجر أو لوحة الأفلييت (CSV/JSON) ونحدّث السعر لحظي زي منصات
-          المقارنة: نفس المنتج يتوحّد (باركود/موديل)، والتيك يترصد. مش بنزحف على HTML
-          جوميا ونون.
+          كل الطرق اللي تخلّينا نحدّث سعر منتج: فيد شريك، XML تسوق، Shopify، WooCommerce،
+          JSON-LD/Open Graph من صفحة المنتج، وAmazon Creators API. التفاصيل على{" "}
+          <Link href="/connectors" className="text-primary underline">
+            الموصّلات
+          </Link>
+          .
         </p>
       </div>
 
       <section className="space-y-3 rounded-xl bg-card p-5 ring-1 ring-foreground/10">
-        <h2 className="font-medium">1) اسحبي فيد المصدر</h2>
+        <h2 className="font-medium">1) اسحبي سعر من رابط</h2>
         <p className="text-sm text-muted-foreground">
-          رابط ملف من لوحة جوميا أفلييت / نون / أي تاجر اداكِ فيد. لو الرابط صفحة منتج
-          HTML هنرفضه ونطلب الملف.
+          فيد CSV/JSON/XML، أو رابط منتج Shopify/Woo، أو صفحة فيها schema.org Product.
+          السيستم يختار الموصّل لوحده.
         </p>
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {connectors.map((c) => (
+            <div key={c.id} className="rounded-xl bg-muted/40 p-3 text-sm">
+              <p className="font-medium">{c.title}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{c.text}</p>
+            </div>
+          ))}
+        </div>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Input
             value={feedUrl}
             onChange={(e) => setFeedUrl(e.target.value)}
-            placeholder="https://…/catalog.csv أو .json"
+            placeholder="فيد CSV/JSON/XML أو رابط منتج"
           />
           <Button onClick={runUrl} disabled={pulling}>
             {pulling ? "بسحب…" : "اسحبي المصدر"}
+          </Button>
+        </div>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Input
+            value={asin}
+            onChange={(e) => setAsin(e.target.value)}
+            placeholder="ASIN أمازون أو https://www.amazon.eg/dp/…"
+          />
+          <Button variant="outline" onClick={runAmazon} disabled={pulling}>
+            أمازون API
           </Button>
         </div>
         <label className="block text-sm">

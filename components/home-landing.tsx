@@ -71,7 +71,7 @@ const modules = [
     href: "/live",
     icon: Radio,
     title: "أسعار حية",
-    text: "بورصة مقارنة: فيد يتسحب، منتج يتطابق، أرخص سعر يظهر مع وقت آخر تيك. مش سكرايب HTML.",
+    text: "فيد، Shopify، Woo، JSON-LD، وأمازون API. مش زحف عشوائي للمتاجر.",
   },
   {
     href: "/places",

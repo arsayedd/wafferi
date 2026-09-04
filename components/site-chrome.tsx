@@ -254,6 +254,9 @@ export function SiteFooter() {
             <li>
               <Link href="/ingest">فيد وأفلييت</Link>
             </li>
+            <li>
+              <Link href="/connectors">موصّلات الأسعار</Link>
+            </li>
           </ul>
         </div>
         <div>
