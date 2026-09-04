@@ -40,6 +40,13 @@ const CATEGORY_EN: Record<CategoryId, string> = {
   laptops: "laptop notebook computer",
   tablets: "android tablet",
   gaming: "game console controller",
+  grocery: "grocery food pantry",
+  sports: "sports equipment",
+  auto: "car accessories",
+  tools: "power drill tools",
+  pets: "pet food cat",
+  office: "office stationery",
+  garden: "garden plant pot",
 };
 
 const BRAND_EN: Record<string, string> = {

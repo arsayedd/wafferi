@@ -56,6 +56,13 @@ export const categories: Category[] = [
   { id: "laptops", name: "لابتوبات", description: "دراسة، شغل، جيمنج حسب الرامة والشاشة", room: "general", vertical: "computing" },
   { id: "tablets", name: "تابلت", description: "شاشات لمس ودراسة", room: "general", vertical: "mobile" },
   { id: "gaming", name: "جيمنج", description: "بلايستيشن، إكس بوكس، إكسسوار لعب", room: "general", vertical: "gaming" },
+  { id: "grocery", name: "بقالة وطعام", description: "زيت، أرز، علب، مشروبات للجهاز والبيت", room: "kitchen", vertical: "grocery" },
+  { id: "sports", name: "رياضة", description: "أحذية جري، أوزان، بساط يوجا", room: "general", vertical: "sports" },
+  { id: "auto", name: "سيارات", description: "إكسسوار عربيات وزيوت وعناية", room: "general", vertical: "auto" },
+  { id: "tools", name: "عدد وأدوات", description: "شنيور، عدة بيت، قياس", room: "general", vertical: "tools" },
+  { id: "pets", name: "حيوانات أليفة", description: "أكل، رمل، ألعاب قطط وكلاب", room: "general", vertical: "pets" },
+  { id: "office", name: "مكتبيات", description: "ورق، أحبار، كراسي مكتب", room: "general", vertical: "office" },
+  { id: "garden", name: "حديقة وبلكونة", description: "زرع، ري، إضاءة خارج", room: "general", vertical: "garden" },
 ];
 
 export const brands: Brand[] = [

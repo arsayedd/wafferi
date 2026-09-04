@@ -51,6 +51,7 @@ function storesFor(cat: CategoryId): [string, string, string] {
     return ["jumia", "elaraby", "raneen"];
   if (cat === "phones" || cat === "tablets" || cat === "laptops" || cat === "gaming")
     return ["jumia", "noon", "btech"];
+  if (cat === "grocery" || cat === "pets") return ["jumia", "noon", "amazon"];
   return ["jumia", "noon", "raneen"];
 }
 

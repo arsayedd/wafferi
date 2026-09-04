@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { brands, categories, cheapestListing, getStore } from "@/lib/catalog";
+import { departments } from "@/lib/departments";
 import { catalogStores, networkStats } from "@/lib/network";
 import { searchProductsPage, SEARCH_PAGE_SIZE, type SortKey } from "@/lib/search";
 import { parseShopperQuery, POPULAR_SEARCHES } from "@/lib/query-parse";
@@ -202,24 +203,33 @@ export function SearchExperience({
       <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
         <aside className="space-y-5 rounded-xl bg-card p-4 ring-1 ring-foreground/10">
           <p className="text-xs text-muted-foreground">الفلاتر على المنتج الرئيسي، مش على صفحة متجر.</p>
-          <fieldset className="space-y-2">
-            <legend className="text-sm font-medium">الفئة</legend>
-            <div className="flex flex-wrap gap-1.5">
-              <Chip
-                active={!category}
-                onClick={() => {
-                  if (initialCategory) router.push("/search");
-                  else setParam("category", "");
-                }}
-              >
-                الكل
-              </Chip>
-              {categories.map((c) => (
-                <Chip key={c.id} active={category === c.id} onClick={() => setParam("category", c.id)}>
-                  {c.name}
-                </Chip>
-              ))}
-            </div>
+          <fieldset className="space-y-3">
+            <legend className="text-sm font-medium">الأقسام</legend>
+            <Chip
+              active={!category}
+              onClick={() => {
+                if (initialCategory) router.push("/search");
+                else setParam("category", "");
+              }}
+            >
+              كل السوق
+            </Chip>
+            {departments.map((d) => (
+              <div key={d.id} className="space-y-1.5">
+                <p className="text-[11px] font-medium text-muted-foreground">{d.name}</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {d.categories.map((id) => {
+                    const c = categories.find((x) => x.id === id);
+                    if (!c) return null;
+                    return (
+                      <Chip key={id} active={category === id} onClick={() => setParam("category", id)}>
+                        {c.name}
+                      </Chip>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </fieldset>
           <fieldset className="space-y-2">
             <legend className="text-sm font-medium">الماركة</legend>

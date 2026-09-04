@@ -47,6 +47,13 @@ const LIFE: VerticalId[] = [
   "mobile",
   "computing",
   "gaming",
+  "grocery",
+  "sports",
+  "auto",
+  "tools",
+  "pets",
+  "office",
+  "garden",
 ];
 
 const FASHION: VerticalId[] = [
@@ -577,6 +584,13 @@ export const verticalLabels: Record<VerticalId, string> = {
   mobile: "موبايلات وتابلت",
   computing: "لابتوب وكمبيوتر",
   gaming: "جيمنج",
+  grocery: "بقالة",
+  sports: "رياضة",
+  auto: "سيارات",
+  tools: "عدد",
+  pets: "حيوانات أليفة",
+  office: "مكتبيات",
+  garden: "حديقة",
 };
 
 export function catalogStores() {

@@ -36,6 +36,7 @@ import {
   Laptop,
   Tablet,
   Gamepad2,
+  Flower2,
   type LucideIcon,
 } from "lucide-react";
 import type { CategoryId } from "@/lib/types";
@@ -80,6 +81,13 @@ const icons: Record<CategoryId, LucideIcon> = {
   laptops: Laptop,
   tablets: Tablet,
   gaming: Gamepad2,
+  grocery: ShoppingBag,
+  sports: Sparkles,
+  auto: Sparkles,
+  tools: Scissors,
+  pets: HeartPulse,
+  office: Archive,
+  garden: Flower2,
 };
 
 const tints: Record<CategoryId, string> = {
@@ -122,6 +130,13 @@ const tints: Record<CategoryId, string> = {
   laptops: "from-zinc-100 to-white text-zinc-800",
   tablets: "from-sky-50 to-white text-sky-800",
   gaming: "from-violet-100 to-white text-violet-900",
+  grocery: "from-lime-50 to-white text-lime-800",
+  sports: "from-orange-100 to-white text-orange-800",
+  auto: "from-slate-200 to-white text-slate-800",
+  tools: "from-yellow-100 to-white text-yellow-900",
+  pets: "from-amber-50 to-white text-amber-800",
+  office: "from-sky-50 to-white text-sky-800",
+  garden: "from-green-50 to-white text-green-800",
 };
 
 export function ProductArt({

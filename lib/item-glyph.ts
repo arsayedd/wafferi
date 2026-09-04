@@ -96,6 +96,13 @@ const CATEGORY_EMOJI: Partial<Record<CategoryId, string>> = {
   laptops: "💻",
   tablets: "📲",
   gaming: "🎮",
+  grocery: "🛒",
+  sports: "🏅",
+  auto: "🚗",
+  tools: "🔧",
+  pets: "🐾",
+  office: "📎",
+  garden: "🌿",
 };
 
 function hue(id: string) {

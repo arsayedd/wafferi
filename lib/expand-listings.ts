@@ -43,6 +43,13 @@ export const categoryVertical: Record<CategoryId, VerticalId> = {
   laptops: "computing",
   tablets: "mobile",
   gaming: "gaming",
+  grocery: "grocery",
+  sports: "sports",
+  auto: "auto",
+  tools: "tools",
+  pets: "pets",
+  office: "office",
+  garden: "garden",
 };
 
 function allowedOnProduct(st: Store, p: Product) {

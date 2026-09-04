@@ -37,7 +37,14 @@ export type CategoryId =
   | "phones"
   | "laptops"
   | "tablets"
-  | "gaming";
+  | "gaming"
+  | "grocery"
+  | "sports"
+  | "auto"
+  | "tools"
+  | "pets"
+  | "office"
+  | "garden";
 
 export type VerticalId =
   | "laundry"
@@ -69,7 +76,14 @@ export type VerticalId =
   | "baby"
   | "mobile"
   | "computing"
-  | "gaming";
+  | "gaming"
+  | "grocery"
+  | "sports"
+  | "auto"
+  | "tools"
+  | "pets"
+  | "office"
+  | "garden";
 
 export type StoreKind =
   | "marketplace"
