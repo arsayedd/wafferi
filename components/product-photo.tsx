@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { productImage } from "@/lib/product-images";
+import { productImage, productImageFallback } from "@/lib/product-images";
 import { ProductArt } from "@/components/product-art";
 import type { CategoryId } from "@/lib/types";
 
@@ -16,18 +16,26 @@ export function ProductPhoto({
   name: string;
   className?: string;
 }) {
-  const [failed, setFailed] = useState(false);
-  if (failed) {
-    return <ProductArt category={category} className={className} />;
+  const [step, setStep] = useState(0);
+  const sources = [productImage(id, category, name), productImageFallback(id, category)];
+
+  if (step >= sources.length) {
+    return <ProductArt category={category} name={name} className={className} />;
   }
+
   return (
-    <div className={`relative aspect-[4/3] overflow-hidden bg-muted ${className}`}>
+    <div
+      className={`relative overflow-hidden bg-muted ${
+        /(?:^|\s)(h-|aspect-)/.test(className) ? "" : "aspect-[4/3]"
+      } ${className}`}
+    >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={productImage(id, category)}
+        src={sources[step]}
         alt={name}
         className="size-full object-cover"
-        onError={() => setFailed(true)}
+        referrerPolicy="no-referrer"
+        onError={() => setStep((s) => s + 1)}
       />
     </div>
   );

@@ -11,6 +11,8 @@ import { SourceCopyright } from "@/components/source-copyright";
 import { Sparkline } from "@/components/sparkline";
 import { useCatalog } from "@/hooks/use-catalog";
 import { useLive, POLL_MS } from "@/hooks/use-live";
+import { ProductPhoto } from "@/components/product-photo";
+import { StoreLogo } from "@/components/store-logo";
 import { getStore } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { productStats } from "@/lib/stats";
@@ -168,16 +170,31 @@ export function LiveBoard() {
               return (
                 <tr key={p.id} className="border-t">
                   <td className="px-3 py-3">
+                    <div className="flex items-center gap-3">
+                      <ProductPhoto
+                        id={p.id}
+                        category={p.category}
+                        name={p.name}
+                        className="h-14 w-[4.5rem] shrink-0 rounded-md"
+                      />
+                      <div>
                     <Link href={`/product/${p.id}`} className="font-medium hover:underline">
                       {p.name}
                     </Link>
                     <div className="text-xs text-muted-foreground">
                       {p.brand} · {stats.stores} مصدر
                     </div>
+                      </div>
+                    </div>
                   </td>
                   <td className="px-3 py-3">
                     <div className="font-semibold">{formatPrice(cheap.price)}</div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <StoreLogo
+                        name={getStore(cheap.storeId)?.name ?? ""}
+                        website={getStore(cheap.storeId)?.website}
+                        size={16}
+                      />
                       {getStore(cheap.storeId)?.name}
                       {cheap.channel === "feed" ? (
                         <Badge className="ms-2" variant="secondary">

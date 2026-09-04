@@ -4,6 +4,9 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { BadgePercent, MapPin, Sparkles } from "lucide-react";
+import { ProductPhoto } from "@/components/product-photo";
+import { SellerStrip } from "@/components/seller-strip";
+import { StoreLogo } from "@/components/store-logo";
 import { SearchBar } from "@/components/search-bar";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
@@ -377,7 +380,9 @@ export function SearchExperience({
           {showWaffari ? (
             <section className="space-y-4">
               {best ? (
-                <article className="rounded-2xl bg-primary/5 p-5 ring-1 ring-primary/20">
+                <article className="grid gap-4 rounded-2xl bg-primary/5 p-5 ring-1 ring-primary/20 md:grid-cols-[200px_1fr]">
+                  <ProductPhoto id={best.id} category={best.category} name={best.name} className="rounded-xl" />
+                  <div>
                   <p className="flex items-center gap-2 text-sm text-primary">
                     <Sparkles className="size-4" />
                     أفضل اختيار للجهاز
@@ -387,13 +392,19 @@ export function SearchExperience({
                     const intel = priceIntel(best);
                     const store = getStore(intel.cheapestStoreId);
                     return (
-                      <p className="mt-1 text-sm text-muted-foreground">
+                      <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                         {formatPrice(intel.lowest)} · تقييم {intel.rating.toFixed(1)} ·{" "}
                         {intel.reviews.toLocaleString("ar-EG")} مراجعة · {intel.stores} متاجر · الأرخص:{" "}
-                        {store?.name}
+                        <span className="inline-flex items-center gap-1">
+                          <StoreLogo name={store?.name ?? ""} website={store?.website} size={16} />
+                          {store?.name}
+                        </span>
                       </p>
                     );
                   })()}
+                  <div className="mt-3">
+                    <SellerStrip product={best} />
+                  </div>
                   <ul className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
                     {whyBest(best).map((r) => (
                       <li key={r.label}>
@@ -414,6 +425,7 @@ export function SearchExperience({
                     >
                       أضيفي للجهاز
                     </Button>
+                  </div>
                   </div>
                 </article>
               ) : null}

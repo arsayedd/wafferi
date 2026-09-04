@@ -17,6 +17,7 @@ import {
 import { namedSuppliers } from "@/lib/named-suppliers";
 import { egyptAreas } from "@/lib/egypt-areas";
 import { stores } from "@/lib/catalog";
+import { StoreLogo } from "@/components/store-logo";
 import { kindLabels } from "@/lib/network";
 
 function storeName(id: string) {
@@ -234,6 +235,7 @@ export default function SourcingClient() {
               className="rounded-xl bg-card p-4 text-sm ring-1 ring-foreground/10"
             >
               <div className="flex flex-wrap items-center gap-2">
+                {s.website ? <StoreLogo name={s.name} website={s.website} size={22} /> : null}
                 <h3 className="font-medium">{s.name}</h3>
                 <Badge variant="outline">{s.channel === "factory" ? "مصنع" : s.wholesale ? "جملة" : "قطاعي"}</Badge>
               </div>

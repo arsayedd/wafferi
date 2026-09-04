@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ProductPhoto } from "@/components/product-photo";
+import { SellerStrip } from "@/components/seller-strip";
+import { StoreLogo } from "@/components/store-logo";
 import { cheapestListing, getStore } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { productStats } from "@/lib/stats";
@@ -40,9 +43,13 @@ export default function ComparePage() {
                 <th className="p-2 text-start">البند</th>
                 {cols.map((p) => (
                   <th key={p.id} className="p-2 text-start">
+                    <ProductPhoto id={p.id} category={p.category} name={p.name} className="mb-2 w-40 rounded-lg" />
                     <Link href={`/product/${p.id}`} className="hover:underline">
                       {p.name}
                     </Link>
+                    <div className="mt-2">
+                      <SellerStrip product={p} limit={5} />
+                    </div>
                     <div>
                       <Button variant="ghost" size="sm" onClick={() => toggleCompare(p.id)}>
                         إزالة
@@ -68,7 +75,12 @@ export default function ComparePage() {
                   return (
                     <td key={p.id} className="p-2 font-semibold text-primary">
                       {formatPrice(c.price)}
-                      <div className="text-xs font-normal text-muted-foreground">
+                      <div className="flex items-center gap-1 text-xs font-normal text-muted-foreground">
+                        <StoreLogo
+                          name={getStore(c.storeId)?.name ?? ""}
+                          website={getStore(c.storeId)?.website}
+                          size={14}
+                        />
                         عند {getStore(c.storeId)?.name}
                       </div>
                     </td>

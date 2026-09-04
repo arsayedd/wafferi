@@ -5,6 +5,8 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cheapestListing, getProduct } from "@/lib/catalog";
+import { ProductPhoto } from "@/components/product-photo";
+import { SellerStrip } from "@/components/seller-strip";
 import { arabicIncludes } from "@/lib/ar-fold";
 import { brideItemCount, brideSections, commercialBundles } from "@/lib/bride-guide";
 import { formatPrice } from "@/lib/format";
@@ -198,13 +200,26 @@ export default function GuideClient() {
                         key={`${s.id}-${it.productId}-${it.name}`}
                         className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
                       >
-                        <div>
+                        {p ? (
+                          <ProductPhoto
+                            id={p.id}
+                            category={p.category}
+                            name={p.name}
+                            className="h-16 w-20 shrink-0 rounded-lg"
+                          />
+                        ) : null}
+                        <div className="min-w-[12rem] flex-1">
                           <p className="font-medium">{it.name}</p>
                           {p ? (
-                            <p className="text-xs text-muted-foreground">
-                              {p.brand}
-                              {cheap ? ` · من ${formatPrice(cheap.price)}` : ""}
-                            </p>
+                            <>
+                              <p className="text-xs text-muted-foreground">
+                                {p.brand}
+                                {cheap ? ` · من ${formatPrice(cheap.price)}` : ""}
+                              </p>
+                              <div className="mt-1">
+                                <SellerStrip product={p} limit={6} />
+                              </div>
+                            </>
                           ) : (
                             <p className="text-xs text-destructive">المنتج لسه مش مربوط في الكتالوج</p>
                           )}

@@ -150,7 +150,7 @@ export const stores: Store[] = [
   }),
   s("tradeline", "تريدلاين", "electronics", "affiliate_network", "affiliate_ready", "arabclicks", [...ALL_APPLIANCES, "av"], {
     city: "القاهرة",
-    website: "https://tradeline.com.eg",
+    website: "https://www.tradelinestores.com",
     specialty: "موبايلات وأجهزة منزلية",
     commissionNote: "ArabClicks / Admitad",
     skuEstimate: 5000,
@@ -276,7 +276,7 @@ export const stores: Store[] = [
   }),
   s("boschshop", "بوش هوم", "brand", "brand_portal", "feed_pending", "direct", ["cooking", "cleaning", "laundry", "small_kitchen"], {
     city: "وكلاء مصر",
-    website: "https://www.bosch-home.com",
+    website: "https://www.bosch-home.com/eg",
     specialty: "أجهزة بوش المدمجة والمستقلة",
     commissionNote: "فيد وكيل حصري",
     skuEstimate: 800,

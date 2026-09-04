@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/product-card";
+import { StoreLogo } from "@/components/store-logo";
 import { SourceCopyright } from "@/components/source-copyright";
 import { products, stores } from "@/lib/catalog";
 
@@ -23,7 +24,10 @@ export default async function StorePage({
       <Link href="/stores" className="text-sm text-muted-foreground hover:underline">
         كل المصادر
       </Link>
-      <h1 className="font-heading text-3xl font-semibold">{store.name}</h1>
+      <h1 className="flex items-center gap-3 font-heading text-3xl font-semibold">
+        <StoreLogo name={store.name} website={store.website} size={40} />
+        {store.name}
+      </h1>
       <p className="max-w-2xl text-muted-foreground">
         {store.specialty}. الموقع الرسمي:{" "}
         <a className="underline" href={store.website} target="_blank" rel="noreferrer">

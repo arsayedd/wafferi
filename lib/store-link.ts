@@ -19,44 +19,46 @@ export function storeLogoUrl(website: string) {
   return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=128`;
 }
 
-/** Search on the merchant site — never a fake /p/{id} PDP that 404s. */
+const SEARCH: Record<string, (q: string) => string> = {
+  jumia: (q) => `https://www.jumia.com.eg/catalog/?q=${q}`,
+  noon: (q) => `https://www.noon.com/egypt-ar/search/?q=${q}`,
+  amazon: (q) => `https://www.amazon.eg/s?k=${q}`,
+  carrefour: (q) => `https://www.carrefouregypt.com/mafegy/ar/search?q=${q}`,
+  btech: (q) => `https://btech.com/eg-ar/catalogsearch/result/?q=${q}`,
+  twob: (q) => `https://2b.com.eg/ar/catalogsearch/result/?q=${q}`,
+  raya: (q) => `https://rayashop.com/search?q=${q}`,
+  raneen: (q) => `https://raneen.com/en/catalogsearch/result/?q=${q}`,
+  ikea: (q) => `https://www.ikea.com/eg/ar/search/?q=${q}`,
+  homzmart: (q) => `https://homzmart.com/ar/search?q=${q}`,
+  namshi: (q) => `https://www.namshi.com/eg-ar/search/?q=${q}`,
+  samsung: (q) => `https://www.samsung.com/eg/search/?searchvalue=${q}`,
+  lgshop: (q) => `https://www.lg.com/eg/search/?search=${q}`,
+  boschshop: (q) => `https://www.bosch-home.com/eg/search?text=${q}`,
+  bekoshop: (q) => `https://www.beko.com/eg-ar/search?q=${q}`,
+  dream2000: (q) => `https://dream2000.com/catalogsearch/result/?q=${q}`,
+  extra: (q) => `https://www.extra.com/ar-eg/search?q=${q}`,
+  defacto: (q) => `https://www.defacto.com.eg/search?q=${q}`,
+  tradeline: (q) => `https://www.tradelinestores.com/search?q=${q}`,
+  sixthstreet: (q) => `https://www.6thstreet.com/eg-ar/search?q=${q}`,
+  goldenscent: (q) => `https://www.goldenscent.com/eg-ar/search?q=${q}`,
+};
+
+/** Search on the merchant, or Google for the product + store in Egypt — never a fake /p/{id} page. */
 export function storeSearchUrl(store: Store, productName: string) {
   const q = encodeURIComponent(productName);
-  const host = storeHostname(store.website);
-  if (host.includes("amazon.")) return `https://www.amazon.eg/s?k=${q}`;
-  if (host.includes("jumia.")) return `https://www.jumia.com.eg/catalog/?q=${q}`;
-  if (host.includes("noon.")) return `https://www.noon.com/egypt-ar/search/?q=${q}`;
-  if (host.includes("carrefour")) return `https://www.carrefouregypt.com/mafegy/ar/search?q=${q}`;
-  if (host.includes("ikea.")) return `https://www.ikea.com/eg/ar/search/?q=${q}`;
-  if (host.includes("btech.")) return `https://btech.com/eg-ar/catalogsearch/result/?q=${q}`;
-  if (host.includes("2b.com")) return `https://2b.com.eg/ar/catalogsearch/result/?q=${q}`;
-  if (host.includes("homzmart.")) return `https://homzmart.com/ar/search?q=${q}`;
-  if (host.includes("namshi.")) return `https://www.namshi.com/eg-ar/search/?q=${q}`;
-  const base = store.website.replace(/\/$/, "");
-  return `${base}`;
+  const known = SEARCH[store.id];
+  if (known) return known(q);
+  return `https://www.google.com/search?q=${encodeURIComponent(`${productName} ${store.name} مصر`)}`;
 }
 
-export function listingHref(storeId: string, productName: string, fallbackUrl?: string) {
+export function listingHref(storeId: string, productName: string, _fallbackUrl?: string) {
   const store = getNetworkStore(storeId);
-  if (!store) return fallbackUrl || "#";
+  if (!store) return "#";
   if (store.shipsEgypt === false) return store.website;
-  const host = storeHostname(store.website);
-  if (fallbackUrl) {
-    try {
-      const path = new URL(fallbackUrl).pathname;
-      if (path.includes("/p/") || path.endsWith(`/${storeId}`) || /\/p\/[\w-]+$/.test(path)) {
-        return storeSearchUrl(store, productName);
-      }
-    } catch {
-      /* use search */
-    }
-  }
-  if (host.includes("amazon.")) return storeSearchUrl(store, productName);
-  return fallbackUrl || storeSearchUrl(store, productName);
+  return storeSearchUrl(store, productName);
 }
 
 export function isEgyptSeller(store?: Store) {
   if (!store) return false;
-  if (store.shipsEgypt === false) return false;
-  return true;
+  return store.shipsEgypt !== false;
 }

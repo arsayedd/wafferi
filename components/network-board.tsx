@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
+import { StoreLogo } from "@/components/store-logo";
 import { products } from "@/lib/catalog";
 import { kindLabels, stores } from "@/lib/network";
 import type { StoreKind } from "@/lib/types";
@@ -38,7 +39,10 @@ export function NetworkBoard() {
                   href={`/stores/${s.id}`}
                   className="rounded-xl bg-card p-4 ring-1 ring-foreground/10 hover:bg-secondary"
                 >
-                  <h3 className="font-medium">{s.name}</h3>
+                  <h3 className="flex items-center gap-2 font-medium">
+                    <StoreLogo name={s.name} website={s.website} size={28} />
+                    {s.name}
+                  </h3>
                   <p className="mt-1 text-sm text-muted-foreground">{s.specialty}</p>
                   <p className="mt-2 text-xs text-muted-foreground">
                     حقوق الاسم لـ {s.name}. {n} منتج في وفّري بيروح لعرض عندهم.

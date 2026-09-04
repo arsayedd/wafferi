@@ -114,9 +114,11 @@ const tints: Record<CategoryId, string> = {
 
 export function ProductArt({
   category,
+  name,
   className = "",
 }: {
   category: CategoryId;
+  name?: string;
   className?: string;
 }) {
   const Icon = icons[category] ?? Sparkles;
@@ -126,9 +128,9 @@ export function ProductArt({
     <div
       className={`flex aspect-[4/3] w-full items-center justify-center bg-gradient-to-br ${tint} ${className}`}
     >
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-2 px-3 text-center">
         <Icon className="size-12 opacity-80" strokeWidth={1.4} />
-        <span className="text-xs font-medium opacity-70">{cat?.name}</span>
+        <span className="text-xs font-medium opacity-80">{name || cat?.name}</span>
       </div>
     </div>
   );

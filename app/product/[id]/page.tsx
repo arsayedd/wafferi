@@ -6,6 +6,8 @@ import { Bell, Star } from "lucide-react";
 import { toast } from "sonner";
 import { PriceTable } from "@/components/price-table";
 import { ProductPhoto } from "@/components/product-photo";
+import { StoreLogo } from "@/components/store-logo";
+import { SellerStrip } from "@/components/seller-strip";
 import { Sparkline } from "@/components/sparkline";
 import { SourceCopyright } from "@/components/source-copyright";
 import { Button } from "@/components/ui/button";
@@ -109,13 +111,21 @@ export default function ProductPage({
             {product.barcode && <Badge variant="outline">باركود {product.barcode}</Badge>}
           </div>
           <p className="text-3xl font-semibold text-primary">{formatPrice(cheap.price)}</p>
-          <p className="text-sm text-muted-foreground">
+          <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
             أوفر سعر حي من{" "}
-            <Link href={`/stores/${cheap.storeId}`} className="text-primary hover:underline">
-              {getStore(cheap.storeId)?.name ?? cheap.storeId}
-            </Link>
+            <span className="inline-flex items-center gap-1">
+              <StoreLogo
+                name={getStore(cheap.storeId)?.name ?? ""}
+                website={getStore(cheap.storeId)?.website}
+                size={18}
+              />
+              <Link href={`/stores/${cheap.storeId}`} className="text-primary hover:underline">
+                {getStore(cheap.storeId)?.name ?? cheap.storeId}
+              </Link>
+            </span>
             — المنتج عندهم، مش عندنا. الفرق عن أغلى عرض {formatPrice(save)}.
           </p>
+          <SellerStrip product={product} />
           {history.length > 1 ? <Sparkline values={history} className="h-11 w-40" /> : null}
           <SourceCopyright
             compact

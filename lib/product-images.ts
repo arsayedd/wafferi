@@ -1,128 +1,73 @@
 import type { CategoryId } from "./types";
 
-const byCategory: Record<CategoryId, string> = {
-  washers:
-    "https://images.unsplash.com/photo-1610557892470-55d9e80c0bce?auto=format&fit=crop&w=900&q=80",
-  fridges:
-    "https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?auto=format&fit=crop&w=900&q=80",
-  freezers:
-    "https://images.unsplash.com/photo-1571175443880-49e1c26b8755?auto=format&fit=crop&w=900&q=80",
-  acs: "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?auto=format&fit=crop&w=900&q=80",
-  fans: "https://images.unsplash.com/photo-1565183928294-7063f23ce0f8?auto=format&fit=crop&w=900&q=80",
-  stoves:
-    "https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=900&q=80",
-  dishwashers:
-    "https://images.unsplash.com/photo-1581622558663-b2e33377dfb2?auto=format&fit=crop&w=900&q=80",
-  vacuums:
-    "https://images.unsplash.com/photo-1558317374-058fb54a0b0b?auto=format&fit=crop&w=900&q=80",
-  heaters:
-    "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=900&q=80",
-  water:
-    "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=900&q=80",
-  tvs: "https://images.unsplash.com/photo-1593359677879-a4bb92f829ef?auto=format&fit=crop&w=900&q=80",
-  audio:
-    "https://images.unsplash.com/photo-1545454675-3538b25d5d0c?auto=format&fit=crop&w=900&q=80",
-  "small-appliances":
-    "https://images.unsplash.com/photo-1570222094114-d054a817e56b?auto=format&fit=crop&w=900&q=80",
-  "personal-care":
-    "https://images.unsplash.com/photo-1522338140262-f46f5913618a?auto=format&fit=crop&w=900&q=80",
-  bedroom:
-    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80",
-  living:
-    "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=80",
-  "kitchen-tools":
-    "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=900&q=80",
-  textiles:
-    "https://images.unsplash.com/photo-1582735689369-4fe89db71132?auto=format&fit=crop&w=900&q=80",
-  decor:
-    "https://images.unsplash.com/photo-1543198126-a8ad8e47fb22?auto=format&fit=crop&w=900&q=80",
-  "women-wear":
-    "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80",
-  "men-wear":
-    "https://images.unsplash.com/photo-1490578474895-aec7c82d818b?auto=format&fit=crop&w=900&q=80",
-  "kids-wear":
-    "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=900&q=80",
-  "bridal-wear":
-    "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=80",
-  pajamas:
-    "https://images.unsplash.com/photo-1617331721439-c4ae9d6d0d0d?auto=format&fit=crop&w=900&q=80",
-  shoes:
-    "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=900&q=80",
-  bags: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=900&q=80",
-  jewelry:
-    "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=900&q=80",
-  beauty:
-    "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80",
-  accessories:
-    "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=900&q=80",
-  cleaning:
-    "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=900&q=80",
-  bathroom:
-    "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=900&q=80",
-  storage:
-    "https://images.unsplash.com/photo-1594069758873-e79e9075eb7d?auto=format&fit=crop&w=900&q=80",
-  travel:
-    "https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?auto=format&fit=crop&w=900&q=80",
-  emergency:
-    "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=900&q=80",
-  baby:
-    "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=900&q=80",
+const CATEGORY_EN: Record<CategoryId, string> = {
+  washers: "front load washing machine appliance",
+  fridges: "french door refrigerator appliance",
+  freezers: "chest freezer appliance",
+  acs: "split air conditioner indoor unit",
+  fans: "standing pedestal fan",
+  stoves: "gas stove oven range",
+  dishwashers: "built-in dishwasher",
+  vacuums: "cylinder vacuum cleaner",
+  heaters: "electric water heater tank",
+  water: "water dispenser cooler",
+  tvs: "flat screen television",
+  audio: "soundbar speaker",
+  "small-appliances": "kitchen countertop appliance",
+  "personal-care": "hair dryer beauty device",
+  bedroom: "wooden bedroom furniture set",
+  living: "living room sofa",
+  "kitchen-tools": "cookware pot set",
+  textiles: "folded towels bedding",
+  decor: "home chandelier lighting",
+  "women-wear": "women dress on hanger",
+  "men-wear": "men galabiya garment",
+  "kids-wear": "kids pajamas folded",
+  "bridal-wear": "white wedding dress",
+  pajamas: "cotton pajamas folded",
+  shoes: "bridal slippers shoes",
+  bags: "evening clutch bag",
+  jewelry: "zircon jewelry set",
+  beauty: "perfume bottle",
+  accessories: "kitchen linens",
+  cleaning: "cleaning mop bucket",
+  bathroom: "bathroom accessories set",
+  storage: "storage organizer boxes",
+  travel: "travel suitcase",
+  emergency: "first aid kit box",
+  baby: "baby bedding",
 };
 
-const byProduct: Record<string, string> = {
-  "lg-washer-8": byCategory.washers,
-  "lg-washer-10": byCategory.washers,
-  "beko-washer-7": byCategory.washers,
-  "toshiba-fridge-16": byCategory.fridges,
-  "samsung-fridge-18": byCategory.fridges,
-  "fresh-freezer-5": byCategory.freezers,
-  "sharp-ac-15": byCategory.acs,
-  "carrier-ac-225": byCategory.acs,
-  "gree-ac-15": byCategory.acs,
-  "unionaire-stove": byCategory.stoves,
-  "bosch-dishwasher": byCategory.dishwashers,
-  "hoover-vacuum": byCategory.vacuums,
-  "robot-vacuum-tuya":
-    "https://images.unsplash.com/photo-1603618090561-412154b4bd12?auto=format&fit=crop&w=900&q=80",
-  "fresh-heater": byCategory.heaters,
-  "water-dispenser-fresh": byCategory.water,
-  "lg-tv-55": byCategory.tvs,
-  "samsung-soundbar": byCategory.audio,
-  "kenwood-mixer": byCategory["small-appliances"],
-  "braun-mixer": byCategory["small-appliances"],
-  "toshiba-microwave":
-    "https://images.unsplash.com/photo-1585659722983-3a675dabf23d?auto=format&fit=crop&w=900&q=80",
-  "tefal-iron":
-    "https://images.unsplash.com/photo-1517677208171-0ec0d10187d6?auto=format&fit=crop&w=900&q=80",
-  "philips-airfryer":
-    "https://images.unsplash.com/photo-1615368144592-283c58987d5d?auto=format&fit=crop&w=900&q=80",
-  "kettle-kenwood":
-    "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?auto=format&fit=crop&w=900&q=80",
-  "tornado-fan-18": byCategory.fans,
-  "remington-dryer": byCategory["personal-care"],
-  "bedroom-oak": byCategory.bedroom,
-  "velvet-sofa": byCategory.living,
-  "dining-6":
-    "https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=900&q=80",
-  "tefal-pots": byCategory["kitchen-tools"],
-  "cotton-duvet":
-    "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=900&q=80",
-  "towel-set": byCategory.textiles,
-  "crystal-chandelier": byCategory.decor,
-  "bridal-dress": byCategory["bridal-wear"],
-  "bridal-abaya": byCategory["bridal-wear"],
-  "cotton-pajamas": byCategory.pajamas,
-  "kids-pajamas": byCategory["kids-wear"],
-  "women-galabiya": byCategory["women-wear"],
-  "men-galabiya": byCategory["men-wear"],
-  "bride-slippers": byCategory.shoes,
-  "evening-bag": byCategory.bags,
-  "zircon-set": byCategory.jewelry,
-  "lattafa-perfume": byCategory.beauty,
-  "bath-towels-8": byCategory.textiles,
-  "kitchen-linens": byCategory.accessories,
-};
+function seed(id: string) {
+  let h = 2166136261;
+  for (let i = 0; i < id.length; i++) h = Math.imul(h ^ id.charCodeAt(i), 16777619);
+  return (h >>> 0) % 1_000_000;
+}
 
-export function productImage(id: string, category: CategoryId) {
-  return byProduct[id] ?? byCategory[category];
+/** Unique studio-style photo per product name — not one generic category stock image. */
+export function productImage(id: string, category: CategoryId, name = "") {
+  const kind = CATEGORY_EN[category] ?? "home product";
+  const prompt = [
+    "photorealistic catalog product photo",
+    name || id.replace(/-/g, " "),
+    kind,
+    "studio lighting",
+    "clean white background",
+    "single product only",
+    "no people",
+    "no watermark",
+    "e-commerce listing",
+  ].join(", ");
+  const params = new URLSearchParams({
+    width: "900",
+    height: "675",
+    nologo: "true",
+    seed: String(seed(id)),
+  });
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?${params.toString()}`;
+}
+
+export function productImageFallback(id: string, category: CategoryId) {
+  const kind = encodeURIComponent(CATEGORY_EN[category] ?? "product");
+  return `https://loremflickr.com/900/675/${kind}/all?lock=${seed(id)}`;
 }
