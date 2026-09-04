@@ -3,6 +3,7 @@
 import { getStore } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { StoreLogo } from "@/components/store-logo";
+import { canShopOut } from "@/lib/store-link";
 import type { Product } from "@/lib/types";
 
 export function SellerStrip({
@@ -13,7 +14,7 @@ export function SellerStrip({
   limit?: number;
 }) {
   const rows = [...product.listings]
-    .filter((l) => l.storeId !== "cartlow" && getStore(l.storeId)?.shipsEgypt !== false)
+    .filter((l) => l.storeId !== "cartlow" && l.storeId !== "carrefour" && canShopOut(l.storeId) && getStore(l.storeId)?.shipsEgypt !== false)
     .sort((a, b) => a.price - b.price);
   const shown = rows.slice(0, limit);
   const extra = rows.length - shown.length;

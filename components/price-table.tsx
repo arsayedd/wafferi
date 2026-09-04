@@ -4,12 +4,12 @@ import { useState } from "react";
 import { BadgeCheck, Ticket } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { SourceCopyright } from "@/components/source-copyright";
 import { getStore } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { StoreLogo } from "@/components/store-logo";
 import { ShopOutButton } from "@/components/shop-out-button";
+import { canShopOut } from "@/lib/store-link";
 import type { Listing } from "@/lib/types";
 import type { LiveListing } from "@/lib/live-quotes";
 import { usePartners } from "@/hooks/use-partners";
@@ -29,7 +29,7 @@ export function PriceTable({
   const [sort, setSort] = useState<"price" | "rating" | "reviews" | "discount">("price");
   const egypt = [...listings].filter((l) => {
     const st = getStore(l.storeId);
-    return l.storeId !== "cartlow" && st?.shipsEgypt !== false;
+    return l.storeId !== "cartlow" && l.storeId !== "carrefour" && canShopOut(l.storeId) && st?.shipsEgypt !== false;
   });
   const sorted = [...egypt].sort((a, b) => {
     if (sort === "rating") return b.rating - a.rating;

@@ -16,8 +16,18 @@ function isGoogleHost(hostname: string) {
   return hostname.includes("google.");
 }
 
-function isTradelineStores(hostname: string) {
-  return hostname.replace(/^www\./, "") === "tradelinestores.com";
+function isKeptShopHost(hostname: string) {
+  const h = hostname.replace(/^www\./, "");
+  return (
+    h.includes("jumia.") ||
+    h.includes("amazon.") ||
+    h.includes("noon.") ||
+    h === "tradelinestores.com" ||
+    h.includes("rayashop.") ||
+    h.includes("ikea.") ||
+    h.includes("dream2000.") ||
+    h.includes("google.")
+  );
 }
 
 /** Never send shoppers to invented /p/{sku} pages or DNS-dead merchant hosts. */
@@ -67,10 +77,11 @@ export function buildOutboundUrl(
   if (isDeadShopUrl(u.toString()) || isFakeProductPath(u.toString())) {
     return listingHref(rule?.storeId ?? "jumia", productName || "منتج جهاز");
   }
-  if (isGoogleHost(u.hostname) || isTradelineStores(u.hostname)) return u.toString();
-  if (!isJumiaHost(u.hostname)) {
-    return listingHref(rule?.storeId ?? "", productName || "منتج جهاز");
+  if (isGoogleHost(u.hostname)) return u.toString();
+  if (!isKeptShopHost(u.hostname)) {
+    return listingHref(rule?.storeId ?? "jumia", productName || "منتج جهاز");
   }
+  if (!isJumiaHost(u.hostname)) return u.toString();
   u.searchParams.set("utm_source", "waffari");
   u.searchParams.set("utm_medium", "affiliate");
   if (rule?.affiliateId.trim()) {

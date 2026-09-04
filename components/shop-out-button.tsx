@@ -1,8 +1,10 @@
 "use client";
 
-import { ExternalLink } from "lucide-react";
+import { Copy, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
+import { buttonVariants } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
+import { cn } from "cn";
 import { isDeadShopUrl } from "@/lib/dead-hosts";
 import { listingHref } from "@/lib/store-link";
 import { usePartners } from "@/hooks/use-partners";
@@ -27,7 +29,7 @@ function hostOf(href: string) {
   try {
     return new URL(href).hostname.replace(/^www\./, "");
   } catch {
-    return "رابط آمن";
+    return "رابط";
   }
 }
 
@@ -62,30 +64,35 @@ export function ShopOutButton({
   }
 
   return (
-    <div className={`flex flex-col ${compact ? "items-center" : "items-end"} gap-1`}>
-      <Button
-        size="sm"
-        variant={cheapest ? "default" : "outline"}
-        nativeButton={false}
-        render={<a href={href} target="_blank" rel="noopener noreferrer" title={href} />}
-        onClick={() =>
-          toast.message(`هتحوّلي على ${name}`, {
-            description:
-              storeId === "tradeline"
-                ? "tradeline.com.eg مش شغال. الرابط بحث على tradelinestores.com."
-                : storeId === "carrefour"
-                  ? "كارفور أونلاين فيه عطل DNS. الرابط بحث جوجل باسم المنتج."
-                  : "بحث الاسم — مش صفحة /p/ وهمية.",
-          })
-        }
+    <div className={`flex ${compact ? "flex-row" : "flex-col items-end"} gap-1`}>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        title={href}
+        className={cn(buttonVariants({ variant: cheapest ? "default" : "outline", size: "sm" }))}
+        onClick={() => toast.message(`هتفتحي ${name}`)}
       >
         {compact ? <ExternalLink /> : label ?? `اشتري من ${name}`}
         {compact ? null : <ExternalLink />}
-      </Button>
+      </a>
       {compact ? null : (
-        <span className="max-w-[220px] truncate font-mono text-[10px] text-muted-foreground" title={href}>
-          {hostOf(href)}
-        </span>
+        <div className="flex max-w-[240px] items-center gap-1">
+          <span className="truncate font-mono text-[10px] text-muted-foreground" title={href}>
+            {hostOf(href)}
+          </span>
+          <button
+            type="button"
+            className="text-muted-foreground hover:text-foreground"
+            title="نسخ الرابط"
+            onClick={() => {
+              void navigator.clipboard?.writeText(href);
+              toast.success("اتنسخ الرابط");
+            }}
+          >
+            <Copy className="size-3" />
+          </button>
+        </div>
       )}
     </div>
   );

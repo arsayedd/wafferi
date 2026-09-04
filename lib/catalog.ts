@@ -8,7 +8,7 @@ import { extraProducts } from "./extra-products";
 import { lifeProducts } from "./life-products";
 import { brideProducts, commercialBundles } from "./bride-guide";
 import { expandNetworkListings } from "./expand-listings";
-import { listingHref, isEgyptSeller, getNetworkStore, brandShopFits } from "./store-link";
+import { listingHref, isEgyptSeller, getNetworkStore, brandShopFits, canShopOut } from "./store-link";
 import { stores } from "./network";
 
 export { stores } from "./network";
@@ -655,7 +655,7 @@ export const products = [
   const listings = p.listings
     .filter((l) => {
       const st = getNetworkStore(l.storeId);
-      if (l.storeId === "cartlow" || !isEgyptSeller(st)) return false;
+      if (l.storeId === "cartlow" || l.storeId === "carrefour" || !canShopOut(l.storeId) || !isEgyptSeller(st)) return false;
       if (!st) return false;
       if (st.kind === "brand" || st.connector === "brand_portal") {
         return brandShopFits(st, p);

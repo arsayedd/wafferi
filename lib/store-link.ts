@@ -21,11 +21,27 @@ export function storeLogoUrl(website: string) {
   return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=128`;
 }
 
-/** Direct search only on hosts that resolve and are not fake /p/{sku} pages. */
+/** Search URLs that land on a real catalog page — not invented /p/{sku} and not DNS-dead hosts. */
 const TRUSTED_SEARCH: Record<string, (q: string) => string> = {
   jumia: (q) => `https://www.jumia.com.eg/catalog/?q=${q}`,
+  amazon: (q) => `https://www.amazon.eg/s?k=${q}`,
+  noon: (q) => `https://www.noon.com/egypt-ar/search?q=${q}`,
   tradeline: (q) => `https://www.tradelinestores.com/search?q=${q}`,
+  raya: (q) => `https://www.rayashop.com/ar/search?q=${q}`,
+  ikea: (q) => `https://www.ikea.com/eg/ar/search/products/?q=${q}`,
+  dream2000: (q) => `https://dream2000.com/search?q=${q}`,
 };
+
+export function canShopOut(storeId: string) {
+  return storeId in TRUSTED_SEARCH;
+}
+
+export function storeSearchUrl(store: Store, productName: string) {
+  const q = encodeURIComponent(productName);
+  const trusted = TRUSTED_SEARCH[store.id];
+  if (trusted) return trusted(q);
+  return `https://www.google.com.eg/search?q=${encodeURIComponent(`${productName} ${store.name} للبيع`)}`;
+}
 
 const BRAND_SHOPS: Record<string, string[]> = {
   lgshop: ["lg", "ال جي", "إل جي"],
@@ -53,20 +69,13 @@ export function brandShopFits(store: Store, product: { brand: string; name: stri
   return keys.some((k) => blob.includes(foldArabic(k)));
 }
 
-export function storeSearchUrl(store: Store, productName: string) {
-  const q = encodeURIComponent(productName);
-  const trusted = TRUSTED_SEARCH[store.id];
-  if (trusted) return trusted(q);
-  return `https://www.google.com/search?q=${encodeURIComponent(`${productName} ${store.name} مصر للبيع`)}`;
-}
-
 export function storeHomeHref(website: string, storeId?: string, storeName?: string) {
   const raw = website || "";
   if (!raw || isDeadShopUrl(raw)) {
     if (storeId === "tradeline" || raw.toLowerCase().includes("tradeline.com.eg")) {
       return "https://www.tradelinestores.com";
     }
-    return `https://www.google.com/search?q=${encodeURIComponent(`${storeName || "متجر"} مصر`)}`;
+    return `https://www.google.com.eg/search?q=${encodeURIComponent(`${storeName || "متجر"} مصر`)}`;
   }
   return raw;
 }
@@ -74,10 +83,10 @@ export function storeHomeHref(website: string, storeId?: string, storeName?: str
 export function listingHref(storeId: string, productName: string, _fallbackUrl?: string) {
   const store = getNetworkStore(storeId);
   if (!store) {
-    return `https://www.google.com/search?q=${encodeURIComponent(`${productName} مصر`)}`;
+    return `https://www.google.com.eg/search?q=${encodeURIComponent(`${productName} مصر`)}`;
   }
   if (store.shipsEgypt === false) {
-    return `https://www.google.com/search?q=${encodeURIComponent(`${productName} مصر`)}`;
+    return `https://www.google.com.eg/search?q=${encodeURIComponent(`${productName} مصر`)}`;
   }
   return storeSearchUrl(store, productName);
 }
