@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { SearchExperience } from "@/components/search-experience";
 
-export const metadata = { title: "السوق" };
+export const metadata = { title: "بحث في الحياة" };
 
 export default function SearchPage() {
   return (
