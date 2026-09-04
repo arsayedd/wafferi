@@ -2,15 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { Menu, Search, ShoppingBag, Bell, GitCompare } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { useWaffari } from "@/hooks/use-waffari";
 import { SearchBar } from "@/components/search-bar";
 
@@ -39,6 +33,7 @@ export function Logo({ className = "" }: { className?: string }) {
 export function SiteHeader() {
   const path = usePathname();
   const { items, alerts, compare } = useWaffari();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-background/90 backdrop-blur-md">
@@ -93,35 +88,61 @@ export function SiteHeader() {
             <ShoppingBag />
             القايمة ({items.length})
           </Button>
-          <Sheet>
-            <SheetTrigger
-              render={<Button variant="ghost" size="icon" className="md:hidden" />}
-            >
-              <Menu />
-            </SheetTrigger>
-            <SheetContent side="right" className="w-72">
-              <SheetHeader>
-                <SheetTitle>القائمة</SheetTitle>
-              </SheetHeader>
-              <nav className="flex flex-col gap-1 px-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            type="button"
+            aria-label="فتح القائمة"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            <Menu />
+          </Button>
+          {menuOpen ? (
+            <div className="fixed inset-0 z-50 md:hidden">
+              <button
+                type="button"
+                className="absolute inset-0 bg-black/40"
+                aria-label="إغلاق القائمة"
+                onClick={() => setMenuOpen(false)}
+              />
+              <aside className="absolute inset-y-0 start-0 flex w-72 flex-col gap-2 bg-background p-4 shadow-lg">
+                <p className="px-2 text-sm font-medium">القائمة</p>
                 {links.map((l) => (
                   <Link
                     key={l.href}
                     href={l.href}
+                    onClick={() => setMenuOpen(false)}
                     className="rounded-lg px-2 py-2 text-sm hover:bg-muted"
                   >
                     {l.label}
                   </Link>
                 ))}
-                <Link href="/brands" className="rounded-lg px-2 py-2 text-sm hover:bg-muted">
+                <Link
+                  href="/brands"
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-lg px-2 py-2 text-sm hover:bg-muted"
+                >
                   الماركات
                 </Link>
-                <Link href="/matching" className="rounded-lg px-2 py-2 text-sm hover:bg-muted">
+                <Link
+                  href="/matching"
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-lg px-2 py-2 text-sm hover:bg-muted"
+                >
                   محرك المطابقة
                 </Link>
-              </nav>
-            </SheetContent>
-          </Sheet>
+                <Link
+                  href="/list"
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-lg px-2 py-2 text-sm hover:bg-muted"
+                >
+                  القايمة ({items.length})
+                </Link>
+              </aside>
+            </div>
+          ) : null}
         </div>
       </div>
     </header>

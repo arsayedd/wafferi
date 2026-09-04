@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { templates } from "@/lib/catalog";
@@ -47,14 +48,24 @@ function readJson<T>(key: string, fallback: T): T {
   }
 }
 
+function persist(key: string, value: unknown) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
 export function WaffariProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<ListItem[]>([]);
   const [budget, setBudgetState] = useState(80000);
   const [alerts, setAlerts] = useState<PriceAlert[]>([]);
   const [compare, setCompare] = useState<string[]>([]);
   const [ready, setReady] = useState(false);
+  const dirty = useRef(false);
 
   useEffect(() => {
+    if (dirty.current) {
+      setReady(true);
+      return;
+    }
     setItems(readJson<ListItem[]>(LIST_KEY, []));
     setBudgetState(readJson<number>(BUDGET_KEY, 80000));
     setAlerts(readJson<PriceAlert[]>(ALERT_KEY, []));
@@ -80,9 +91,12 @@ export function WaffariProvider({ children }: { children: React.ReactNode }) {
   }, [compare, ready]);
 
   const addItem = useCallback((productId: string) => {
+    dirty.current = true;
     setItems((prev) => {
       if (prev.some((i) => i.productId === productId)) return prev;
-      return [...prev, { productId, qty: 1, purchased: false, note: "" }];
+      const next = [...prev, { productId, qty: 1, purchased: false, note: "" }];
+      persist(LIST_KEY, next);
+      return next;
     });
   }, []);
 
@@ -130,9 +144,12 @@ export function WaffariProvider({ children }: { children: React.ReactNode }) {
   const setBudget = useCallback((n: number) => setBudgetState(n), []);
 
   const addAlert = useCallback((productId: string, targetPrice: number) => {
+    dirty.current = true;
     setAlerts((prev) => {
       const rest = prev.filter((a) => a.productId !== productId);
-      return [...rest, { productId, targetPrice }];
+      const next = [...rest, { productId, targetPrice }];
+      persist(ALERT_KEY, next);
+      return next;
     });
   }, []);
   const removeAlert = useCallback((productId: string) => {
@@ -140,10 +157,15 @@ export function WaffariProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const toggleCompare = useCallback((productId: string) => {
+    dirty.current = true;
     setCompare((prev) => {
-      if (prev.includes(productId)) return prev.filter((id) => id !== productId);
-      if (prev.length >= 3) return [...prev.slice(1), productId];
-      return [...prev, productId];
+      const next = prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : prev.length >= 3
+          ? [...prev.slice(1), productId]
+          : [...prev, productId];
+      persist(COMPARE_KEY, next);
+      return next;
     });
   }, []);
   const clearCompare = useCallback(() => setCompare([]), []);

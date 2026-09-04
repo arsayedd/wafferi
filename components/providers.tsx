@@ -9,7 +9,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light">
       <WaffariProvider>
         {children}
-        <Toaster position="top-center" dir="rtl" />
+        <Toaster />
       </WaffariProvider>
     </ThemeProvider>
   );
