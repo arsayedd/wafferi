@@ -24,7 +24,7 @@ export function searchSuggestions(raw: string): SuggestRow[] {
   }
 
   for (const s of POPULAR_SEARCHES) {
-    if (!q || foldArabic(s).includes(foldArabic(q)) || foldArabic(q).includes(foldArabic(s).slice(0, 4))) {
+    if (!q || foldArabic(s).includes(foldArabic(q))) {
       add({ label: s, href: `/search?q=${encodeURIComponent(s)}`, hint: "شائع" });
     }
   }

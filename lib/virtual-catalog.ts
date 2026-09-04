@@ -3,6 +3,7 @@ import { listingHref } from "./store-link";
 import { makeSku } from "./sku-factory";
 import { shopQueryFromProduct } from "./shop-query";
 import { foldArabic, similarArabic } from "./ar-fold";
+import { triggeredSynonymGroups, hayMatchesSynonyms } from "./search-synonyms";
 
 export const VIRTUAL_STORES = [
   "jumia",
@@ -331,7 +332,7 @@ const families: Family[] = [
     ["خلاط", "قلاية هوائية", "ميكروويف", "كتل", "مكواة", "محضر طعام", "عصارة", "توستر", "مكنسة يد"],
     ["أبيض", "أسود", "أحمر", "ستانلس"],
     ["عادي", "زجاج", "استانلس", "ديجيتال"],
-    ["خلاط", "قلاية", "قلايه", "ميكروويف", "كتل", "محضر"],
+    ["خلاط", "قلاية", "قلايه", "قلاية هوائية", "اير فراير", "air fryer", "ميكروويف", "كتل", "محضر"],
     450,
     (b, size, kind, color, grade) => `${kind} ${b} ${size} ${color} ${grade}`,
   ),
@@ -943,9 +944,18 @@ type QueryBits = {
 function pickIndexes(list: string[], want?: string) {
   if (!want?.trim()) return list.map((_, i) => i);
   const folded = foldArabic(want);
+  const groups = triggeredSynonymGroups(want);
   return list
     .map((v, i) => ({ v, i }))
-    .filter(({ v }) => similarArabic(v, want) || foldArabic(v).includes(folded) || folded.includes(foldArabic(v)))
+    .filter(({ v }) => {
+      const fv = foldArabic(v);
+      if (fv === folded) return true;
+      if (folded.length >= 4 && (fv.includes(folded) || folded.includes(fv))) return true;
+      if (similarArabic(v, want)) return true;
+      if (groups.length && hayMatchesSynonyms(v, groups)) return true;
+      if (folded.length < 4) return fv.split(/\s+/).includes(folded);
+      return false;
+    })
     .map(({ i }) => i);
 }
 
@@ -960,11 +970,17 @@ function tokensOf(q?: string) {
 function familyMatches(f: Family, filters: QueryBits) {
   if (filters.category && f.category !== filters.category) return false;
   const q = filters.q?.trim();
-  if (!q || filters.category) return true;
+  if (!q) return true;
+  const groups = triggeredSynonymGroups(q);
+  if (groups.length) {
+    const blob = `${f.words.join(" ")} ${f.kinds.join(" ")} ${f.category}`;
+    return hayMatchesSynonyms(blob, groups);
+  }
   const folded = foldArabic(q);
   if (f.words.some((w) => folded.includes(foldArabic(w)) || similarArabic(w, q))) return true;
-  if (pickIndexes(f.brands, q).length) return true;
+  if (pickIndexes(f.brands, q).length && foldArabic(f.brands.join(" ")).includes(folded)) return true;
   if (pickIndexes(f.kinds, q).length) return true;
+  if (filters.category) return false;
   return false;
 }
 
@@ -1001,6 +1017,7 @@ function assignDims(f: Family, filters: QueryBits) {
   );
 
   for (const token of tokensOf(filters.q)) {
+    if (token.length < 4) continue;
     if (skip.has(token) || [...skip].some((s) => s.includes(token) || token.includes(s))) continue;
     const dims: { hits: number[]; apply: (v: number[]) => void }[] = [
       { hits: pickIndexes(f.brands, token), apply: (v) => (brandIdx = v) },

@@ -9,7 +9,7 @@ export const extraProducts: Product[] = [
     barcode: "8710103891004",
     model: "HD9650",
     capacity: "6.2 لتر",
-    highlights: ["من غير زيت تقريبًا", "سلتين", "تطبيق وصفات"],
+    highlights: ["من غير زيت تقريبًا", "سلتين", "تطبيق وصفات", "اير فراير", "air fryer"],
     specs: [
       { label: "السعة", value: "6.2 لتر" },
       { label: "القدرة", value: "2225 وات" },

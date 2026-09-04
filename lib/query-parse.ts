@@ -2,6 +2,7 @@ import { foldArabic, tokenizeQuery, similarArabic } from "./ar-fold";
 import { brands, categories } from "./catalog";
 import type { CategoryId } from "./types";
 import type { SearchFilters, SortKey } from "./search";
+import { primaryKindNeedle, triggeredSynonymGroups } from "./search-synonyms";
 
 const CATEGORY_ALIASES: { id: CategoryId; words: string[] }[] = [
   { id: "washers", words: ["غساله", "غسالة", "غسالات", "washer", "washing machine"] },
@@ -16,7 +17,7 @@ const CATEGORY_ALIASES: { id: CategoryId; words: string[] }[] = [
   { id: "vacuums", words: ["مكنسة", "مكنسه", "مكانس", "مكنسة كهربائية", "vacuum"] },
   { id: "heaters", words: ["سخان", "سخانات", "heater"] },
   { id: "water", words: ["فلتر مياه", "مبرد مياه", "فلاتر", "filter"] },
-  { id: "small-appliances", words: ["خلاط", "قلايه", "قلاية", "ميكروويف", "ميكرويف", "كتل", "blender", "air fryer", "microwave"] },
+  { id: "small-appliances", words: ["خلاط", "قلايه", "قلاية", "قلاية هوائية", "قلايه هوائيه", "اير فراير", "ايرفراير", "air fryer", "airfryer", "ميكروويف", "ميكرويف", "كتل", "blender", "microwave"] },
   { id: "phones", words: ["موبايل", "موبيل", "تليفون", "هاتف", "ايفون", "آيفون", "اندرويد", "جالاكسي", "galaxy", "s25", "s24", "phone", "smartphone"] },
   { id: "laptops", words: ["لابتوب", "لاب", "لابتوبات", "كمبيوتر محمول", "notebook", "laptop"] },
   { id: "tablets", words: ["تابلت", "ايباد", "آيباد", "tablet"] },
@@ -185,10 +186,11 @@ function aliasMatchesQuery(alias: string, folded: string, tokens: string[]) {
   if (!f) return false;
   const parts = f.split(" ").filter(Boolean);
   if (parts.length > 1) {
-    return parts.every((part) => tokens.some((t) => similarArabic(t, part)) || folded.includes(part));
+    if (folded.includes(f)) return true;
+    return parts.every((part) => tokens.includes(part) || (part.length >= 4 && tokens.some((t) => t.includes(part) || part.includes(t))));
   }
   if (f.length < 4) return tokens.includes(f);
-  return tokens.some((t) => similarArabic(t, f)) || folded.includes(f);
+  return tokens.includes(f) || folded.includes(f) || tokens.some((t) => similarArabic(t, f));
 }
 
 function categoryHints() {
@@ -271,6 +273,12 @@ export function parseShopperQuery(raw: string): ParsedQuery {
   if (categoryHit) {
     filters.category = categoryHit.id;
     intent.push(categories.find((c) => c.id === categoryHit!.id)?.name ?? categoryHit.id);
+  }
+
+  const kindNeedle = primaryKindNeedle(triggeredSynonymGroups(raw));
+  if (kindNeedle) {
+    filters.kind = kindNeedle;
+    filters.category = filters.category ?? "small-appliances";
   }
 
   for (const [alias, name] of Object.entries(BRAND_ALIASES)) {

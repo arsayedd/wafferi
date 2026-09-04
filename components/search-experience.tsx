@@ -74,7 +74,7 @@ export function SearchExperience({
     () =>
       searchProductsPage(
         {
-          q: parsed.q ?? (parsed.category ? undefined : q.trim() || undefined),
+          q: q.trim() || parsed.q || undefined,
           category: category || undefined,
           brand: brand || undefined,
           store: store || undefined,
@@ -86,7 +86,7 @@ export function SearchExperience({
           minReviews,
           minDiscount,
           capacity: size || parsed.capacity,
-          kind: kind || undefined,
+          kind: kind || parsed.kind || undefined,
           color: color || undefined,
           delivery: delivery || undefined,
         },
@@ -99,6 +99,7 @@ export function SearchExperience({
       parsed.q,
       parsed.category,
       parsed.capacity,
+      parsed.kind,
       category,
       brand,
       store,

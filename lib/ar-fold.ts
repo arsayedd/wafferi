@@ -59,10 +59,9 @@ export function similarArabic(a: string, b: string) {
   const y = softenArabic(b);
   if (!x || !y) return false;
   if (x === y) return true;
+  if (Math.min(x.length, y.length) < 4) return false;
+  if (x[0] !== y[0]) return false;
   const n = Math.max(x.length, y.length);
-  const dLen = Math.abs(x.length - y.length);
-  if (dLen <= 2 && n >= 4 && (x.includes(y) || y.includes(x))) return true;
-  if (n < 4) return false;
-  const allow = n <= 5 ? 1 : n <= 8 ? 2 : 3;
+  const allow = n <= 8 ? 1 : 2;
   return editDistance(x, y) <= allow;
 }

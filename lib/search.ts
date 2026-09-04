@@ -2,6 +2,7 @@ import { foldArabic, tokenizeQuery, similarArabic, softenArabic } from "./ar-fol
 import { avgRating, cheapestListing, getCategory, getStore, products } from "./catalog";
 import { bestChoiceScore, offerDiscountPct, totalReviews } from "./best-choice";
 import { SEARCH_STOP } from "./query-parse";
+import { hayMatchesSynonyms, triggeredSynonymGroups } from "./search-synonyms";
 import type { Product } from "./types";
 import { VIRTUAL_STORES, virtualSearch } from "./virtual-catalog";
 
@@ -61,28 +62,28 @@ function capacityHit(p: Product, cap?: string) {
 function tokenHit(hay: string, token: string) {
   if (!token) return true;
   if (SEARCH_STOP.has(token) || /^\d+$/.test(token)) return true;
+  const words = hay.split(/\s+/).filter(Boolean);
+  if (token.length < 4) return words.includes(token);
+  if (hay.includes(token)) return true;
   const softHay = softenArabic(hay);
   const softTok = softenArabic(token);
-  if (hay.includes(token) || softHay.includes(softTok)) return true;
-  const stem = token.slice(0, Math.min(token.length, 5));
-  if (stem.length >= 4 && (hay.includes(stem) || softHay.includes(softenArabic(stem)))) return true;
-  return hay.split(" ").some((w) => similarArabic(w, token));
+  if (softHay.includes(softTok)) return true;
+  return words.some((w) => similarArabic(w, token));
 }
 
 function textHit(p: Product, q?: string) {
   if (!q?.trim()) return true;
   const hay = foldArabic(haystack(p));
+  const groups = triggeredSynonymGroups(q);
+  if (groups.length) return hayMatchesSynonyms(hay, groups);
   const foldedQ = foldArabic(q);
   if (hay.includes(foldedQ) || softenArabic(hay).includes(softenArabic(q))) return true;
-  if (similarArabic(p.name, q) || similarArabic(p.category, q) || similarArabic(getCategory(p.category)?.name ?? "", q)) {
+  if (similarArabic(p.name, q) || similarArabic(getCategory(p.category)?.name ?? "", q)) {
     return true;
   }
   const tokens = tokenizeQuery(q).filter((w) => w.length > 1 && !SEARCH_STOP.has(w) && !/^\d+$/.test(w));
   if (!tokens.length) return true;
-  const hits = tokens.filter((t) => tokenHit(hay, t));
-  if (hits.length === tokens.length) return true;
-  if (tokens.length >= 2 && hits.length >= Math.ceil(tokens.length * 0.6)) return true;
-  return false;
+  return tokens.every((t) => tokenHit(hay, t));
 }
 
 function applyFilters(p: Product, filters: SearchFilters, withText: boolean) {
