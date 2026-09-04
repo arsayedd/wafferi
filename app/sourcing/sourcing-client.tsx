@@ -9,6 +9,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   houseTiers,
+  marketplaceProfiles,
   matchSourcing,
   sourcingCategories,
   type SourcingCategory,
@@ -84,6 +85,57 @@ export default function SourcingClient() {
         </form>
       </div>
 
+      <section className="grid gap-3 md:grid-cols-3">
+        {[
+          {
+            t: "أونلاين",
+            d: "جوميا، نون، أمازون، ايكيا، هومزمارت، رنين، صفقة، كوبيندي… تشوفي إيه موجود في السوق.",
+          },
+          {
+            t: "جملة / أسواق",
+            d: "العتبة، الموسكي، حمام التلات، درب سعادة، عبدالعزيز، الجمهورية. تنزلي تقارني كاش.",
+          },
+          {
+            t: "مصانع",
+            d: "العاشر، أكتوبر، العبور، دمياط، بدر. للكميات وMOQ — مش مشوار العروسة اليومي.",
+          },
+        ].map((x) => (
+          <div key={x.t} className="rounded-xl bg-secondary/60 p-4">
+            <p className="font-medium">{x.t}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{x.d}</p>
+          </div>
+        ))}
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="font-heading text-2xl font-semibold">ماركتبليس — بداية السوق</h2>
+        <p className="text-sm text-muted-foreground">
+          أهم نقطة لو عايزة تشوفي التغطية، مش تشتري وخلاص.
+        </p>
+        <div className="overflow-x-auto rounded-xl ring-1 ring-foreground/10">
+          <table className="w-full min-w-[520px] text-sm">
+            <thead className="bg-muted/60 text-start">
+              <tr>
+                <th className="p-3 text-start font-medium">المصدر</th>
+                <th className="p-3 text-start font-medium">أهم الحاجات</th>
+              </tr>
+            </thead>
+            <tbody>
+              {marketplaceProfiles.map((m) => (
+                <tr key={m.id} className="border-t border-border/60">
+                  <td className="p-3">
+                    <Link className="text-primary hover:underline" href={`/stores/${m.id}`}>
+                      {storeName(m.id)}
+                    </Link>
+                  </td>
+                  <td className="p-3 text-muted-foreground">{m.sells}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <section className="space-y-3">
         <h2 className="font-heading text-2xl font-semibold">طبقات الجهاز</h2>
         <p className="text-sm text-muted-foreground">
@@ -98,7 +150,7 @@ export default function SourcingClient() {
           {houseTiers.map((t) => (
             <Link
               key={t.id}
-              href="/guide"
+              href={`/plan`}
               className="rounded-xl bg-card p-4 ring-1 ring-foreground/10 hover:bg-secondary"
             >
               <p className="text-xs text-primary">{t.name}</p>

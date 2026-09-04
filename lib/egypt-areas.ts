@@ -40,6 +40,7 @@ export const egyptAreas: EgyptArea[] = [
     spots: [
       { id: "pots", name: "سوق الحلل والطاسات", note: "امشي المحلات المتجاورة وقارني السماكة والسعر." },
       { id: "trays", name: "محلات الصواني والتقديم", note: "صواني فرن وضيافة بالجملة." },
+      { id: "electric", name: "ماكينات كهربا حمام التلات", note: "أجهزة صغيرة وكهربا جنب الرفايع. 6 المزين." },
       { id: "spices", name: "توابل وأدوات صغيرة", note: "رفايع المطبخ جنب الحلل." },
     ],
   }),
@@ -406,6 +407,18 @@ export const egyptAreas: EgyptArea[] = [
     finds: ["مصنع", "مخزن"],
     keywords: ["برج العرب", "إسكندرية", "مصنع"],
     spots: [{ id: "zone", name: "المنطقة الصناعية", note: "للـsourcing مش للمشوار اليومي من القاهرة." }],
+  }),
+  a({
+    id: "sahel-cairo",
+    name: "الساحل",
+    city: "القاهرة",
+    lat: 30.098,
+    lng: 31.231,
+    cheaper: true,
+    why: "تجار جملة ملابس على الكورنيش.",
+    finds: ["لبس جملة"],
+    keywords: ["ساحل", "جملة لبس"],
+    spots: [{ id: "mkm", name: "محلات الجملة على الكورنيش", note: "مثال: MKM Fashion." }],
   }),
 ];
 
