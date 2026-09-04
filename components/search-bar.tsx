@@ -79,12 +79,7 @@ export function SearchBar({
       </form>
       {open ? (
         <div
-          className={cn(
-            "absolute z-50 mt-2 overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-lg",
-            compact
-              ? "inset-inline-end-0 w-[min(22rem,calc(100vw-1.5rem))]"
-              : "inset-inline-start-0 w-full",
-          )}
+          className="absolute start-0 z-50 mt-2 w-full min-w-[min(18rem,calc(100vw-1rem))] max-w-[calc(100vw-1rem)] overflow-y-auto rounded-xl border border-border bg-popover text-popover-foreground shadow-lg"
         >
           <p className="border-b px-3 py-2 text-xs text-muted-foreground">اقتراحات: فئات وماركات وجمل جاهزة</p>
           <ul className="max-h-80 overflow-auto py-1">
@@ -100,8 +95,8 @@ export function SearchBar({
                     setOpen(false);
                   }}
                 >
-                  <span className="truncate text-sm font-medium">{s.label}</span>
-                  <span className="shrink-0 text-[11px] text-muted-foreground">{s.hint}</span>
+                  <span className="min-w-0 truncate text-sm font-medium">{s.label}</span>
+                  <span className="shrink-0 whitespace-nowrap text-[11px] text-muted-foreground">{s.hint}</span>
                 </button>
               </li>
             ))}
