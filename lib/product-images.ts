@@ -79,4 +79,4 @@ export function productImageFallback(id: string, category: CategoryId, name = ""
   return "/catalog-photos/living.jpg";
 }
 
-export const PHOTO_CREDIT = "ويكيميديا · صورة المنتج — مش من صفحة المتجر";
+export const PHOTO_CREDIT = "ويكيميديا / Openverse — صورة مرجعية للمنتج، مش سحب من صفحة المتجر";
